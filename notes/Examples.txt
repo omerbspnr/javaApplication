@@ -1,0 +1,2631 @@
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının append metodu ve capacity değişimi
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder(5);
+
+		System.out.printf("Capacity:%d%n", sb.capacity());
+		System.out.printf("Length:%d%n", sb.length());
+
+		sb.append("ankara").append("istanbul").append("izmir");
+
+		System.out.printf("Capacity:%d%n", sb.capacity());
+		System.out.printf("Length:%d%n", sb.length());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının String parametreli ctor elemanı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("ankara");
+
+		sb.append("istanbul").append("izmir");
+
+		System.out.println(sb);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının String parametreli ctor elemanı capacity değerini 16 + string'in karakter
+	sayısı olarak belirler
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("istanbul");
+
+		System.out.printf("Capacity:%d%n", sb.capacity());
+		System.out.printf("Length:%d%n", sb.length());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının charAt metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("istanbul");
+
+		int len = sb.length();
+
+		for (int i = 0; i < len; ++i)
+			System.out.printf("%c ", sb.charAt(i));
+
+		System.out.println();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının delete metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("ankara");
+
+		sb.delete(0, 2); //[0, 2)
+
+		System.out.println(sb);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının deleteCharAt metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("ankara");
+
+		sb.deleteCharAt(5);
+
+		System.out.println(sb);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının getChars metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("Bugün hava çok güzel");
+
+		char [] c = new char[4];
+
+		sb.getChars(6, 10, c, 0);
+
+		for (int i = 0; i < c.length; ++i)
+			System.out.println(c[i]);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının getChars metodu ile içersindeki karakterlerin tamamından bir dizinin elde
+	edilmesi
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("Bugün hava çok güzel");
+
+		char [] c = new char[sb.length()];
+
+		sb.getChars(0, sb.length(), c, 0);
+
+		for (int i = 0; i < c.length; ++i)
+			System.out.println(c[i]);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının insert metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("Bugün hava çok güzel");
+
+		sb.insert(6, "gerçekten ");
+
+		System.out.println(sb);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının setLength metodu ile büyütme yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		StringBuilder sb = new StringBuilder("ankara");
+
+		sb.setLength(10);
+
+		System.out.println(sb + ":");
+		System.out.println(sb.indexOf("\0"));
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının setLength metodu ile küçültme de yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        StringBuilder sb = new StringBuilder("ankara");
+
+        sb.setLength(4);
+
+        System.out.println(sb + ":");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    changeCase metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+class App {
+    public static void main(String [] args)
+    {
+        System.out.println(StringUtil.changeCase("AnKaRa1:,"));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	ArrayUtil sınıfının reverse metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        String str = Console.read("Bir yazı giriniz:");
+        char [] c = str.toCharArray();
+
+        ArrayUtil.reverse(c);
+
+        Console.write(new String(c));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı iki yazı için birincisi içerisinden ikinci yazıda bulunan
+	karakterlerin olmadığı yazıyı  döndüren squeeze isimli metodu yazınız ve test ediniz.
+	Örnek: ankara, istanbul -> kr
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+import org.csystem.util.StringUtil;
+
+class App {
+    public static void main(String [] args)
+    {
+        String s1 = Console.read("Birinci yazıyı giriniz:");
+        String s2 = Console.read("İkinci yazıyı giriniz:");
+
+        Console.writeLine(StringUtil.squeeze(s1, s2));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının ensureCapacity metodu artırılacak capacity değeri artması gereken capacity değerinden
+	küçükse değeri artması gereken sayı olarak belirler
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        StringBuilder sb = new StringBuilder("ankara");
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+
+        sb.ensureCapacity(23);
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının ensureCapacity metodu artırılacak capacity değeri artması gereken capacity değerinden
+	büyükse değer verilen capacity değeri olarak belirlenir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        StringBuilder sb = new StringBuilder("ankara");
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+
+        sb.ensureCapacity(50);
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının subSequance metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        StringBuilder sb = new StringBuilder("ankara");
+
+        Console.writeLine(sb.subSequence(2, sb.length()));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının trimToSize metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("ankara").append("-").append("istanbul").append("-").append("izmir");
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+        Console.writeLine("Length:%d", sb.length());
+
+        sb.trimToSize();
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+        Console.writeLine("Length:%d", sb.length());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	StringBuilder sınıfının trimToSize metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+        Console.writeLine("Length:%d", sb.length());
+
+        sb.trimToSize();
+
+        Console.writeLine("Capacity:%d", sb.capacity());
+        Console.writeLine("Length:%d", sb.length());
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Klavyeden girilen bir ne sayısı kadar klavyeden girilen yazıları bir dizi içerisinde
+	toplatınız. Bu işlemden sonra bu dizinin içerisindeki yazıların aralarında - karakteri olacak şekilde bir
+	yazı elde eden programı StringBuilder kullanarak yapınız
+	ankara, istanbul, izmir, zonguldak -> ankara-istanbul-izmir-zonguldak
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.concatstringsapp.ConcatApp;
+
+class App {
+    public static void main(String [] args)
+    {
+        ConcatApp.run();
+    }
+}
+
+package org.csystem.samples.concatstringsapp;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+public class ConcatStrings {
+    private String [] m_str;
+    private String m_delim;
+    private String m_result;
+
+    private void fillStr()
+    {
+        for (int i = 0; i < m_str.length; ++i)
+            m_str[i] = Console.read("Yazı?");
+    }
+    public ConcatStrings(int n, char delim)
+    {
+        this(n, delim + "");
+    }
+
+    public ConcatStrings(int n, String delim)
+    {
+        m_str = new String[n];
+        m_delim = delim;
+        m_result = "";
+    }
+
+    public String[] getStr()
+    {
+        return m_str;
+    }
+
+    public String getResult()
+    {
+        return m_result;
+    }
+
+    public void run()
+    {
+        fillStr();
+        m_result = ArrayUtil.join(m_str, m_delim);
+    }
+}
+
+package org.csystem.samples.concatstringsapp;
+
+
+import org.csystem.util.Console;
+
+public class ConcatApp {
+    public static void run()
+    {
+        int n = Console.readInt("Bir sayı giriniz:");
+        ConcatStrings app = new ConcatStrings(n, "--");
+
+        app.run();
+
+        Console.writeLine(app.getResult());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	BigDecimal sınıfı ve add metodu aşağıdaki gibi bir kullanımda yuvarlama hatası oluşmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigDecimal a = new BigDecimal("0.1");
+        BigDecimal b = new BigDecimal("0.2");
+        BigDecimal c = a.add(b);
+
+        Console.writeLine(c.toString());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	BigDecimal sınıfının min ve max metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigDecimal a = BigDecimal.valueOf(0.1);
+        BigDecimal b = BigDecimal.valueOf(0.2);
+        BigDecimal min = a.min(b);
+        BigDecimal max = a.max(b);
+
+        Console.writeLine(min.toString());
+        Console.writeLine(max.toString());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı BigDecimal türünden bir dizinin toplamını döndüren
+	sum isimli metodu ArrayUtil sınıfı içerisinde yazınız.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+
+import static org.csystem.util.ArrayUtil.*;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigDecimal [] bigDecimals = {
+                BigDecimal.valueOf(1.3),
+                BigDecimal.valueOf(-6),
+                BigDecimal.valueOf(9.567),
+                BigDecimal.valueOf(5.934),
+        };
+
+        BigDecimal total = sum(bigDecimals);
+
+        Console.writeLine(total.toString());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	BigDecimal sınıfının compareTo metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+
+class App {
+    public static void main(String [] args)
+    {
+        double a = Console.readDouble("Birinci sayıyı giriniz:");
+        double b = Console.readDouble("İkinci sayıyı giriniz:");
+
+        BigDecimal bda = BigDecimal.valueOf(a);
+        BigDecimal bdb = BigDecimal.valueOf(b);
+
+        Console.writeLine(bda.compareTo(bdb));
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı BigDecimal türden bir dizinin en büyük elemanını döndüren max ve en küçük
+	elemanını döndüren min isimli metotları ArrayUtil sınıfı içerisinde yazınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigDecimal [] bigDecimals = {
+                BigDecimal.valueOf(1.3),
+                BigDecimal.valueOf(-6),
+                BigDecimal.valueOf(9.567),
+                BigDecimal.valueOf(5.934),
+        };
+
+        Console.writeLine("min:%s", ArrayUtil.min(bigDecimals));
+        Console.writeLine("max:%s", ArrayUtil.max(bigDecimals));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	BigDecimal sınıfının devide metodu ile bölme işleminde sonucun nasıl yuvarlanacağı ve ne kadar hassasiyet ile
+	elde edileceği belirlenebilir. Çoğu zaman da belirlenmesi gerekir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigDecimal a = BigDecimal.TEN;
+        BigDecimal b = BigDecimal.valueOf(3);
+
+        BigDecimal res = a.divide(b, 10, RoundingMode.HALF_UP);
+
+        Console.writeLine("res=%s%n", res);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı BigDecimal türden bir dizinin ortalamasını döndüren average metotlarını
+	aşağıdaki açıklamaya göre yazınız.
+	- Yalnızca dizi referansı parametreli metot virgülden sonra 6 basamak ve yukarı yuvarlama biçimde çalışacaktır
+	- Dizi referans, scale ve RoundingMode parametreli metot ilgili değerlere göre işlem yapacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigDecimal [] bigDecimals = {
+                BigDecimal.valueOf(1.3),
+                BigDecimal.valueOf(-6),
+                BigDecimal.valueOf(9.567),
+                BigDecimal.valueOf(5.934),
+        };
+
+        BigDecimal avg = ArrayUtil.average(bigDecimals, 50, RoundingMode.CEILING);
+
+        Console.writeLine("Average=%s", avg);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	BigInteger sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigInteger;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigInteger bi = new BigInteger("9999999999999999999999999999999999999999999999");
+
+        Console.writeLine(bi.toString());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	BigInteger sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigInteger;
+
+class App {
+    public static void main(String [] args)
+    {
+        BigInteger bi = new BigInteger("ABC3FDE308F5FFFABC", 16);
+
+        Console.writeLine(bi.toString());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: NumberUtil sınıfı içerisinde yazılmış olan isPrime isimli metodu. BigInteger parametresi için
+	ayrıca yazınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.math.BigInteger;
+
+public class App {
+    public static void main(String[] args)
+    {
+        for (BigInteger i = BigInteger.ZERO; i.compareTo(BigInteger.valueOf(100)) <= 0; i = i.add(BigInteger.ONE)) {
+            if (NumberUtil.isPrime(i))
+                Console.write("%s ", i);
+        }
+
+        Console.writeLine();
+
+        Console.writeLine(NumberUtil.isPrime(BigInteger.valueOf(1_000_003)) ? "Asal" : "Asal değil");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte BigInteger içerisindeki değerin yüksek anlamlı byte değerleri atılarak 4 byte'lık değer
+	elde edilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.math.BigInteger;
+
+public class App {
+    public static void main(String[] args)
+    {
+        BigInteger bi = new BigInteger("ABCDEF10ABCD", 16);
+
+        Console.writeLine("%X", bi.intValue());
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Değişken sayıda argüman alan metotlar (elipsis parametreli metotlar) (varargs methods)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Util.display(10, 20);
+        Util.display();
+        Util.display(10);
+        Util.display(new int []{10, 20});
+    }
+}
+
+class Util {
+    public static void display(int...a)
+    {
+        for (int val : a)
+            System.out.printf("%d ", val);
+
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki durumda error oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Util {
+    public static void display(int [] a) //error
+    {
+
+    }
+    public static void display(int...a) //error
+    {
+        for (int val : a)
+            System.out.printf("%d ", val);
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki durumda int parametreli display metodu çağrılır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Util.display(10);
+    }
+}
+
+class Util {
+    public static void display(int a)
+    {
+        System.out.printf("a=%d%n", a);
+    }
+
+    public static void display(int...a)
+    {
+        for (int val : a)
+            System.out.printf("%d ", val);
+
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir metodun varargs parametresi diğer parametrelerin en sağında olmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Util.display(10);
+    }
+}
+
+class Util {
+    public static void display(int val, int...a)
+    {
+        System.out.printf("val=%d%n", val);
+
+        for (int elem : a)
+            System.out.printf("%d ", elem);
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki kuralın bir sonucu olarak iki tane varargs parametreli metot yazılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Util {
+    public static void display(double...a, int...b) //error
+    {
+
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki durumda int parametreli display çağrılır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        short a = 10;
+
+        Util.display(a);
+    }
+}
+
+class Util {
+    public static void display(int val)
+    {
+        System.out.println("int");
+    }
+
+    public static void display(short...a)
+    {
+        System.out.println("short...");
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Dizi dizileri de varargs olarak yazılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a= {1, 2, 3, 4, 5};
+        int [] b = {1, 2, 3, 4, 7};
+
+        Util.display(a, b, a, a, b, b, a);
+    }
+}
+
+class Util {
+    public static void display(int[]...a)
+    {
+        for (int [] array : a) {
+            for (int val : array)
+                System.out.printf("%02d ", val);
+
+            System.out.println();
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Elipsis atomu yalnızca parametre değişken bildirimlerinde kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int...a = new int[10]; //error
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı int türden iki dizinin birlştirilmiş olduğu yeni bir dizi döndüren
+	join isimli metodu ArrayUtil sınıfı içerisinde yazınız ve test ediniz. Metodun bir parametresi varargs
+	biçiminde olacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.NumberUtil;
+
+import java.math.BigInteger;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int []  a = {1, 2, 3, 4, 5, 6};
+        int [] result = ArrayUtil.join(a, 10, 20, 30);
+
+        ArrayUtil.display(result);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Programın komut satırı argümanları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        for (String arg : args)
+            System.out.println(arg);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki programda komut satırı argümanı verilmişse komut satırı argümanları verilmemişse klavyeden
+	istenen değerler kullanılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+public class App {
+    public static void main(String[] args)
+    {
+        if (args.length == 0)
+            args = Console.read("Argümanları giriniz:").split("[ \t\r]+");
+
+        for (String arg : args)
+            System.out.println(arg);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	CommandUtil sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.CommandLineUtil;
+
+public class App {
+    public static void main(String[] args)
+    {
+        args = CommandLineUtil.getCommandLineArgs(args, "Argümanları giriniz:");
+
+        for (String arg : args)
+            System.out.println(arg);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	CommandUtil sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import static org.csystem.util.CommandLineUtil.*;
+
+public class App {
+    public static void main(String[] args)
+    {
+        args = getCommandLineArgs(args, "Argümanları giriniz:");
+        controlForLengthEqual(args, 2, "Usage: copy src dest");
+
+        for (String arg : args)
+            System.out.println(arg);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	var anahtar sözcüğü Java 10 le eklenmiştir. Yerel değişken bildirimlerinde kullanılan bir anahtar sözcüktür
+	Java 11 ile birlikte var anahtar sözcüğü Lambda ifadelerinde de kullanılabilmektedir. Lambda ifadeleri ileride
+	ele alınacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    var anahtar sözcüğü kullanım yerleri dışında anahtar sözcük olarak ele alınmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int var;
+
+        var = 10;
+
+        System.out.println(var);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    var olarak bildirilen yerel değişenlere ilk değer verilmelidir. Verilen ilk değere göre türü elde edilir.
+    Ve yaşamı boyunca aynı türde devam eder
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var a = 10;
+
+        a = 2.3; //error
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    var parametre değişkeni ve veri elemanı bildirimlerinde kullanılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public var a; //error
+    public void foo(var a) //error
+    {
+
+    }
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    var yerel değişkenler
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import static org.csystem.app.PostalCodeInfoModelFactory.*;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var model = create(67100, "Zonguldak");
+
+        //...
+    }
+}
+
+class PostalCodeInfoModelFactory {
+    public static PostalCodeInfoModel create(int code, String name)
+    {
+        //...
+        return new PostalCodeInfoModel(code, name);
+    }
+}
+
+class PostalCodeInfoModel {
+    private int m_code;
+    private String m_place;
+
+    public PostalCodeInfoModel(int code, String place)
+    {
+        m_code = code;
+        m_place = place;
+    }
+
+    public int getCode()
+    {
+        return m_code;
+    }
+
+    public void setCode(int code)
+    {
+        m_code = code;
+    }
+
+    public String getPlace()
+    {
+        return m_place;
+    }
+
+    public void setPlace(String place)
+    {
+        m_place = place;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    var yerel değişkenler for veya for-each döngü deyimlerinde de kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var a = new int[]{1, 2, 3, 4};
+
+        for (var val : a)
+            System.out.println(val * val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    var yerel değişkenler for veya for-each döngü deyimlerinde de kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var a = new int[]{1, 2, 3, 4};
+
+        for (var val : a)
+            System.out.println(val * val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Komut satırı argümanları ile veya komut satırı argümanı verilmemişse klavyeden istenen
+    n tane yazının n-1 tanesini son verilen argümanı ayraç olarak kullanacak şekilde birleştirip yeni bir String
+    elde eden programı yazınız.
+
+    java xxx ali veli selami -
+    ali-veli-selami
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+import static org.csystem.util.CommandLineUtil.*;
+
+public class App {
+    public static void main(String[] args)
+    {
+        ConcatWithDelimApp.run(args);
+    }
+}
+
+class ConcatWithDelimApp {
+    private ConcatWithDelimApp() {}
+    public static void run(String [] args)
+    {
+        args = getCommandLineArgs(args, "Birleştirilecek yazıları ve sonunda ayracı giriniz:");
+        controlForLengthGreaterOrEqual(args, 3, "Geçersiz kullanım: En az üç argüman girilmelidir");
+        var str = ArrayUtil.join(args, args.length - 1, args[args.length - 1]);
+
+        Console.writeLine(str);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayUtil sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Random;
+
+public final class ArrayUtil {
+    private ArrayUtil() {}
+
+    public static int[][] addMatrices(int [][] a, int []...b)
+    {
+        if (!isMatrix(a) || !isMatrix(b) || a.length != b.length || a[0].length != b[0].length)
+            throw new IllegalArgumentException("Geçersiz matris(ler)");
+
+        var row = a.length;
+        var col = a[0].length;
+        var m = new int[row][col];
+
+        for (var i = 0; i < row; ++i)
+            for (var j = 0; j < col; ++j)
+                m[i][j] = a[i][j] + b[i][j];
+
+        return m;
+    }
+
+    public static BigDecimal average(BigDecimal...bigDecimals)
+    {
+        return average(bigDecimals, 6, RoundingMode.HALF_UP);
+    }
+
+    public static BigDecimal average(BigDecimal [] bigDecimals, int scale, RoundingMode roundingMode)
+    {
+        return sum(bigDecimals).divide(BigDecimal.valueOf(bigDecimals.length), scale, roundingMode);
+    }
+
+    public static double average(int...a)
+    {
+        return (double)sum(a) / a.length;
+    }
+
+    public static int [] copy(int [] src, int[]dest)
+    {
+        return copy(src, dest, src.length);
+    }
+
+    public static int [] copy(int [] src, int[]dest, int size)
+    {
+        for (var i = 0; i < size; ++i)
+            dest[i] = src[i];
+
+        return dest;
+    }
+
+    public static int copyIfLengthGreater(String [] src, String [] dest, int val)
+    {
+        var index = 0;
+
+        for (var s : src)
+            if (s.length() > val)
+                dest[index++] = s;
+
+        return index;
+    }
+
+    public static void display(int ...a)
+    {
+        display(1, a);
+    }
+
+    public static void display(int n, int...a)
+    {
+        display(n, true, a);
+    }
+
+    public static void display(int n, boolean putZero, int...a)
+    {
+        var fmt = putZero ? String.format("%%0%dd ", n) : String.format("%%%dd ", n);
+
+        for (var val : a)
+            System.out.printf(fmt, val);
+
+        System.out.println();
+    }
+
+    public static void display(String...str)
+    {
+        display(str, str.length);
+    }
+
+    public static void display(String [] str, int n)
+    {
+        for (var i = 0; i < n; ++i)
+            System.out.println(str[i]);
+    }
+
+    public static void display(int []...a)
+    {
+        display(1, a);
+    }
+
+    public static void display(int n, int[]...a)
+    {
+        display(n, true, a);
+    }
+
+    public static void display(int n, boolean putZero, int []...a)
+    {
+        for (var array : a)
+            display(n, putZero, array);
+    }
+
+    public static void drawHistogram(int [] h, int n, char ch)
+    {
+        var maxVal = max(h);
+
+        for (var val : h) {
+            var count = Math.round(val * n / maxVal);
+
+            while (count -- > 0)
+                System.out.print(ch);
+
+            System.out.println();
+        }
+    }
+
+    public static int [] getHistogramData(int [] a, int n) //[0, n]
+    {
+        var hist = new int[n + 1];
+
+        for (var val : a)
+            ++hist[val];
+
+        return hist;
+    }
+
+    public static int [] getRandomArray(int n, int min, int max) //[min, max)
+    {
+        return getRandomArray(new Random(), n, min, max);
+    }
+
+
+    public static int [] getRandomArray(Random r, int n, int min, int max) //[min, max)
+    {
+        var a = new int[n];
+
+        for (var i = 0; i < n; ++i)
+            a[i] = r.nextInt(max - min) + min;
+
+        return a;
+    }
+
+    public static int[][] getRandomMatrix(int m, int n, int min, int max) //[min, max)
+    {
+        return getRandomMatrix(new Random(), m, n, min, max);
+    }
+
+    public static int[][] getRandomMatrix(Random r, int m, int n, int min, int max) //[min, max)
+    {
+        var a = new int[m][];
+
+        for (var i = 0; i < m; ++i)
+            a[i] = getRandomArray(r, n, min, max);
+
+        return a;
+    }
+
+    public static int[][] getRandomSquareMatrix(int n, int min, int max) //[min, max)
+    {
+        return getRandomSquareMatrix(new Random(), n, min, max);
+    }
+
+    public static int[][] getRandomSquareMatrix(Random r, int n, int min, int max) //[min, max)
+    {
+        return getRandomMatrix(r, n, n, min, max);
+    }
+
+    public static boolean isEmpty(int [] a)
+    {
+        return a.length == 0;
+    }
+
+
+    public static boolean isMatrix(int [][] a)
+    {
+        var col = a[0].length;
+
+        for (var i = 1; i < a.length; ++i)
+            if (a[i].length != col)
+                return false;
+
+        return true;
+    }
+
+    public static boolean isSquareMatrix(int [][] a)
+    {
+        return isMatrix(a) && a.length == a[0].length;
+    }
+
+    public static int [] join(int [] a, int...b)
+    {
+        var res = new int[a.length + b.length];
+        var index = 0;
+
+        for (var val : a)
+            res[index++] = val;
+
+        for (var val : b)
+            res[index++] = val;
+
+        return res;
+    }
+
+    public static String join(String [] s, char delim)
+    {
+        return join(s, delim + "");
+    }
+
+    public static String join(String [] s, String delim)
+    {
+        return join(s, s.length, delim);
+    }
+
+    public static String join(ArrayList<String> list, char delim)
+    {
+        return join(list, delim + "");
+    }
+
+    public static String join(ArrayList<String> list, String delim)
+    {
+        var str = "";
+
+        for (var o : list)
+            str += o + delim;
+
+        return str.substring(0, str.length() - delim.length());
+    }
+
+    public static String join(String [] s, int n, char delim)
+    {
+        return join(s, n, delim + "");
+    }
+
+    public static String join(String [] s, int n, String delim)
+    {
+        var sb = new StringBuilder();
+
+        for (var i = 0; i < n; ++i)
+            sb.append(s[i]).append(delim);
+
+        return sb.substring(0, sb.length() - delim.length());
+    }
+
+    public static int max(int [] a)
+    {
+         var maxVal = a[0];
+
+        for (var i = 1; i < a.length; ++i)
+            if (maxVal < a[i])
+                maxVal = a[i];
+
+        return maxVal;
+    }
+
+    public static int max(int [][] a)
+    {
+        var maxVal = Integer.MIN_VALUE;
+
+        for (var array : a)
+            for (var val : array)
+                if (maxVal < val)
+                    maxVal = val;
+
+        return maxVal;
+    }
+
+    public static BigDecimal max(BigDecimal [] bigDecimals)
+    {
+        var res = bigDecimals[0];
+
+        for (var i = 1; i < bigDecimals.length; ++i)
+            res = res.max(bigDecimals[i]);
+
+        return res;
+    }
+
+    public static int min(int [] a)
+    {
+        var minVal = a[0];
+
+        for (var i = 1; i < a.length; ++i)
+            if (minVal > a[i])
+                minVal = a[i];
+
+        return minVal;
+    }
+
+    public static int min(int [][] a)
+    {
+        var minVal = Integer.MAX_VALUE;
+
+        for (var array : a)
+            for (var val : array)
+                if (minVal > val)
+                    minVal = val;
+
+        return minVal;
+    }
+
+    public static BigDecimal min(BigDecimal [] bigDecimals)
+    {
+        var res = bigDecimals[0];
+
+        for (var i = 1; i < bigDecimals.length; ++i)
+            res = res.min(bigDecimals[i]);
+
+        return res;
+    }
+
+    public static char [] reverse(char [] a)
+    {
+        new StringBuilder(a.length)
+                .append(a)
+                .reverse()
+                .getChars(0, a.length, a, 0);
+
+        return a;
+    }
+
+    public static int[] resizeActual(int [] a, int size)
+    {
+        if (size == a.length)
+            return a;
+
+        if (size < a.length)
+            return copy(a, new int[size], size);
+
+        return copy(a, new int[size]);
+    }
+
+    public static int[] resize(int [] a, int size)
+    {
+        if (size <= a.length)
+            return a;
+
+        return copy(a, new int[size]);
+    }
+
+    public static int [] reverse(int [] a)
+    {
+        var halfLen = a.length / 2;
+
+        for (var i = 0; i < halfLen; ++i) {
+            var temp = a[i];
+
+            a[i] = a[a.length - 1 - i];
+            a[a.length - 1 - i] = temp;
+        }
+
+        return a;
+    }
+
+
+    public static int sum(int...a)
+    {
+        return sum(0, a);
+    }
+
+    public static int sum(int init, int...a)
+    {
+        var total = init;
+
+        for (var val : a)
+            total += val;
+
+        return total;
+    }
+
+    public static int sumDiagonal(int [][] a)
+    {
+        if (!isSquareMatrix(a))
+            throw new IllegalArgumentException("Kare matris gereklidir");
+
+        var total = 0;
+
+        for (var i = 0; i < a.length; ++i)
+            total += a[i][i];
+
+        return total;
+    }
+
+    public static BigDecimal sum(BigDecimal [] bigDecimals)
+    {
+        var result = BigDecimal.ZERO;
+
+        for (var bigDecimal : bigDecimals)
+            result = result.add(bigDecimal);
+
+        return result;
+    }
+
+    public static int [][] transpose(int [][] a)
+    {
+        var t = new int[a[0].length][a.length];
+
+        for (var i = 0; i < a.length; ++i)
+            for (var j = 0; j < a[i].length; ++j)
+                t[j][i] = a[i][j];
+
+        return t;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CommandUtil sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+
+package org.csystem.util;
+
+public final class CommandLineUtil {
+    private CommandLineUtil() {}
+
+    private static void doWorkForControl(String msg)
+    {
+        Console.Error.writeLine(msg);
+        System.exit(-1);
+    }
+
+    public static void controlForLengthEqual(String [] args, int val, String msg)
+    {
+        if (args.length != val)
+            doWorkForControl(msg);
+    }
+
+    public static void controlForLengthGreater(String [] args, int val, String msg)
+    {
+        if (args.length <= val)
+            doWorkForControl(msg);
+    }
+
+    public static void controlForLengthGreaterOrEqual(String [] args, int val, String msg)
+    {
+        if (args.length < val)
+            doWorkForControl(msg);
+    }
+
+    public static void controlForLengthLess(String [] args, int val, String msg)
+    {
+        if (args.length >= val)
+            doWorkForControl(msg);
+    }
+
+    public static void controlForLengthLessOrEqual(String [] args, int val, String msg)
+    {
+        if (args.length > val)
+            doWorkForControl(msg);
+    }
+
+    public static String [] getCommandLineArgs(String [] args, String msg)
+    {
+        if (args.length == 0)
+            return Console.read(msg).split("[ \t\r]+");
+
+        return args;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    NumberUtil sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.math.BigInteger;
+
+public final class NumberUtil {
+	private static final BigInteger TWO = BigInteger.valueOf(2); // For Java versions before 9
+	private static final BigInteger THREE = BigInteger.valueOf(3);
+	private static final BigInteger FIVE = BigInteger.valueOf(5);
+	private static final BigInteger SEVEN = BigInteger.valueOf(7);
+	private static final BigInteger ELEVEN = BigInteger.valueOf(11);
+
+	private static int [] getDigits(long val, int n)
+	{
+		val = Math.abs(val);
+		var count = val == 0 ? 1 : (int)(Math.log10(val) / n + 1);
+		var divisor = (int)Math.pow(10, n);
+		var digits = new int[count];
+
+		for (var i = count - 1; i >= 0; --i) {
+			digits[i] = (int)(val % divisor);
+			val /= divisor;
+		}
+
+		return digits;
+	}
+
+	private static String numToStrMax3DigitsTR(int n)
+	{
+		if (n == 0)
+			return "sıfır";
+
+		var ones = new String[]{"", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"};
+		var tens = new String[]{"", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"};
+		var str = n < 0 ? "eksi" : "";
+
+		n = Math.abs(n);
+
+		var a = n / 100;
+		var b = n / 10 % 10;
+		var c = n % 10;
+
+		if (a != 0) {
+			if (a != 1)
+				str += ones[a];
+			str += "yüz";
+		}
+
+		if (b != 0)
+			str += tens[b];
+
+		if (c != 0)
+			str += ones[c];
+
+		return str;
+	}
+
+	private NumberUtil() {}
+
+	public static long factorial(int n)
+	{
+		if (n < 0)
+			return  -1;
+
+		var result = 1L;
+
+		for (var i = 2L; i <= n; ++i)
+			result *= i;
+
+		return result;
+	}
+
+	public static int [] getDigits(long val)
+	{
+		return getDigits(val, 1);
+	}
+
+	public static int [] getDigitsInThrees(long val)
+	{
+		return getDigits(val, 3);
+	}
+
+	public static int getDigitsCount(int val)
+	{
+		return val == 0 ? 1 : (int)(Math.log10(Math.abs(val)) + 1);
+	}
+
+	public static int getDigitsSum(int val)
+	{
+		var sum = 0;
+
+		while (val != 0) {
+			sum += val % 10;
+			val /= 10;
+		}
+
+		return Math.abs(sum);
+	}
+
+	public static int getFibonacciNumber(int n)
+	{
+		if (n <= 0)
+			return -1;
+
+		if (n <= 2)
+			return n - 1;
+
+		var prev1 = 0;
+		var prev2 = 1;
+		var result = 0;
+
+		for (var i = 2; i < n; ++i) {
+			result = prev1 + prev2;
+			prev1 = prev2;
+			prev2 = result;
+		}
+
+		return result;
+	}
+
+	public static int getPrime(int n)
+	{
+		if (n <= 0)
+			return -1;
+
+		var count = 0;
+		var val = 0;
+
+		for (var i = 2; count < n; ++i)
+			if (isPrime(i)) {
+				++count;
+				val = i;
+			}
+
+		return val;
+	}
+
+	public static int [] getPrimes(int n)
+	{
+		var count = 0;
+		var primes = new int[n];
+
+		for (var i = 2; count < n; ++i)
+			if (isPrime(i)) {
+				primes[count] = i;
+				++count;
+			}
+
+		return primes;
+	}
+
+	public static int getReverse(int val)
+	{
+		var rev = 0;
+
+		while (val != 0) {
+			rev = rev * 10 + val % 10;
+			val /= 10;
+		}
+
+		return rev;
+	}
+
+	public static boolean isArmstrong(int val)
+	{
+		if (val < 0)
+			return false;
+
+		var n = getDigitsCount(val);
+		var temp = val;
+		var sum = 0;
+
+		while (temp != 0) {
+			sum += Math.pow(temp % 10, n);
+			temp /= 10;
+		}
+
+		return sum == val;
+	}
+
+	public static boolean isEven(int val)
+	{
+		return val % 2 == 0;
+	}
+
+	public static boolean isOdd(int val)
+	{
+		return !isEven(val);
+	}
+
+	public static boolean isPalindrome(int val)
+	{
+		return getReverse(val) == val;
+	}
+
+	public static boolean isPositive(int val)
+	{
+		return val > 0;
+	}
+
+	public static boolean isPrime(BigInteger val)
+	{
+		if (val.compareTo(BigInteger.ONE) <= 0)
+			return false;
+
+		if (val.mod(TWO).equals(BigInteger.ZERO))
+			return val.equals(TWO);
+
+		if (val.mod(THREE).equals(BigInteger.ZERO))
+			return val.equals(THREE);
+
+		if (val.mod(FIVE).equals(BigInteger.ZERO))
+			return val.equals(FIVE);
+
+		if (val.mod(SEVEN).equals(BigInteger.ZERO))
+			return val.equals(SEVEN);
+
+		var sqrtVal = val.sqrt();
+
+		for (var i = ELEVEN; i.compareTo(sqrtVal) <= 0; i = i.add(TWO))
+			if (val.mod(i).equals(BigInteger.ZERO))
+				return false;
+
+		return true;
+	}
+
+	public static boolean isPrime(long val)
+	{
+		if (val <= 1)
+			return false;
+
+		if (val % 2 == 0)
+			return val == 2;
+
+		if (val % 3 == 0)
+			return val == 3;
+
+		if (val % 5 == 0)
+			return val == 5;
+
+		if (val % 7 == 0)
+			return val == 7;
+
+		var sqrtVal = (long)Math.sqrt(val);
+
+		for (var i = 11L; i <= sqrtVal; i += 2)
+			if (val % i == 0)
+				return false;
+
+		return true;
+	}
+
+	public static boolean isPrime(int val)
+	{
+		return isPrime((long)val);
+	}
+
+	public static int min(int a, int b, int c)
+	{
+		return (a < b) ? (a < c ? a : c) : (b < c ? b : c);
+	}
+
+	public static int max(int a, int b, int c)
+	{
+		return (a > b) ? (a > c ? a : c) : (b > c ? b : c);
+	}
+
+	public static String numToStrTR(long n)
+	{
+		//TODO:Homework
+		return numToStrMax3DigitsTR((int)n);
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    StringUtil sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.Random;
+
+public final class StringUtil {
+	private static char getRandomChar(Random r, String s)
+	{
+		return s.charAt(r.nextInt(s.length()));
+	}
+
+	private StringUtil() {}
+
+
+	public static String changeCase(String s)
+	{
+		var sb = new StringBuilder(s);
+
+		var len = sb.length();
+
+		for (var i = 0; i < len; ++i) {
+			var ch = sb.charAt(i);
+
+			if (Character.isUpperCase(ch))
+				sb.setCharAt(i, Character.toLowerCase(ch));
+			else if (Character.isLowerCase(ch))
+				sb.setCharAt(i, Character.toUpperCase(ch));
+		}
+
+		return sb.toString();
+	}
+
+	public static int getCount(String s1, String s2)
+	{
+		var count = 0;
+		var index = 0;
+
+		while ((index = s1.indexOf(s2, index)) != -1) {
+			++count;
+			++index;
+		}
+
+		return count;
+	}
+
+	public static String getLetters(String s)
+	{
+		var str = "";
+		var len = s.length();
+
+		for (int i = 0; i < len; ++i) {
+			char ch = s.charAt(i);
+
+			if (Character.isLetter(ch))
+				str += ch;
+		}
+
+		return str;
+	}
+
+	public static String getRandomString(int n, String str)
+	{
+		return getRandomString(new Random(), n, str);
+	}
+
+	public static String getRandomString(Random r, int n, String str)
+	{
+		var c = new char[n];
+
+		for (var i = 0; i < n; ++i)
+			c[i] = getRandomChar(r, str);
+
+		return new String(c);
+	}
+
+	public static String getRandomStringTR(int n)
+	{
+		return getRandomStringTR(new Random(), n);
+	}
+
+	public static String getRandomStringTR(Random r, int n)
+	{
+		var alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZabcçdefgğhıijklmnoöprsştuüvyz";
+
+		return getRandomString(r, n, alphabet);
+	}
+
+	public static boolean isPalindirome(String s)
+	{
+		var str = getLetters(s);
+
+		var halfLen = str.length() / 2;
+		var len = str.length();
+
+		for (var i = 0; i < halfLen; ++i) {
+			var chLeft = Character.toLowerCase(str.charAt(i));
+			var chRight = Character.toLowerCase(str.charAt(len - 1 - i));
+
+			if (chLeft != chRight)
+				return false;
+		}
+
+		return true;
+	}
+
+	public static boolean isPangramEN(String str)
+	{
+		var alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+		return isPangram(str.toLowerCase(), alphabet);
+	}
+
+	public static boolean isPangramTR(String str)
+	{
+		var alphabet = "abcçdefgğhıijklmnoöprsştuüvyz";
+
+		return isPangram(str.toLowerCase(), alphabet);
+	}
+
+	public static boolean isPangram(String str, String alphabet)
+	{
+		var len = alphabet.length();
+
+		for (var i = 0; i < len; ++i) {
+			var ch = alphabet.charAt(i);
+
+			if (str.indexOf(ch) == -1)
+				return false;
+		}
+
+		return true;
+	}
+
+	public static String padLeft(String s, int len, char ch)
+	{
+		var sLen = s.length();
+
+		if (len <= sLen)
+			return s;
+
+		return repeat(len - sLen, ch) + s;
+	}
+
+	public static String padLeft(String s, int len)
+	{
+		return padLeft(s, len, ' ');
+	}
+
+	public static String padRight(String s, int len, char ch)
+	{
+		var sLen = s.length();
+
+		if (len <= sLen)
+			return s;
+
+		return s + repeat(len - sLen, ch);
+
+	}
+
+	public static String padRight(String s, int len)
+	{
+		return padRight(s, len, ' ');
+	}
+
+	public static String removeWhitespaces(String s)
+	{
+		var str = "";
+
+		int len = s.length();
+
+		for (var i = 0; i < len; ++i) {
+			var ch = s.charAt(i);
+
+			if (!Character.isWhitespace(ch))
+				str += ch;
+		}
+
+		return str;
+	}
+
+	public static String repeat(int n, char ch)
+	{
+		return repeat(n, ch + "");
+	}
+
+	public static String repeat(int n, String s)
+	{
+		var len = s.length();
+		var c = new char[n * len];
+
+		for (var i = 0; i < c.length; i += len) {
+			for (var k = 0; k < len; ++k)
+				c[i + k] = s.charAt(k);
+		}
+
+		return new String(c);
+	}
+
+	public static String reverse(String s)
+	{
+		return new StringBuilder(s).reverse().toString();
+	}
+
+	public static String [] split(String str, String delim, StringSplitOptions options)
+	{
+		var regex = "[";
+
+		var delimLen = delim.length();
+
+		for (var i = 0; i < delimLen; ++i) {
+			char ch = delim.charAt(i);
+
+			regex += ch == ']' || ch == '[' ? "\\" + ch : ch;
+		}
+
+		regex += ']';
+		if (StringSplitOptions.REMOVE_EMPTY_ENTRIES == options)
+			regex += '+';
+
+		return str.split(regex);
+	}
+
+
+	public static String squeeze(String s1, String s2)
+	{
+		var len = s1.length();
+		var sb = new StringBuilder(len);
+
+		for (var i = 0; i < len; ++i) {
+			var ch = s1.charAt(i);
+
+			if (s2.indexOf(ch) == -1)
+				sb.append(ch);
+		}
+
+		return sb.toString();
+	}
+
+	public static String toUpper(String str)
+	{
+		return str.toUpperCase();
+	}
+
+	public static String trimLeft(String s)
+	{
+		var i = 0;
+		var len = s.length();
+
+		for (; i < len && Character.isWhitespace(s.charAt(i)); ++i)
+			;
+
+		return s.substring(i);
+	}
+
+	public static String trimRight(String s)
+	{
+		var i = s.length() - 1;
+
+		for (; i >= 0 && Character.isWhitespace(s.charAt(i)); --i)
+			;
+
+		return s.substring(0, i + 1);
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının fill metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = new int[10];
+
+        Arrays.fill(a, 67);
+
+        ArrayUtil.display(a);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının fill metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        boolean [] flags = new boolean[10];
+
+        Arrays.fill(flags, true);
+
+        for (var flag : flags)
+            Console.writeLine(flag);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının fill metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        boolean [] flags = new boolean[10];
+
+        Arrays.fill(flags, 2, 5, true); //[2, 5)
+
+        for (var flag : flags)
+            Console.writeLine(flag);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının copyOf metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+       int [] a = ArrayUtil.getRandomArray(10, 0 ,101);
+
+       ArrayUtil.display(2, a);
+
+       int [] newArray = Arrays.copyOf(a, 20);
+
+        ArrayUtil.display(2, newArray);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının copyOf metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+       int [] a = ArrayUtil.getRandomArray(10, 0 ,101);
+
+       ArrayUtil.display(2, a);
+
+        a = Arrays.copyOf(a, 20);
+
+        ArrayUtil.display(2, a);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının copyOf metotları eleman sayısı küültülmüş yeni bir dizi döndürebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+       int [] a = ArrayUtil.getRandomArray(10, 0 ,101);
+
+       ArrayUtil.display(2, a);
+
+        a = Arrays.copyOf(a, 5);
+
+        ArrayUtil.display(2, a);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının copyOf metotları eleman sayısı küültülmüş yeni bir dizi döndürebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int n = 10;
+        int newSize = 20;
+        int [] a = ArrayUtil.getRandomArray(n, 0 ,101);
+
+        ArrayUtil.display(2, a);
+
+        a = Arrays.copyOf(a, newSize);
+        Arrays.fill(a, n, newSize, -1);
+        ArrayUtil.display(2, a);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının copyOf metodu ile bir dizinin kopyası çıkartılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = {1, 2, 3, 4};
+        int [] b;
+
+        b = Arrays.copyOf(a, a.length);
+
+        ArrayUtil.display(a);
+        ArrayUtil.display(b);
+
+        Console.writeLine(a == b);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	ArrayUtil sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = {1, 2, 3, 4, 5};
+
+        ArrayUtil.display(ArrayUtil.resize(a, 10));
+        ArrayUtil.display(a);
+        ArrayUtil.display(ArrayUtil.resizeActual(a, 3));
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının copyOfRange metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = {1, 2, 3, 4, 5, 6, 7, 8};
+        int [] b;
+
+        b = Arrays.copyOfRange(a, 2, 4);
+
+        ArrayUtil.display(a);
+        ArrayUtil.display(b);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının equals metotları ile aynı türden diziler eşitlik karşılaştırmasına sokulabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = {1, 2, 3, 4, 5, 6, 7, 8};
+        int [] b = {1, 2, 3, 4, 5, 6, 7, 8};
+
+        System.out.println(Arrays.equals(a, b));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: int türden iki matrisin eşit olup olmadığını test eden equals isimli metodu ArrayUtil
+    sınıfına ekleyiniz. Matris olmaması durumunda metot false değerini döndürecektir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [][] a = {{1, 2, 3}, {4, 5, 6}};
+        int [][] b = {{1, 2, 3}, {4, 5, 7}};
+
+        Console.writeLine(ArrayUtil.equals(a, b));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Parametresi ile aldığı bir dizi dizisinin tüm satırlarını ikinci paramatresi ile aldığı varargs
+    değişkene göre değerlerle dolduran fill metodunu yazınız Satır sayısından az sayısa değer verilmesi durumunda
+    verilen değerler kadar doldurulacaktır.
+
+    int [][] a = new int[3][4];
+
+    fill(a, 10, 20, 30)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [][] a = new int[3][4];
+
+        ArrayUtil.fill(a, 3, 5, 7);
+
+        ArrayUtil.display(a);
+
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının compare metodu dizleri karşılaştırmak için kullanılır. Birinci parametresi ile
+    aldığı dizi ikinci parametresi ile aldığı diziden küçükse yani ilk farklı elemanlar elde edildiğinde birinci dizinin
+    ilgili elemanı küçükse negatif, büyükse pozitif, eğer diziler eşitse sıfır değerini döndürür.
+    Bu metot Java 9 ile eklenmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = {1, -6, 3, 4, 5, 6, 7, 8};
+        int [] b = {1, 3};
+
+        System.out.println(Arrays.compare(a, b));
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Parametresi ile aldığı bir dizi dizisinin Arrays sınıfının compare maetotlarının
+    karşılaştırma kriterine göre en büyük dizisinin bir kopyasını döndüren getMaxComparedArray isimli metodu yazınız
+    ve test ediniz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [][] a = {{1, 2, 3}, {4, 8, 10}, {7}};
+
+        var min = ArrayUtil.getMinComparedArray(a);
+        var max = ArrayUtil.getMaxComparedArray(a);
+
+        ArrayUtil.display(min);
+        ArrayUtil.display(max);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının sort metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var a = ArrayUtil.getRandomArray(20, 1, 100);
+
+        ArrayUtil.display(2, a);
+        Arrays.sort(a);
+        ArrayUtil.display(2, a);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının sort metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var a = ArrayUtil.getRandomArray(20, 1, 100);
+
+        ArrayUtil.display(2, a);
+        Arrays.sort(a, 2, 6);
+        ArrayUtil.display(2, a);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının toString metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var a = ArrayUtil.getRandomArray(20, 1, 100);
+
+        ArrayUtil.display(2, a);
+
+        System.out.println(Arrays.toString(a));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının metotlarının bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var deviceInfo = new DeviceInfo("test", "192.168.234", 2567, 50500, 4545);
+
+        System.out.println(deviceInfo.toString());
+    }
+}
+
+class DeviceInfo {
+    private String m_name;
+    private String m_host;
+    private int [] m_ports;
+
+    public DeviceInfo(String name, String host, int...ports)
+    {
+        m_name = name;
+        m_host = host;
+        m_ports = Arrays.copyOf(ports, ports.length);
+        Arrays.sort(m_ports);
+    }
+
+    //...
+
+    public String toString()
+    {
+        return String.format("%s:%s:%s", m_name, m_host, Arrays.toString(m_ports));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının compareUnsigned metotları ile işaretsi karşılaştırma yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args)
+    {
+        int [] a = {0x80000B00, 0x9000AB00};
+        int [] b = {0x0000B00, 0x0000AB00};
+
+        ArrayUtil.display(a);
+        ArrayUtil.display(b);
+
+        System.out.println(Arrays.compare(a, b));
+        System.out.println(Arrays.compareUnsigned(a, b));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Integer sınıfının işaretsiz sayılar için işlem yapan parseUnsignedInt metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Bir sayı giriniz:");
+        int val = Integer.parseUnsignedInt(kb.nextLine());
+
+        System.out.println(val);
+    }
+}
+
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+

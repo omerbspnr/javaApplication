@@ -1,0 +1,354 @@
+- Java Uygulama kursu -
+--------------------------------------------------------------------------------------------------------------
+                                            01.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+- Bir algoritmanın karmaşıklığı iki şeye bağlıdır.
+    - Hız
+    - Kaynak kullanımı
+
+
+- Big O notation
+    - Büyük O harfinin içerisine n'e bağlı bir denklem yazılır.
+      O(1)// Sabit karmaşıklık // döngü yok anlamında, Örneğin dizi erişimi
+      O(n) // lineer(doğrusal) karmaşıklık // tek döngü içeren algoritma // dizinin elemanları toplamı
+      O(n ^ 2) // Karesel karmaşıklık iç içe döngü içeren(iki tane) algoritma // matrisin  elemanları toplamı
+      O(n ^ 3) // Küpsel karmaşıklık
+--------------------------------------------------------------------------------------------------------------
+                                            StrinBuilder class
+--------------------------------------------------------------------------------------------------------------
+
+- String sınıfı immutable(Gösterdiği nesneyi değiştirimez) özelliğe sahip iken,
+  StringBuilder sınıfının içerisindeki veri değiştirilebilir.
+
+- String sınıfı türünden runtime'da atanan(Örneğin klavyeden girilen yada new operatörü ile oluşturaln) aynı
+  yazılar birbirinden farklı adresler üretir.
+    - Yukarıdaki olayda derleyicinin olayın içinde olmadığı için aynı yer ayrılmaz.
+    - String s = "ankara";
+    - String str = "ankara"; // derleyici "ankara" yazısı için tek bir adres üretir.
+
+- Derleme zamanında çözülecek bir sorun var ise derleme zamanında çözülür.
+
+
+- StringBuilder sınıfı String sınıfının mutable halidir(StringBuilder içerde char türünden dizi tutar.).
+
+- StringBuilder sınıfının size ve capacity denilen iki farklı methodu vardır.
+  size içeride tutulan değişkenin uzunluğunu döndürür.
+  Capacity ise maksimum artırılabilecek size'ı gösterir.(Capacity aşıldığında StringBuilder yeni bir yer tahsis edilir)
+
+
+- amortized constant time (Çoğu zaman O(1) bazen ise O(n) karmaşıklığa çıkabilen karmaşıklıktır.)
+
+- StringBuilder amortized constant time karmaşıklığı ile çalışan bir yapıya sahiptir.
+
+- StringBuilder sınıfı içsel olarak tuttuğu dizinin elemanına capacity denir. Bizim tuttuğumuz veri eleman sayısına
+  size, yada length denir.
+
+- StringBuilder String sınıfı için yardımcı bir türdür.
+
+- StringBuilder ctor'ları
+    - default (16 karakterlik yer tutar.)
+    - int capacity parametreli ctor (capacity'nin tarafımızdan belirlendiği durumlar)
+    - String parametreli (String.length'i artı 16 karakterlik yer tutar.)
+
+- Java'da bir programcı bir nesneyi öldüremez.(C++' daki delete işlemi dinamik bir nesnenin hayatını sona erdirir.)
+
+- StringBuilder türüne String türünden bir nesne atanmaz.
+
+- StringBuilder sınıfının String parametreli ctor elemanı vardır.
+
+- StringBuilder sınıfının toString fonksiyonu String döndürür.
+
+--------------------------------------------------------------------------------------------------------------
+                                            07.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+
+- StringBuilder sınıfı türünden nesne initialize edilirken verilen Stringin uzunluğu artı 16 byte'lık yer ayırır.
+
+- delete metodu StringBuilder sınıfında verilen range'i silip kaydırma yapar.
+
+- getChars metodu verilen bir char array'inin içini doldurur. Herhangi bir StringBuilder sınıfının
+    sb.getChars(int srcBegin,int srcEnd,char [] chars, int destBegin); //
+
+- terim olarak append ve add fiilleri programlama da sona eklemek için kullanılır.
+
+- insert belirli bir konuma ekleme yapar. bunun sonunda bir kaydırma işlemi yapılır.
+
+- StringBuilder sınıfının setLength fonksiyonu length'i artırır ve geri kalan kısmı null character ile doldurur.
+
+- setLength isimli fonksiyonu aynı zamanda küçültme de yapmamızı sağlar.
+
+- StringBuilder sınıfının fonksiyonları
+    - ensureCapacity(int val); // artırılacak minimum kapasiti değerinden küçük ise kendisi minimum değeri atar.
+      Değilse bizim bildirdiğimiz değeri artar.
+
+      StringBuilder sb = new StringBuilder("ankara"); // capacity 22
+      sb.ensureCapacity(23); // capacity 46 artması gereken değer 46 olacağı için 46'ya çıkmıştır.
+      sb.ensurecapacity(150); // capacity 150
+
+    - Ya bizim verdiğimiz gereken değere çeker yada artmasa gereken değere çeker.
+
+    - ensureCapacity değeri varolan değerden daha küçük bir değere artar.
+
+
+- setCharAt fonksiyonu geçersiz length durumlarında exception throw eder.
+- StringBuilder sınıfının char arayan bir indexOf fonksiyonu yoktur. String sınıfının vardır.
+
+- subSequence(int start, int end) methodu yazı olabilen sınıflar için kullanılabilir. charSequence türüne geri döner.
+  charSequence demek String demek değildir. Ama String demek charSequence demektir.
+
+- trimToSize(); Sınıfın capacity'sini length'ine eşitler.
+
+--------------------------------------------------------------------------------------------------------------
+                                            BigDecimal class
+--------------------------------------------------------------------------------------------------------------
+
+- switch deyimlerinde double türleriyle karşılaştırma yapılamaz.
+
+- double sayıları karşılaştırılken epsilon değeri ile karşılaştırılır.
+
+- double sayıların kritik yerlerde kullanımı özellikle finansal uygulamalar da ortaya çıkar ve sorunları burada belli olur.
+
+- BigDecimal sınıfı immutable'dır.
+
+- BigDecimal sınıfının add metodu iki BigDecimal türünden nesneyi toplar.
+
+- BigDecimal sınııfının valueOf metodu double türler için yuvarlama hatası olmaz. Verilen sayının kanonikal formunu döndürür.
+  Sayı fonksiyona verilmeden önce yuvarlanmış ise kanonikal forma göre de  yuvarlanmış şekilde sayıdan nesne üretir.
+
+- BigDecimal sınıfının min ve max metotları member metot'tur.
+
+- BigDecimal sınıfının public static final bazı  veri elemanları
+    - BigDecimal.ZERO
+    - BigDecimal.TEN
+    - BigDecimal.ONE
+
+
+--------------------------------------------------------------------------------------------------------------
+                                            08.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+
+- BigDecimal sınıfının compareTo metodu karşılaştırma yapar.
+    bd1.compareTo(bd2)
+    Değer pozitif ise bd1 > bd2
+    değer negatif ise bd2 > bd1
+    değer 0 ise bd1 == bd2 olur.
+
+
+- iki tane sayının max'ını elde ederken yeni bir nesne elde edilmez. Eldeki nesnelerin adresleri geri döndürülür.
+
+
+- BigDecimal sınıfının non-static divide metodu,
+    a.divide(Bigdecimal number, int scale, RoundingMode )
+        scale .'dan sonra kaç tane basamak verileceğini bilir.
+        RoundingMode'da enum türünden bir sınıftır.RoundingMode'ın belirli değerleri vardır.(RoundingMode.HALF_UP //gibi)
+        Yuvurlamanın nasıl yapılacağını belirtmeliyiz.
+
+
+
+--------------------------------------------------------------------------------------------------------------
+                                Bir Library(Jar dosyası) nasıl oluşturulur(intellij için)
+--------------------------------------------------------------------------------------------------------------
+- Java da her bir moduül birer projedir.
+- Her bir modülün birer main'i olabilir.
+- Jar dosyaları aşağıdaki biçimde oluşturulur.
+    1- Öncelikli olarak sınıfın içindeki kodlar yazılmış olmalı
+    2- project structure'dan artifact(çıktı olarak kullanılır)'s kısmından yeni bir artifact oluşturulur.
+    3- Artifact'in üst taraftaki ısmı değil ancak aşağı taraftaki ismi başına alan adı şeklralinde eklenir.
+       (org-csystem-mathlib) - olmasının nedeni dosya olacağı için nokta koyamamızdan kaynaklıdır.
+    4- Build kısmından oluşturulan artifact'ler build artifacts seçeneği ile build edilir.
+--------------------------------------------------------------------------------------------------------------
+                                Bir Library(Jar dosyası) nasıl projeye eklenir(intellij için)
+--------------------------------------------------------------------------------------------------------------
+
+- Öncelikli olarak library'ler projeye eklenirken proje klasörümüzde bu jar dosyalarını bulunduracağımız,
+  bir klasör de olması daha iyi olur.(İsmi libs olabilir)
+  Bu klasörde bulunan dosyaları eklemek için projects structure'dan library sekmesine tıklayarak ilgili
+  jar dosyaları projelerimizi ekliyoruz. Bu dosyaları projemizde ekleyeceğimiz modülü seçebiliriz.
+
+--------------------------------------------------------------------------------------------------------------
+                                                14.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+- SimpleProductMenuApp uygulaması yapıldı.
+
+
+--------------------------------------------------------------------------------------------------------------
+                                                15.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+- Çalışabilen bir jar için içindeki main fonksiyonu da seçilmelidir(ArrayUtil çalışabilen bir jar değildir.).
+
+--------------------------------------------------------------------------------------------------------------
+                                                BIGINTEGER
+--------------------------------------------------------------------------------------------------------------
+
+- ONE, TEN TWO, ZERO gibi final static public veri elemanları vardır.
+
+- Önemli fonksiyonlar
+    - String parametreli ctor// BigInteger(string val);
+    - String ve int radix paramatreli
+      //BigInteger(string val, int radix); radix paramatresi  hangi sayı sistemine göre yapılacağını belirtir.
+    - static valueOf metodu(long val);
+
+    - sınıfın IntValue ve DoubleValue metodları mevcuttur. Tür dönüşümü yapıp artık bitleri atar.
+
+    - mod almak için mod metodu kullanılır.
+
+- BigInteger sınıfında new operatörü ile yaratılan bir nesne ile final değişkenlerin(BigInteger.ZERO gibi)  == operatörü
+  ile karşılaştılması doğru sonucu vermez.
+  BigInteger zero = new BigInteger("0");
+  System.out.println(zero == BigInteger.ZERO);//false döndürür. Çünkü referans karşılaştırılmasında farklı sonuçlar verir.
+  Eğer değer valueOf ile alınmış olsaydı sonuç doğru olurdu
+
+- == operatörü ile yapılan bir karşılaştırma her zaman referans karşılaştırması olur. Bu durumda new operatörü ile yaratılmış
+  aynı değere sahip nesneler her zaman farklı adresleri gösterirler.
+
+- Eğer sınıflar'ın valueOf metodu var ise ve immutable sınıf iseler valuOf metodu aynı adres değerlerini döndürür.
+    BigInteger.valufeOf(2) == BigInteger.valueOf(2);
+
+--------------------------------------------------------------------------------------------------------------
+                            DEĞİŞKEN SAYIDA ARGÜMAN İLE ÇALIŞAN METODLAR.(VARARGS METODLAR)
+--------------------------------------------------------------------------------------------------------------
+
+- Metod ne şekilde yazılırsa yazılsın metodun içindeki parametre değişkeni dizi referansıdır.
+- Böyle fonksiyonlar değişken sayıda yani
+      Util.display(10,20,30,40); // derleyici burada new int[]{10,20,30,40} şeklinde gönderir.
+      Util.display();
+      Util.display(new int[]{1,2})
+  argümanları ile çağırılabilir.
+
+- class Uitl {
+    public static void display(int ...a) // değişken sayıda int türünü alabilir.
+    {
+        //... atomuna elipsis atomu denir.
+    }
+  }
+
+- elipsis atomu dilden dile farklı şekilde yazılabilir.
+
+- varags bir metod [] referansı ile overload edilemez.
+    public void display(int [] a);
+    public void display(int ...a); // ikisinin aynı anda olması errordur.
+
+- Bunun dışında fonksiyon herhangi bir parametre ile overload edilebilir.
+
+- Bir metodun bir elipsis parametresi var ise elipsis parametresi en sondaki parametre olmalıdır.
+    void display(int ... a, int n) ;//error;
+
+- Bir metodun birden fazla elipsis parametresi olamaz.
+  public static void display(int ...a, String ...b) // error;
+
+- printf fonksiyonun birincisi parametresi String s, ikinci parametresi Object ... args'dır.
+
+- iki tane varags parametreli metod yazılmak istenirse biri dizi referansı yapılmalıdır.
+
+- matrisler le elipsis işlemi yapmak için fonksiyon parametresi
+  class Util {
+    public static void display(int [] ... a)
+    {
+
+    }
+  }
+
+- varargs metodlar sadece fonksiyon bildiriminde bulunabilir.
+
+- Burada fonksiyona geçilecek parametre ya elipsis atomundan önceki atom türünden 0 yada en az 1 adet olmalı,
+  yada elipsis atomunu da kapsayacak şekilde (int ... a için int [], int [] ... a için  int [] []) bir adet argüman
+  gönderilebilir. birden fazla parametresi var ise
+
+
+--------------------------------------------------------------------------------------------------------------
+                                                21.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------------------------------------
+                                                KOMUT SATIRI ARGÜMANLARI
+--------------------------------------------------------------------------------------------------------------
+
+- Özellikle bazı server uygulamalarında kullanılmaktadır.
+
+--------------------------------------------------------------------------------------------------------------
+                                                var keyword
+--------------------------------------------------------------------------------------------------------------
+
+- Java 10 ile eklenmiştir. Yerel değişken bildirimlerinde kullanılır.
+- Java 11 ile birlikte lambda ifadelerinde de kullanılmaya başlanmıştır.
+
+- var anahtar sözcüğü değişken ismi olarak kullanılabilir.
+
+- var anahtar sözcüğü ile belirtilen değişkene ilk değer verilmesi zorunludur.
+  Çünkü değişken türünü  verilen ilk değere göre belirlenir
+  var a = 10; // a'nın türü 10 olarak belirlenmiştir.
+
+- var anahtar  sözcüğünün büyük özelliği kod yazımını basitleştirmektir.
+
+- var anahtar sözcüğü parametre değişkeni bildiriminde kullanılamaz.
+
+- var bir sınıfın veri elemanı olarak ta belirlenemez.
+
+- sadece yerel değişkenler ve lambda ifadelerinde kullanılır.
+
+-
+
+--------------------------------------------------------------------------------------------------------------
+                                                22.03.2020
+--------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------
+                                                Arrays sınıfı
+--------------------------------------------------------------------------------------------------------------
+
+- Diziler üzerinde  işlem yapmak için kullanılan bir sınıftır.
+- ctor'u private'tır. Metodlarının hepsi static'dir.
+
+- Arrays sınıfının temel işlemler yapan metodları
+    - fill metodları
+        Arrays.fill(T [] a, int val); // verilen array'i ;
+        Arrays.fill(T [] a, int fromIndex, int toIndex, int val) [fromIndex, toIndex)
+
+    - T [] a copyOf metodu // yeni bir dizi tahsis eder ve değerleri kopyalar, yeni üretilen diziyi küçültebilir.
+        Arrays.fill(T [] a, int newLength); // yeni bir dizi döndürür. newLength ile o uzunlukta bir dizi üretir ve
+        dizinin değerlerini kopyalar. diziyi aynı zamanda küçültedebilidir.(Yani eleman sayısı küçültülmüş yeni bir dizi
+        verebilir.)
+
+    - T []  copyOfRange(T [] a, int fromIndex,  int toIndex); // copyOf [fromIndex, twoIndex]
+
+    - booleans equals(T [] a, T [] b); // a
+
+    - int compare(T [] a, T [] b); // T burada herhangi bir metod anlamındadır.
+        - Java 9 ile beraber eklenmiştir.
+        - Eğer ilk parametredeki dizi büyük ise pozitif, küçük ise negatif, birbirine eşit iseler 0 değerini döner.
+        - ilk farklı değer'den büyük olanın değerini döndürür.
+        - length'ler farklı ve iki  array'in ilk n(n burada küçük dizinin size'ına kadardır) değeri karşılaştırır.
+          eğer burada farklı bir değer var ise döner, eğer değerler eşit ise hangi dizinin size'ı daha büyük ise o
+          dizinin bulunduğu konuma göre (Size'ı büyük olan dizi ilk parametre ise pozitif değer, ikinci ise negatif)
+          değer döner.
+
+
+
+    void sort(T [] a);
+        - verilen diziyi büyükten küçüğe sıralar.
+    void sort(T [] a, int fromIndex, int toIndex)
+        - diziyi [fromIndex, toIndex) bu aralıkta sıralar.
+
+        Küçükten büyüğe de çalışır ancak bunun için collection'lar konusunu görmemiz gerekir.
+
+    String toString metodları
+        Bir diziyi alıp Stringe dönüştürür [] içine alıp , ile ayırır.
+        Yazıya çevirirken String sınıfının valueOf metodunu kullanır.
+
+- Javadaki bütün tam sayı türleri işaretli ve negatif sayılarda tutulabilir(Yani unsigned bir primitive tür yoktur).
+
+     Arrays.compareUnsigned(int [] a, int [] b)
+        - burada sayının negatif değerleri için sayının bitlerini 2'ye tamamlayarak pozitif değere döndürür.
+        -
+- Genel olarak veri tutan(Data class) Sadece veri tutmaya yarayan sınıfların, toString'i olur.
+
+--------------------------------------------------------------------------------------------------------------
+                                                İçiçe sınıf bildirimleri
+--------------------------------------------------------------------------------------------------------------
+
