@@ -2403,7 +2403,7 @@ public class App {
 
 /*----------------------------------------------------------------------------------------------------------------------
     Sınıf Çalışması: Parametresi ile aldığı bir dizi dizisinin tüm satırlarını ikinci paramatresi ile aldığı varargs
-    değişkene göre değerlerle dolduran fill metodunu yazınız Satır sayısından az sayısa değer verilmesi durumunda
+    değişkene göre değerlerle dolduran fill metodunu yazınız. Satır sayısından az sayıda değer verilmesi durumunda
     verilen değerler kadar doldurulacaktır.
 
     int [][] a = new int[3][4];
@@ -2568,7 +2568,7 @@ class DeviceInfo {
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
-    Arrays sınıfının compareUnsigned metotları ile işaretsi karşılaştırma yapılabilir
+    Arrays sınıfının compareUnsigned metotları ile işaretsiz karşılaştırma yapılabilir
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
@@ -2605,6 +2605,1287 @@ public class App {
         int val = Integer.parseUnsignedInt(kb.nextLine());
 
         System.out.println(val);
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir metodun kendini kendinisini çağırması ile (recursion) ile başka bir metodu çağırması arasında
+    teknik olarak bir fark yoktur. Özyinelemeli metotlar bir şekilde sonlandırılmazas sürekli kendisi çağırdığından
+    exception oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample.foo();
+    }
+}
+
+class Sample {
+    public static void foo()
+    {
+        foo();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Özyinelemeli metotlarını çalışmasını anlatan basit bir örnek
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample.foo(4);
+    }
+}
+
+class Sample {
+    public static void foo(int val)
+    {
+        System.out.printf("Giriş:%d%n", val);
+        if (val == 0)
+            return;
+
+        foo(val - 1);
+        System.out.printf("Çıkış:%d%n", val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    RecursionUtil sınıfının factorial metodu
+        public static long factorial(int n)
+        {
+            long res = 1;
+
+            if (n <= 0)
+                return 1;
+
+            res = n * factorial(n - 1);
+
+            return res;
+        }
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.RecursionUtil;
+
+public class App {
+    public static void main(String[] args)
+    {
+        FactorialTest.run();
+    }
+}
+
+class FactorialTest {
+    public static void run()
+    {
+        for (int n = 0; n <= 17; ++n)
+            System.out.printf("%d!=%d%n", n, RecursionUtil.factorial(n));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir yazının tersten iteratif yöntemle yazdırılması
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        WriteReverseTest.run();
+    }
+}
+
+class WriteReverseTest {
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+
+        for (;;) {
+            System.out.print("Bir yazı giriniz:");
+            String str = kb.nextLine();
+
+            Util.writeReverse(str);
+
+            System.out.println();
+
+            if (str.equals("exit"))
+                break;
+        }
+    }
+}
+
+class Util {
+    public static void writeReverse(String str)
+    {
+        int len = str.length();
+
+        while (len -- > 0)
+            System.out.print(str.charAt(len));
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir yazının tersten özyinelemeli olarak yazdırılması
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.RecursionUtil;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        WriteReverseTest.run();
+    }
+}
+
+class WriteReverseTest {
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+
+        for (;;) {
+            System.out.print("Bir yazı giriniz:");
+            String str = kb.nextLine();
+
+            RecursionUtil.writeReverse(str);
+
+            System.out.println();
+
+            if (str.equals("exit"))
+                break;
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir yazı tersyüz etme işleminin iteratif olarak yapılması
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        GetReverseTest.run();
+    }
+}
+
+class GetReverseTest {
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+
+        for (;;) {
+            System.out.print("Bir yazı giriniz:");
+            String str = kb.nextLine();
+
+            String s = Util.getReverse(str);
+
+            System.out.println(s);
+
+            if (str.equals("exit"))
+                break;
+        }
+    }
+}
+
+class Util {
+    public static String getReverse(String str)
+    {
+        int left = 0;
+        int right = str.length() - 1;
+        char [] c = str.toCharArray();
+
+        while (left < right) {
+            char temp = c[left];
+            c[left++] = c[right];
+            c[right--] = temp;
+        }
+
+        return new String(c);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir yazı tersyüz etme işleminin özyinelemeli olarak yapılması
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.RecursionUtil;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        GetReverseTest.run();
+    }
+}
+
+class GetReverseTest {
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+
+        for (;;) {
+            System.out.print("Bir yazı giriniz:");
+            String str = kb.nextLine();
+
+            String s = RecursionUtil.getReverse(str);
+
+            System.out.println(s);
+
+            if (str.equals("exit"))
+                break;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Fibonnaci sayısının bulunması işleminin özyinelemeli olarak çözümü
+
+    Fibonacci: 0 1 1 2 3 5 8 13 21 34 ...
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.RecursionUtil;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        GetFibonnaciTest.run();
+    }
+}
+
+class GetFibonnaciTest {
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+
+        for (;;) {
+            System.out.print("n değerini giriniz:");
+            int n = Integer.parseInt(kb.nextLine());
+            if (n == 0)
+                break;
+
+            int val = RecursionUtil.getFibonacci(n);
+
+            System.out.printf("%d. Fibonacci sayısı:%d%n", n, val);
+        }
+    }
+}
+
+
+/*---------------------------------------------------------------------------------------------------------------------
+    Soru: Bir sayıyı System.out.write kullanarak yani sadece char ekrana basan bir metot kullanarak
+    yazdıran programı yazınız (özyinelemeli çözüm)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.RecursionUtil;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args)
+    {
+        WriteNumberTest.run();
+    }
+}
+
+class WriteNumberTest {
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+
+        for (;;) {
+            System.out.print("Bir sayı giriniz:");
+            int n = Integer.parseInt(kb.nextLine());
+            RecursionUtil.writeNumber(n);
+            System.out.println();
+
+            if (n == 0)
+                break;
+        }
+    }
+}
+
+package org.csystem.util;
+
+import java.io.PrintStream;
+
+public final class RecursionUtil {
+    private static final PrintStream ms_out = System.out;
+
+    private static void getReverse(char[] c, int left, int right)
+    {
+        if (left >= right)
+            return;
+
+        char temp;
+
+        temp= c[left];
+        c[left] = c[right];
+        c[right] = temp;
+
+        getReverse(c, left + 1, right - 1);
+    }
+
+    private static void writeReverse(String str, int i)
+    {
+        if (i == str.length())
+            return;
+
+        writeReverse(str, i + 1);
+        ms_out.print(str.charAt(i));
+    }
+
+    private RecursionUtil()
+    {}
+
+    public static long factorial(int n)
+    {
+        if (n <= 0)
+            return 1;
+
+        return n * factorial(n - 1);
+    }
+
+    public static String getReverse(String str)
+    {
+        char [] c = str.toCharArray();
+
+        getReverse(c, 0, c.length - 1);
+
+        return new String(c);
+    }
+
+    public static int getFibonacci(int n)
+    {
+        if (n <= 2)
+            return n - 1;
+
+        return getFibonacci(n - 1) + getFibonacci(n - 2);
+    }
+
+    public static void writeNumber(int val)
+    {
+        if (val < 0) {
+            ms_out.write('-');
+            val = -val;
+        }
+
+        if (val / 10 != 0)
+            writeNumber(val / 10);
+
+        ms_out.write((char)(val % 10 + '0'));
+    }
+
+    public static void writeNumber(int val, int radix)
+    {
+        if (val < 0) {
+            ms_out.write('-');
+            val = -val;
+        }
+
+        if (val / radix != 0)
+            writeNumber(val / radix, radix);
+
+        ms_out.write((char)(val % radix >= 10 ? val % radix - 10 + 'A' : '0' + val % radix));
+    }
+
+    public static void writeReverse(String s)
+    {
+        writeReverse(s, 0);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java' da içiçe tür bildirimleri geçerlidir. Sınıf içerisinde sınıf bildirimleri genel olarak Java'da
+    4(dört) şekilde yapılabilir:
+    1. static sınıf bildirimi (nested)
+    2. non-static sınıf bildirimi (inner)
+    3. Yerel sınıf bildirimi (local)
+    3. İsimsiz sınıf bildirimi (anonymous)
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    Hiç bir tür içerisinde bulunmayan bir sınıf (top level classes) static olarak bildirilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+public class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+static class A { //error
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir sınıf içerisinde başka bir sınıf static olarak bildirilebilir. Yani içteki sınıf dıştaki sınıfın bir
+    elemanıdır (member). Dolayısıyla bir eleman static olabileceğinden (ctor hariç) sınf da static anahtar sözcüğü
+    ile bildirilebilir. Tüm sınıf elemanlarında olduğu gibi içte bildirilen bir sınıf erişim belirleyici alabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class A {
+    public static class B {
+        //...
+    }
+
+    private static class C {
+        //...
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    static bildirilmiş sınıflar normal sınıflarda olduğu gibi elemanlara sahip olabilirler. static bildirilmiş
+    sınıflara onu kapsayan sınıf dışından kapsadığı sınıf ismi ve nokta operatörü ile erişilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A.B b = new A.B();
+
+        b.x = 10;
+        b.foo();
+
+        A.B.bar();
+    }
+}
+
+class A {
+    public static class B {
+        public int x;
+
+        public void foo()
+        {
+
+        }
+
+        public static void bar()
+        {
+
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    static bildirilmiş sınıflara erişim için import static deyimi kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import static org.csystem.app.A.B;
+
+class App {
+    public static void main(String[] args)
+    {
+        B b = new B();
+
+        b.x = 10;
+        b.foo();
+
+        B.bar();
+    }
+}
+
+class A {
+    public static class B {
+        public int x;
+
+        public void foo()
+        {
+
+        }
+
+        public static void bar()
+        {
+
+        }
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Kapsayan sınıfta static olarak bildirilen bir sınıfın elemanlarına erişilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a = new A();
+
+        a.tar(10);
+    }
+}
+
+class A {
+    public void tar(int val)
+    {
+        B x = new B();
+
+        x.foo();
+        x.x = val;
+
+        B.bar();
+    }
+    public static class B {
+        public int x;
+
+        public void foo()
+        {
+            System.out.println("foo");
+        }
+
+        public static void bar()
+        {
+            System.out.println("bar");
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Kapsayan sınıfta static olarak bildirilen bir sınıfın private elemanlarına da erişilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a = new A();
+
+        a.tar(10);
+    }
+}
+
+class A {
+    public void tar(int val)
+    {
+        B x = new B();
+
+        x.foo();
+        x.m_x = val;
+
+        B.bar();
+    }
+
+    public static class B {
+        private int m_x;
+
+        public void foo()
+        {
+            System.out.println("foo");
+        }
+
+        public static void bar()
+        {
+            System.out.println("bar");
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    static bildirilen bir sınıf kapsayan sınıfın private elemanlarına da erişebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A.B x = new A.B();
+
+        x.foo();
+    }
+}
+
+class A {
+    private int m_x;
+    public void tar(int val)
+    {
+        System.out.println("A.tar");
+    }
+
+    public static class B {
+        private int m_x;
+
+        public void foo()
+        {
+            System.out.println("foo");
+
+            A x = new A();
+
+            x.tar(20);
+            x.m_x = 10;
+        }
+
+        public static void bar()
+        {
+            System.out.println("bar");
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    static bildirilen bir sınıf kapsayan sınıfın private elemanlarına da erişebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A.B x = new A.B();
+
+        x.foo();
+    }
+}
+
+class A {
+    private static void foo()
+    {
+        System.out.println("A.foo");
+    }
+    public static class B {
+        public void foo()
+        {
+            System.out.println("B.foo");
+            A.foo();
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    static bildirilen bir sınıf kapsayan sınıfın private elemanlarına da erişebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A.B.foo();
+    }
+}
+
+class A {
+    private static void foo()
+    {
+        System.out.println("A.foo");
+    }
+    public static class B {
+        public static void foo()
+        {
+            System.out.println("B.foo");
+            A.foo();
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki gibi bir tasarımda static bildirilmiş sınıf kullanılabilir (builder pattern)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        var builder = new AlertDialog.Builder();
+
+       // builder.setTitle("Dikkat");
+        builder.setMessage("Kapatmak istediğinize emin misiniz?");
+        builder.setButton(Button.YESNO);
+        //builder.setMessageIcon(MessageIcon.QUESTION);
+        var dlg = builder.build();
+
+        dlg.show();
+    }
+}
+
+enum Button {OK, YESNO, YESNOCANCEL}
+enum MessageIcon {INFORMATION, QUESTION, ALERT, WARNING}
+
+class AlertDialog {
+    private String m_title;
+    private String m_message;
+    private Button m_button;
+    private MessageIcon m_messageIcon;
+
+    private AlertDialog()
+    {
+        m_title = "";
+        m_message = "";
+        m_button = Button.OK;
+        m_messageIcon = MessageIcon.INFORMATION;
+    }
+
+    public static class Builder {
+        private AlertDialog m_alertDialog;
+
+        public Builder()
+        {
+            m_alertDialog = new AlertDialog();
+        }
+
+        public void setTitle(String title)
+        {
+            //...
+            m_alertDialog.m_title = title;
+        }
+
+        public void setMessage(String message)
+        {
+            //...
+            m_alertDialog.m_message = message;
+        }
+
+        public void setButton(Button button)
+        {
+            //...
+            m_alertDialog.m_button = button;
+        }
+
+        public void setMessageIcon(MessageIcon messageIcon)
+        {
+            //...
+            m_alertDialog.m_messageIcon = messageIcon;
+        }
+
+        public AlertDialog build()
+        {
+            return m_alertDialog;
+        }
+    }
+
+    public void show()
+    {
+        System.out.printf("Title:%s%n", m_title);
+        System.out.printf("Message:%s%n", m_message);
+        System.out.printf("Button:%s%n", m_button);
+        System.out.printf("Message Icon:%s%n", m_messageIcon);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Android geliştirmede kullanılan meşhur R sınıfı içerisinde static bildirilmiş sınıflar olacak biçimde tasarlanmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        //...
+    }
+}
+
+
+class View {
+    //...
+}
+
+class EditText extends View {
+    //...
+}
+
+class TextView extends View {
+    //...
+}
+
+class Context {
+    public View findViewById(int id)
+    {
+        ///
+        return new View();
+    }
+
+}
+class Activity extends Context {
+    //...
+    private EditText m_editTextName;
+    private TextView m_textViewName;
+
+    public void onCreate()
+    {
+        //...
+        m_editTextName = (EditText)findViewById(R.id.MAINACTIVITY_EDITTEXT_NAME);
+        m_textViewName = (TextView)findViewById(R.id.MAINACTIVITY_TEXTVIEW_NAME);
+    }
+    //...
+}
+
+class R {
+    public static class id {
+        public static final int MAINACTIVITY_EDITTEXT_NAME = 0x123456;
+        public static final int MAINACTIVITY_TEXTVIEW_NAME = 0x123457;
+    }
+
+    public static class string {
+        public static final int label_name = 0x123455;
+        public static final int ok_button_text = 0x123458;
+    }
+    public static class color {
+        public static final int white_color = 0x12987;
+    }
+
+    //...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir sınıf içerisinde non-static olarak bildirilmiş bir sınıf olabilir (inner class)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class A {
+    //...
+    public class B {
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    non-static bildirilmiş bir sınıfın static elemanları olamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class A {
+    //...
+    public class B {
+        public static int a; //error
+
+        public static void foo() //error
+        {
+
+        }
+
+        //...
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    non-static bildirilmiş bir sınıf türürün nesne kapsayan sınıf dışında <referan>.new sentaksı ile
+    yaratılabilir. Yani bir inner türünden nesne için ait olduğu bir kapsayan sınıf nesnesi olmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a1 = new A();
+        A.B y = a1.new B();
+        A.B z = a1.new B();
+        A a2 = new A();
+        A.B t = a2.new B();
+    }
+}
+
+class A {
+    public class B {
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    non-static bildirilmiş bir sınıf o nesnenin ilişkin olduğu kapsayan sınıf nesnesinin non-static veri elemanlarına
+    doğrudan erişebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a = new A();
+        A.B b = a.new B();
+
+        b.foo(34);
+        System.out.printf("a.val:%d%n", a.getVal());
+
+        var c = a.new B();
+
+        c.foo(67);
+
+        System.out.printf("a.val:%d%n", a.getVal());
+    }
+}
+
+class A {
+    private int m_val;
+
+    public int getVal() {return m_val;}
+
+    public class B {
+        public void foo(int val)
+        {
+            m_val = val;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    non-static bildirilmiş bir sınıf o nesnenin ilişkin olduğu kapsayan sınıf nesnesinin non-static veri elemanlarına
+    doğrudan erişebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a = new A();
+
+        a.doWorkForVal(-20);
+
+        System.out.println(a.getVal());
+        //...
+    }
+}
+
+class A {
+    private int m_val;
+
+    private class B {
+        public void doWork(int val)
+        {
+            m_val = Math.abs(val);
+        }
+    }
+
+    public int getVal() {return m_val;}
+
+    public void doWorkForVal(int val)
+    {
+        B x = new B();
+
+        x.doWork(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte error oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a = new A();
+
+        a.doWorkForVal(-20);
+
+        System.out.println(a.getVal());
+        //...
+    }
+}
+
+class A {
+    private int m_val;
+
+    private class B {
+        public void doWork(int val)
+        {
+            m_val = Math.abs(val);
+        }
+    }
+
+    public int getVal() {return m_val;}
+
+    public static void doWorkForVal(int val)
+    {
+        B x = new B(); //error:
+
+        x.doWork(val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Tekrar: non-static metotlarının çağrılarının arakoda çevrilmiş temsili karşılığı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A x = new A();
+
+        x.foo(10);
+
+        //Temsili arakod karşılığı
+        A.foo(x, 10);
+    }
+}
+
+class A {
+    private int m_val;
+    public void foo(int val)
+    {
+        m_val = val;
+    }
+
+    //Temsili arakod karşılığı:
+    public static void foo(A a, int val)
+    {
+        a.m_val = val;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Tekrar: this referansı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A x = new A();
+
+        x.foo(10);
+    }
+}
+
+class A {
+    private int m_val;
+    public void foo(int val)
+    {
+        this.m_val = val;
+        this.bar();
+    }
+
+    public void bar()
+    {
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Tekrar: this referansı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class A {
+    private int val;
+
+    public A(int val)
+    {
+        this.val = val;
+    }
+    public int getVal() {return val;}
+
+    public void setVal(int val)
+    {
+        //...
+        this.val = val;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    this expression
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A x = new A();
+
+        A.B y = x.new B();
+
+        y.foo();
+    }
+}
+
+class A {
+    private int m_val;
+
+    public void foo()
+    {
+        System.out.println("A.foo");
+    }
+
+    public class B {
+        private int m_val;
+        public void foo()
+        {
+            System.out.println("B.foo");
+            A.this.foo();
+            A.this.m_val = 10;
+            this.m_val = 20;
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Zincir çağırna kalıbı (fluent pattern)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample();
+
+        s.foo().bar().tar().foo();
+    }
+}
+
+class Sample {
+    //...
+    public Sample foo()
+    {
+        System.out.println("foo");
+
+        return this;
+    }
+
+    public Sample bar()
+    {
+        System.out.println("bar");
+
+        return this;
+    }
+
+    public Sample tar()
+    {
+        System.out.println("tar");
+
+        return this;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Builder kalıbının fluent kalıbı ile kullanımı (fluent builder)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        var builder = new AlertDialog.Builder();
+
+        var dlg = builder
+                .setTitle("Dikkat")
+                .setMessage("Emin misiniz?")
+                .setButton(Button.OK)
+                .build();
+
+        dlg.show();
+
+    }
+}
+
+enum Button {OK, YESNO, YESNOCANCEL}
+enum MessageIcon {INFORMATION, QUESTION, ALERT, WARNING}
+
+class AlertDialog {
+    private String m_title;
+    private String m_message;
+    private Button m_button;
+    private MessageIcon m_messageIcon;
+
+    private AlertDialog()
+    {
+        m_title = "";
+        m_message = "";
+        m_button = Button.OK;
+        m_messageIcon = MessageIcon.INFORMATION;
+    }
+
+    public static class Builder {
+        private AlertDialog m_alertDialog;
+
+        public Builder()
+        {
+            m_alertDialog = new AlertDialog();
+        }
+
+        public Builder setTitle(String title)
+        {
+            //...
+            m_alertDialog.m_title = title;
+
+            return this;
+        }
+
+        public Builder setMessage(String message)
+        {
+            //...
+            m_alertDialog.m_message = message;
+
+            return this;
+        }
+
+        public Builder setButton(Button button)
+        {
+            //...
+            m_alertDialog.m_button = button;
+
+            return this;
+        }
+
+        public Builder setMessageIcon(MessageIcon messageIcon)
+        {
+            //...
+            m_alertDialog.m_messageIcon = messageIcon;
+
+            return this;
+        }
+
+        public AlertDialog build()
+        {
+            return m_alertDialog;
+        }
+    }
+
+    public void show()
+    {
+        System.out.printf("Title:%s%n", m_title);
+        System.out.printf("Message:%s%n", m_message);
+        System.out.printf("Button:%s%n", m_button);
+        System.out.printf("Message Icon:%s%n", m_messageIcon);
     }
 }
 

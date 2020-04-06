@@ -30,12 +30,12 @@
 - Derleme zamanında çözülecek bir sorun var ise derleme zamanında çözülür.
 
 
-- StringBuilder sınıfı String sınıfının mutable halidir(StringBuilder içerde char türünden dizi tutar.).
+- StringBuilder sınıfı String sınıfının mutable halidir(StringBuilder içerde char türünden dizi tutar, String sınıfı
+  içerisinde CharSequence denilen bir tür vardır.)
 
-- StringBuilder sınıfının size ve capacity denilen iki farklı methodu vardır.
+- StringBuilder sınıfının size ve capacity denSpor düSpor dünyasından unutulmaz açıklamalar - HABERLER
   size içeride tutulan değişkenin uzunluğunu döndürür.
   Capacity ise maksimum artırılabilecek size'ı gösterir.(Capacity aşıldığında StringBuilder yeni bir yer tahsis edilir)
-
 
 - amortized constant time (Çoğu zaman O(1) bazen ise O(n) karmaşıklığa çıkabilen karmaşıklıktır.)
 
@@ -51,13 +51,16 @@
     - int capacity parametreli ctor (capacity'nin tarafımızdan belirlendiği durumlar)
     - String parametreli (String.length'i artı 16 karakterlik yer tutar.)
 
-- Java'da bir programcı bir nesneyi öldüremez.(C++' daki delete işlemi dinamik bir nesnenin hayatını sona erdirir.)
+- Java'da bir programcı bir nesnenin hayatına son veremez.(C++' daki delete işlemi dinamik bir nesnenin hayatını sona erdirir.)
 
 - StringBuilder türüne String türünden bir nesne atanmaz.
 
 - StringBuilder sınıfının String parametreli ctor elemanı vardır.
+    StringBuilder sb = new StringBuilder(String s);
 
 - StringBuilder sınıfının toString fonksiyonu String döndürür.
+
+- String ve StringBuilder sınıfının indexOf methodları char parametre ile değil, string paremetre ile çalışır.
 
 --------------------------------------------------------------------------------------------------------------
                                             07.03.2020
@@ -111,8 +114,10 @@
 - double sayıların kritik yerlerde kullanımı özellikle finansal uygulamalar da ortaya çıkar ve sorunları burada belli olur.
 
 - BigDecimal sınıfı immutable'dır.
-
+- Sınıflarda referans karşılaştırması ile nesnelerin gösterdikleri değerlerin aynı olup olmadığını
+  == operatörü ile değil sınıfın ilgili metodları ile(equals, compareTo), metodları ile yapılmalıdır.
 - BigDecimal sınıfının add metodu iki BigDecimal türünden nesneyi toplar.
+
 
 - BigDecimal sınııfının valueOf metodu double türler için yuvarlama hatası olmaz. Verilen sayının kanonikal formunu döndürür.
   Sayı fonksiyona verilmeden önce yuvarlanmış ise kanonikal forma göre de  yuvarlanmış şekilde sayıdan nesne üretir.
@@ -132,12 +137,13 @@
 
 - BigDecimal sınıfının compareTo metodu karşılaştırma yapar.
     bd1.compareTo(bd2)
-    Değer pozitif ise bd1 > bd2
-    değer negatif ise bd2 > bd1
+    Değer +1 ise bd1 > bd2
+    değer -1 ise bd2 > bd1
     değer 0 ise bd1 == bd2 olur.
 
 
-- iki tane sayının max'ını elde ederken yeni bir nesne elde edilmez. Eldeki nesnelerin adresleri geri döndürülür.
+- iki tane sayının max'ını elde ederken yeni bir nesne elde edilmez. Verilen adreslerden hangisinin gösterdiği
+  değer büyük ise o referans geri döndürülür.
 
 
 - BigDecimal sınıfının non-static divide metodu,
@@ -180,6 +186,7 @@
 --------------------------------------------------------------------------------------------------------------
 
 - Çalışabilen bir jar için içindeki main fonksiyonu da seçilmelidir(ArrayUtil çalışabilen bir jar değildir.).
+  Burada çalışabilen jar'a örnek olarak simple product menuapp'si örnek olarak verilebilir.
 
 --------------------------------------------------------------------------------------------------------------
                                                 BIGINTEGER
@@ -190,7 +197,9 @@
 - Önemli fonksiyonlar
     - String parametreli ctor// BigInteger(string val);
     - String ve int radix paramatreli
-      //BigInteger(string val, int radix); radix paramatresi  hangi sayı sistemine göre yapılacağını belirtir.
+      //BigInteger(string val, int radix); radix paramatresi  hangi sayı sistemine göre sayının okunacağını belirtir.
+       BigInteger("ababab", 16); // sayı 16'lık sistemde okunur.
+       BigInteger("765", 8); // sayı 8'lik sayı sistemini göre okunur.
     - static valueOf metodu(long val);
 
     - sınıfın IntValue ve DoubleValue metodları mevcuttur. Tür dönüşümü yapıp artık bitleri atar.
@@ -200,8 +209,9 @@
 - BigInteger sınıfında new operatörü ile yaratılan bir nesne ile final değişkenlerin(BigInteger.ZERO gibi)  == operatörü
   ile karşılaştılması doğru sonucu vermez.
   BigInteger zero = new BigInteger("0");
-  System.out.println(zero == BigInteger.ZERO);//false döndürür. Çünkü referans karşılaştırılmasında farklı sonuçlar verir.
-  Eğer değer valueOf ile alınmış olsaydı sonuç doğru olurdu
+  System.out.println(zero == BigInteger.ZERO);//false döndürür. Çünkü referans karşılaştırılmasında
+  sınıf immutable olmasına rağmen referansın biri new keyword'u ile yaratıldığından dolayı farklı sonuçlar verir.
+  Eğer değer valueOf ile alınmış olsaydı sonuç doğru olurdu.(Burası final static değerler için geçerlidir.)
 
 - == operatörü ile yapılan bir karşılaştırma her zaman referans karşılaştırması olur. Bu durumda new operatörü ile yaratılmış
   aynı değere sahip nesneler her zaman farklı adresleri gösterirler.
@@ -236,10 +246,10 @@
 - Bunun dışında fonksiyon herhangi bir parametre ile overload edilebilir.
 
 - Bir metodun bir elipsis parametresi var ise elipsis parametresi en sondaki parametre olmalıdır.
-    void display(int ... a, int n) ;//error;
+    void display(int ... a, int n) ;//error
 
 - Bir metodun birden fazla elipsis parametresi olamaz.
-  public static void display(int ...a, String ...b) // error;
+  public static void display(int ...a, String ...b) // error
 
 - printf fonksiyonun birincisi parametresi String s, ikinci parametresi Object ... args'dır.
 
@@ -270,7 +280,12 @@
 --------------------------------------------------------------------------------------------------------------
 
 - Özellikle bazı server uygulamalarında kullanılmaktadır.
+- komut satırı argümanlarının uygulamaya geçilmesi için uygulamanın konsolda çalışması gerekmektedir.
+- komut satırından uygulamayı çalıştırmak için, console'dan
+    - java org.csystem.app.App <argümanlar>
 
+    - eğer uygulama bir jar dosyası olarak çıkarıldı ise
+      java -jar şeklinde <applicationname> <argümanlar> şeklinde çalıştırılmalıdır.
 --------------------------------------------------------------------------------------------------------------
                                                 var keyword
 --------------------------------------------------------------------------------------------------------------
@@ -307,19 +322,20 @@
 
 - Arrays sınıfının temel işlemler yapan metodları
     - fill metodları
-        Arrays.fill(T [] a, int val); // verilen array'i ;
+        Arrays.fill(T [] a, int val); // verilen array'i verilen değer ile doldurur;
         Arrays.fill(T [] a, int fromIndex, int toIndex, int val) [fromIndex, toIndex)
 
     - T [] a copyOf metodu // yeni bir dizi tahsis eder ve değerleri kopyalar, yeni üretilen diziyi küçültebilir.
-        Arrays.fill(T [] a, int newLength); // yeni bir dizi döndürür. newLength ile o uzunlukta bir dizi üretir ve
-        dizinin değerlerini kopyalar. diziyi aynı zamanda küçültedebilidir.(Yani eleman sayısı küçültülmüş yeni bir dizi
-        verebilir.)
+
+    - Arrays.fill(T [] a, int newLength); // yeni bir dizi döndürür. newLength ile o uzunlukta bir dizi üretir ve
+      dizinin değerlerini kopyalar. diziyi aynı zamanda küçültedebilidir.(Yani eleman sayısı küçültülmüş yeni bir dizi
+      verebilir.)
 
     - T []  copyOfRange(T [] a, int fromIndex,  int toIndex); // copyOf [fromIndex, twoIndex]
 
-    - booleans equals(T [] a, T [] b); // a
+    - booleans equals(T [] a, T [] b); // dizilerin eşitlik karşılaştırması yapar.
 
-    - int compare(T [] a, T [] b); // T burada herhangi bir metod anlamındadır.
+    - int compare(T [] a, T [] b); // T burada herhangi bir tür anlamındadır.
         - Java 9 ile beraber eklenmiştir.
         - Eğer ilk parametredeki dizi büyük ise pozitif, küçük ise negatif, birbirine eşit iseler 0 değerini döner.
         - ilk farklı değer'den büyük olanın değerini döndürür.
@@ -338,17 +354,148 @@
         Küçükten büyüğe de çalışır ancak bunun için collection'lar konusunu görmemiz gerekir.
 
     String toString metodları
-        Bir diziyi alıp Stringe dönüştürür [] içine alıp , ile ayırır.
+        Bir diziyi alıp Stringe dönüştürür [] içine alıp delim olaral ,  kullanılır.
         Yazıya çevirirken String sınıfının valueOf metodunu kullanır.
 
-- Javadaki bütün tam sayı türleri işaretli ve negatif sayılarda tutulabilir(Yani unsigned bir primitive tür yoktur).
+- Javadaki bütün tam sayı türleri pozitif ve negatif sayıları tutulabilir(Yani unsigned bir primitive tür yoktur).
 
      Arrays.compareUnsigned(int [] a, int [] b)
         - burada sayının negatif değerleri için sayının bitlerini 2'ye tamamlayarak pozitif değere döndürür.
-        -
+
 - Genel olarak veri tutan(Data class) Sadece veri tutmaya yarayan sınıfların, toString'i olur.
 
 --------------------------------------------------------------------------------------------------------------
+                                                04.04.2020
+--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
                                                 İçiçe sınıf bildirimleri
 --------------------------------------------------------------------------------------------------------------
+
+- 4 biçimde yapılabilir.
+    1-) static sınıf bildirimi (nested)
+    2-) non-static sınıf bildirimi (inner)
+    3-) yerel sınıf bildirimi
+    4-) isimsiz sınıf bildirimi
+
+
+---- Static sınıf(nested) bildirimi ----
+
+- Hiç bir sınıf içerisinde bulunmayan bir sınıf (top level classes) static olarak bildirilimez.
+    package org.csystem.app;
+    static class  Mycass {} // error
+
+- Bir sınıf içerisinde başka bir sınıf static olarak bildirilebilir. İçteki sınıf dıştaki sınıfın bir elemanıdır.
+  Dolayısıyla bir eleman static olabileceğinden sınıfta statik anahtar sözcüğü ile bildirilebilir.
+
+- Tüm elemanlarda olduğu gibi içte bildirilen bir sınıf erişim belirleyicisi olabilir.(public, protected, private, non-modifier)
+  Top level classes'ların private olması gibi bir durumu yokken bu inner class'lar için bu durum geçerlidir.
+
+- Static bildirilmiş sınıflar,  veri elemanlarına normal sınaflarda olduğu gibi elemanlara sahip olabilirler.
+
+- static bildirilmiş sınıflar onu kapsayan sınıf dışından, kapsadığı sınıf ismi ve . operatörü ile erişilebilir.
+    Myclass.innerMyclass b = new Myclass.innerMyclass();
+    class Myclass {
+        public static class innerMyclass{}
+    }
+
+- Bu composition ile karıştırmamak geerekir bu tamamen yeni bir tür bildirimidir.
+
+- import static direktifi ile bu static class'a nitelemeden kullanabiliriz.
+    import static org.csystem.app.Myclass.innerMyclass;
+
+- Kapsayan sınıfta static olarak bildirilen sınıfın elemanlarına erişilebilir.
+
+- top level bir sınıftan ilgili sınıfın static member class'ların private elemanına erişilebilir.
+
+- static bir sınıftan kapsayan sınıfın private elemanlarına erişim sağlanabilir.
+
+- static bir sınıfın en büyük artısı içtekinin dıştaki sınıfın yada dıştaki sınıfın içteki sınıfın
+  private elemanlarına erişimimizin olmasıdır.
+
+- static sınıflar Builder design pattern'inde sıkça kullanılır. Bunun nedeni sınıfa sanki istediğimiz
+  değerler ile yaratma şansımızı verir.
+
+- StringBuilder sınıfıda bir Builder design paterninin sonucudur. Ancak böyle bir şeyin implemente ediliş şekli
+  daha farklıdır.
+
+------- non-static(inner) sınıf bildirimi -------
+
+- Bir sınıfın içerisindeki sınıf non-static bildirilmiş ise(inner class ise), böyle bir sınıfın static veri elemanı olamaz.
+
+- non-static bir inner class'ın static bir member yada static bir methodu olamaz.
+
+- non-static bir sınıf(inner class) türünden bir nesne yaratmak için
+    <top  class>.<inner_class> <variablename> = <top  class reference>.new <innerclass>();
+    A a1 = new A();
+    A.B y = a1.new B();
+    A.B z = a1.new B(); // şeklinde yapılabilir.
+
+    class A {
+      class B{}
+    }
+
+- non static(inner) bildirilmiş bir nesne kapsayan sınıf dışında <referans>.new sentaksı ile
+  yaratılabilir.
+
+- inner class'lığın inheritance'lık ile alakası yoktur. Ancak ve ancak bir ilişki veirlecek ise
+  aggregation olabilir.
+
+- inner class'lar ilişkin olduğu kapsayan sınıf nesnesinin non-static veri elemanlarına doğrudan erişebilir.
+
+- inner class'lar da içteki nesneyi yaratılabilmek için onu kapsayan sınıf türünden bir nesneye ihtiyaç vardır.
+
+- Genelde inner türden nesneleri dışarıda değilde sınıfın içinde yaratırız.
+
+- static bir fonksiyondan sınıfın non-static bir inner class'ı yaratılamaz.
+  Çünkü inner class'ın türünden bir nesne içinde kapsayan türden bir referansın kime ait olacağını
+  belirlenemez.
+
+- javac içsel static ve içsel non-static sınıflar için .class dosyasını A$B.class şeklinde
+  oluşturur.
+
+- this anahtar sözcüğü non-static metod ile çağırılan referansın adresini gösterir.
+
+- this sınıfının inner class'lar ile kullanılımı
+
+class A {
+    private int m_val;
+    public void foo()
+    {
+        System.out.println("A.foo")
+    }
+    class B {
+        private int m_val;
+        public void foo()
+        {
+            System.out.println("B.foo")
+            A.this.foo(); // this expression
+            this.m_val = 10;
+            A.this.m_val = 20; //
+        }
+    }
+}
+--------------------------------------------------------------------------------------------------------------
+                                                05.04.2020
+--------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------
+                                                Recursive algoritmalar
+--------------------------------------------------------------------------------------------------------------
+
+- Özyineleme gerektiğinde kullanılması gereken bir durumdur. Çalışılırken dikkat edilmesi gerekir. Örneğin gömülü
+  sistemlerde recursive algoritma hiç tercih edilmez.
+
+- recursive algoritmalar kendini ne kadar çok çağırırsa stack'i o kadar doldurur.
+
+- Eğer recursive algoritmalar yerine  algoritma döngü ile  yapılabiliyor ise(Eğer recursive ile çok daha hızlı
+  yapılmıyor ise) recursive function tercih edilmemelidir.
+
+- örneğin factorial fonksiyonu recursive şeklinde yazılmak yerine iteratif şeklinde yazılması daha iyidir.
+
+- Bir yazının tersten yazdırılması recursive algoritma ile
+
+
+
+
+
 

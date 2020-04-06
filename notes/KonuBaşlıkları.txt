@@ -23,6 +23,10 @@ var keyword
 
 Arrays sınıfı
 
-içiçe sınıf(nested class)
-    -inner (non-static nested class)
-    - static nested class
+içiçe sınıf bildirimleri
+    - static class bildirimi(nested)
+    - non-static class bildirimi(inner)
+    - Yerel sınıf bildirimi(local)
+    - isimsiz sınıf bildirimi(anonymous)
+
+Recursive function
