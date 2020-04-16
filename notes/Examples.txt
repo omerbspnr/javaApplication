@@ -3500,8 +3500,8 @@ class A {
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
-    non-static bildirilmiş bir sınıf türürün nesne kapsayan sınıf dışında <referan>.new sentaksı ile
-    yaratılabilir. Yani bir inner türünden nesne için ait olduğu bir kapsayan sınıf nesnesi olmalıdır
+    non-static bildirilmiş bir sınıf türürün nesne kapsayan sınıf dışında <referans>.new sentaksı ile
+    yaratılabilir. Yani bir inner sınıf türünden nesne için ait olduğu bir kapsayan sınıf nesnesi olmalıdır
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
@@ -3596,6 +3596,7 @@ class A {
         x.doWork(val);
     }
 }
+
 
 /*----------------------------------------------------------------------------------------------------------------------
     Aşağıdaki örnekte error oluşur
@@ -3723,6 +3724,44 @@ class A {
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki örnekte x referansına ilişkin aşağıdaki gibi this referansı kullanılarak yaratılmış olur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A a = new A();
+
+        a.doWorkForVal(-20);
+
+        System.out.println(a.getVal());
+        //...
+    }
+}
+
+class A {
+    private int m_val;
+
+    private class B {
+        public void doWork(int val)
+        {
+            m_val = Math.abs(val);
+        }
+    }
+
+    public int getVal() {return m_val;}
+
+    public void doWorkForVal(int val)
+    {
+        B x = this.new B();
+
+        x.doWork(val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
     this expression
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
@@ -3759,7 +3798,48 @@ class A {
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
-    Zincir çağırna kalıbı (fluent pattern)
+    this expression
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        A x = new A();
+
+        x.a = 20;
+        A.B y = x.new B();
+
+        y.bar();
+    }
+}
+
+class Sample {
+    public static void doWork(A a)
+    {
+        a.foo();
+    }
+}
+
+class A {
+    public int a;
+    public void foo()
+    {
+        System.out.printf("a=%d%n", a);
+        System.out.println("A.foo");
+    }
+
+    public class B {
+        public void bar()
+        {
+            System.out.println("B.bar");
+            Sample.doWork(A.this);
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Zincir çağırma kalıbı (fluent pattern)
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
@@ -3889,6 +3969,1326 @@ class AlertDialog {
     }
 }
 
+/*----------------------------------------------------------------------------------------------------------------------
+    static sınıfların bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        CountdownTimerEvent.StartEvent startEvent = new CountdownTimerEvent.StartEvent();
+        TimerEvent.ProgressEvent progressEvent = new TimerEvent.ProgressEvent();
+
+        //...
+    }
+}
+
+class CountdownTimerEvent {
+    public static class StartEvent {
+        //...
+    }
+
+    public static class ProgressEvent {
+        //...
+    }
+
+    public static class StopEvent {
+        //...
+    }
+}
+
+class TimerEvent {
+    public static class StartEvent {
+        //...
+    }
+
+    public static class ProgressEvent {
+        //...
+    }
+
+    public static class StopEvent {
+        //...
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf içerisinde enum türü bildirilebilir. enum türlerinin doğası gereği bildirimin static olup olmamasının
+    bir önemi yoktur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    private enum Color {RED, GREEN, BLUE}
+    //...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir sınıf bildirimi bir metot içerisinde yapılıyorsa bu sınıflara yerel (local) sınıflar denir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        class A {
+
+        }
+
+        class B {
+
+        }
+    }
+
+
+    public void bar()
+    {
+        class A {
+
+        }
+
+        class B {
+
+        }
+
+        class C {
+
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar faaliyet alanı bakımından bildirildikleri yerden bildirildikleri bloğun sonuna kadar
+    görülebilirdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        class A {
+
+        }
+
+        A x = new A();
+
+        class B {
+            public void foo()
+            {
+
+            }
+        }
+
+        B y = new B();
+
+        y.foo();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar faaliyet alanı bakımından bildirildikleri yerden bildirildikleri bloğun sonuna kadar
+    görülebilirdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        for (int i = 0; i < 10; ++i) {
+            class A {
+
+            }
+
+            A x = new A();
+        }
+
+        A y; //error
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aynı faaliyet alanı içerisinde aynı isimde yerel sınıf bildirimi geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        class A {
+
+        }
+
+        for (int i = 0; i < 10; ++i) {
+            class A { //error
+
+            }
+
+            A x = new A();
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki durum geçerlidir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        for (int i = 0; i < 10; ++i) {
+            class A {
+
+            }
+
+            A x = new A();
+        }
+
+        class A {
+
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar erişim belirleyici ile bildirilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        public class A { //error
+
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar static olarak bildirilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        static class A { //error
+
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar başka bir sınıftan türetilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class X {
+
+}
+
+class Sample {
+    public void foo()
+    {
+        class A extends X {
+            //...
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel bir sınıf başka bir yerel sınıftan türetilebilir. Bu durumda taban sınıf isminin geçerli olması
+    için taban yerel sınıfın türemiş yerel sınıftan önce bildirilmesi gerekir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+
+    }
+}
+
+class Sample {
+    public void foo()
+    {
+        class A {
+            //...
+        }
+
+        class  B extends  A {
+            //...
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel bir sınıf kendisinden önce bildirilen yerel değişkenleri ve parametre değişkenlerini yakalayabilir (capture)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample.foo(20);
+    }
+}
+
+class Sample {
+    public static void foo(int val)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Bir sayı giriniz");
+        int a = Integer.parseInt(kb.nextLine());
+
+        class Util {
+            public boolean isEven() {return val % 2 == 0;}
+            public boolean isOdd() {return a % 2 != 0;}
+        }
+
+        var util = new Util();
+
+        System.out.println(util.isEven() ? "Çift" : "Tek");
+        System.out.println(util.isOdd() ? "Tek" : "Çift");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar içerisinde yakalanan yerel veya parametre değişkenleri faaliyet alanı içerisinde tek bir değer
+    alabilirler. Yani değerleri değiştirilemez. Java 8 ile birlikte yakalnmış olan yerel veya parametre
+    değişkenlerine "effective final" değişkenler denir. Java 8 öncesinde yakalanabilecek değişkenler final
+    yapılmak zorundaydı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample.foo(20);
+    }
+}
+
+class Sample {
+    public static void foo(int val)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Bir sayı giriniz");
+        int a = Integer.parseInt(kb.nextLine());
+
+        class Util {
+            public boolean isEven() {return val % 2 == 0;} //error
+            public boolean isOdd() {return a++ % 2 != 0;} //error:
+        }
+
+        val = 12;
+
+        var util = new Util();
+
+        System.out.println(util.isEven() ? "Çift" : "Tek");
+        System.out.println(util.isOdd() ? "Tek" : "Çift");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıfların static elemanları olamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample.foo(20);
+    }
+}
+
+class Sample {
+    public static void foo(int val)
+    {
+        class A {
+            public static int a; //error
+
+            public static void foo(int a) //error
+            {
+
+            }
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar içerisinde sınıfın veri elemanları kullanılabilir hatta değişiklik de yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample.val = 10;
+        Sample.foo(20);
+
+        System.out.println(Sample.val);
+    }
+}
+
+class Sample {
+    public static int val;
+
+    public static void foo(int a)
+    {
+        class Util {
+            public boolean isEven() {return a % 2 == 0;}
+            public boolean isOdd() {return Sample.val++ % 2 != 0;}
+        }
+
+        var util = new Util();
+
+        System.out.println(util.isEven() ? "Çift" : "Tek");
+        System.out.println(util.isOdd() ? "Tek" : "Çift");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar içerisinde sınıfın veri elemanları kullanılabilir hatta değişiklik de yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample();
+
+        s.val = 11;
+
+        s.foo(20);
+
+        System.out.println(s.val);
+    }
+}
+
+class Sample {
+    public int val;
+
+    public void foo(int a)
+    {
+        class Util {
+            public boolean isEven() {return a % 2 == 0;}
+            public boolean isOdd() {return Sample.this.val++ % 2 != 0;}
+        }
+
+        var util = new Util();
+
+        System.out.println(util.isEven() ? "Çift" : "Tek");
+        System.out.println(util.isOdd() ? "Tek" : "Çift");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar bazı durumlarda test yapmakta kullanılabilir. Aşağıdaki işlemi ileride daha profesyonel tekniklerle
+    yapacağız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample();
+
+        s.displaySqrt(-20);
+    }
+}
+
+class Sample {
+    public static final boolean DEBUG = false;
+
+    private void foo(int val)
+    {
+        if (DEBUG) {
+            class TestUtil {
+                public boolean isNonnegative()
+                {
+                    return val >= 0;
+                }
+            }
+            var tu = new TestUtil();
+
+            if (!tu.isNonnegative()) {
+                System.out.println("Invalid value");
+                System.exit(-1);
+            }
+        }
+        System.out.println(Math.sqrt(val));
+    }
+
+    public void displaySqrt(int val)
+    {
+        if (val >= 0)
+            foo(val);
+        else
+            System.out.println("Geçersiz değer");
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yerel sınıflar bazı durumlarda test yapmakta kullanılabilir. Aşağıdaki işlemi ileride daha profesyonel tekniklerle
+    yapacağız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample();
+
+        s.displaySqrt(20);
+    }
+}
+
+class SampleTest {
+    public static void test(int val)
+    {
+        class TestUtil {
+            public boolean isNonnegative()
+            {
+                return val >= 0;
+            }
+        }
+        var tu = new TestUtil();
+
+        if (!tu.isNonnegative()) {
+            System.out.println("Invalid value");
+            System.exit(-1);
+        }
+
+        System.out.println("OK");
+    }
+}
+
+class Sample {
+    public static final boolean DEBUG = false;
+
+    private void foo(int val)
+    {
+        if (DEBUG)
+            SampleTest.test(val);
+
+        System.out.println(Math.sqrt(val));
+    }
+
+    public void displaySqrt(int val)
+    {
+        if (val >= 0)
+            foo(val);
+        else
+            System.out.println("Geçersiz değer");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anahtar Notlar: İşlemli atama operatörlerinin genel biçimi
+    T1 t1;
+    T2 t2;
+
+    t1 op= t2
+
+    t1 = (T1)(t1 op t2);
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        int a = 10;
+
+        a += Math.pow(a, 3); // a = (int)(a + Math.pow(a, 3));
+
+        System.out.println(a);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anonim sınıf bildiriminin genel biçimi:
+    new <tür>([argümanlar]) {
+        //...
+    }
+    Yukarıdaki bildirim bir anonim sınıf bildirimidir aynı zamanda da bir nesne yaratılması işlemidir. Yani anonim
+    sınıf bildirimi new operatörüne yazılan türden türetilmiş olan bir sınıfın hem bildirimi hemde o sınıf türünden
+    nesne yaratılması görevini verir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample() {};
+        Sample k = new Sample() {};
+
+        System.out.println(s.getClass().getName());
+        System.out.println(k.getClass().getName());
+    }
+}
+
+class Sample {
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anonim sınıf bir türetme (inheritance) işlemi olduğundan aşağıdaki kod geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample() {}; //error:
+        Sample k = new Sample() {}; //error:
+
+        System.out.println(s.getClass().getName());
+        System.out.println(k.getClass().getName());
+    }
+}
+
+final class Sample {
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte foo metodu çağrıldığında foo metodunu çağıran referansın gösterdiği nesnenin referans sayısı bir
+    artırılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+
+class App {
+    public static void main(String[] args)
+    {
+        Mample m = new Mample();
+
+        new Sample().foo(m);
+        //referans sayacı:1
+        m.setSample(new Sample());
+        //...
+    }
+}
+
+class Mample {
+    private Sample m_sample;
+
+    public void setSample(Sample s)
+    {
+        m_sample = s;
+    }
+}
+
+class Sample {
+    public void foo(Mample m)
+    {
+        m.setSample(this);
+        System.out.println("Sample.foo");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki durumda bellek sızıntısı (memory leak) oluşur. yaratılan nesne program sonuna kadar garbage collected
+    duruma gelemeyeceği için ölemez
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        new Sample().foo();
+        //...
+    }
+}
+
+class Sample {
+    public Sample s;
+
+    public void foo()
+    {
+        s = this;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte liste boşaltına kadar tüm yaratılan nesneler kesin yaşarlar
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String[] args)
+    {
+        for (int i = 0; i < 10; ++i)
+            new Sample();
+
+        System.out.println(Sample.list.size());
+
+        Sample.list.clear();
+    }
+}
+
+class Sample {
+    public final static ArrayList list = new ArrayList();
+
+    public Sample()
+    {
+        list.add(this);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anonim sınıflar abstract sınıflar türünden yaratılıyorsa bu durumda abstract sınıfın tüm abstract metotları
+    override edilmek zorundadır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample() {
+            public void foo()
+            {
+                System.out.println("Anonim Sample.foo");
+            }
+            public void bar()
+            {
+                System.out.println("Anonim Sample.bar");
+            }
+        };
+
+        s.foo();
+    }
+}
+
+abstract class Sample {
+    public abstract void foo();
+    public abstract void bar();
+
+    //...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anonim sınıfların abstract sınıflardan türetilmesi
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        var helper = new OperationHelper(10);
+
+        System.out.println(helper.doOperation(20));
+    }
+}
+
+class OperationHelper {
+    private UnaryOperations m_unaryOperations;
+
+    public OperationHelper(int val)
+    {
+        m_unaryOperations = new UnaryOperations(val) {
+            public int apply(int val)
+            {
+                return val + this.val;
+            }
+        };
+
+        System.out.println(m_unaryOperations.getClass().getName());
+    }
+
+    public int doOperation(int val)
+    {
+        return m_unaryOperations.apply(val);
+    }
+}
+
+abstract class UnaryOperations {
+    protected int val;
+
+    protected UnaryOperations(int val)
+    {
+        this.val = val;
+    }
+
+    public abstract int apply(int val);
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte UnaryOperations sınıfının ctor'u protected olmasına karşın anonim sınıf
+    bildirimi yapıldığı için sorun oluşmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.UnaryOperations;
+
+class App {
+    public static void main(String[] args)
+    {
+        var helper = new OperationHelper(10);
+
+        System.out.println(helper.doOperation(20));
+    }
+}
+
+class OperationHelper {
+    private UnaryOperations m_unaryOperations;
+
+    public OperationHelper(int val)
+    {
+        m_unaryOperations = new UnaryOperations(val) {
+            public int apply(int val)
+            {
+                return val + this.val;
+            }
+        };
+
+        System.out.println(m_unaryOperations.getClass().getName());
+    }
+
+    public int doOperation(int val)
+    {
+        return m_unaryOperations.apply(val);
+    }
+}
+
+package org.csystem.util;
+
+public abstract class UnaryOperations {
+    protected int val;
+
+    protected UnaryOperations(int val)
+    {
+        this.val = val;
+    }
+
+    public abstract int apply(int val);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anonim sınıflar da yerel sınıflarda olduğu kendisinden önce bildirilen yerel değişkenleri
+    ve parametre değişkenleri yakalayabilirler.
+    Bu durumda yine final olmayan bir yerel değişken veya parametre değişkeni için effectively
+    final kuralları geçerlidir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.UnaryOperation;
+
+class App {
+    public static void main(String[] args)
+    {
+        var helper = new OperationHelper(10);
+
+        System.out.println(helper.doOperation(20));
+    }
+}
+
+class OperationHelper {
+    private UnaryOperation m_unaryOperations;
+
+    public OperationHelper(int a)
+    {
+        m_unaryOperations = new UnaryOperation() {
+            public int apply(int val)
+            {
+                return a + val;
+            }
+        };
+    }
+
+    public int doOperation(int val)
+    {
+        return m_unaryOperations.apply(val);
+    }
+}
+
+package org.csystem.util;
+
+public abstract class UnaryOperation {
+    //...
+    public abstract int apply(int val);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağdaki örnekte OperationHelper sınıfı işlemi de dışarıdan alacak şekilde tasarlanmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Operation;
+import org.csystem.util.OperationHelper;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String[] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Bir sayı giriniz:");
+        int value = Integer.parseInt(kb.nextLine());
+
+        var operation = new Operation() {
+            public int apply(int val)
+            {
+                return val * value;
+            }
+            public int apply(int a, int b)
+            {
+                return value + a + b;
+            }
+        };
+
+        var helper = new OperationHelper(operation);
+
+        System.out.println(helper.doUnaryOperation(10));
+        System.out.println(helper.doBinaryOperation(2, 3));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki işlem aşağıdaki gibi de yapılabilir. Bu durumda okunabilirliğe dikkat edilmesi
+    gerekir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Operation;
+import org.csystem.util.OperationHelper;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String[] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Bir sayı giriniz:");
+        int value = Integer.parseInt(kb.nextLine());
+
+        var helper = new OperationHelper(new Operation() {
+            public int apply(int val)
+            {
+                return val * value;
+            }
+            public int apply(int a, int b)
+            {
+                return value + a + b;
+            }
+        });
+
+        System.out.println(helper.doUnaryOperation(10));
+        System.out.println(helper.doBinaryOperation(2, 3));
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki yukarıdakiler içerisinde en okunabilir olanıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Operation;
+import org.csystem.util.OperationHelper;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String[] args)
+    {
+        Application.run();
+    }
+}
+
+class Application {
+    private static Operation getOperation(int value)
+    {
+        return new Operation() {
+            public int apply(int val)
+            {
+                return val * value;
+            }
+            public int apply(int a, int b)
+            {
+                return value + a + b;
+            }
+        };
+    }
+
+    public static void run()
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Bir sayı giriniz:");
+        int value = Integer.parseInt(kb.nextLine());
+
+        var helper = new OperationHelper(getOperation(value));
+        System.out.println(helper.doUnaryOperation(10));
+        System.out.println(helper.doBinaryOperation(2, 3));
+    }
+}
+
+package org.csystem.util;
+
+public class OperationHelper {
+    private Operation m_unaryOperation;
+
+    public OperationHelper(Operation unaryOperation)
+    {
+        m_unaryOperation = unaryOperation;
+    }
+
+    public int doBinaryOperation(int a, int b)
+    {
+        return m_unaryOperation.apply(a, b);
+    }
+
+    public int doUnaryOperation(int val)
+    {
+        return m_unaryOperation.apply(val);
+    }
+}
+
+package org.csystem.util;
+
+public abstract class Operation {
+    //...
+    public abstract int apply(int val);
+    public abstract int apply(int a, int b);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Timer sınıfı sınıfı timer işlemlerinde kullanılan temel sınıflardan biridir. Bu sınıfın scheduleXXX metotları
+    ile ayrı bir akış oluşturulur ve girilen perioda göre TimerTask referansı ile aldğı türe ilişkin
+    run metodu çağrılır. Aşağıdaki örnekte main metodu bitse bile timer ın devam ettiğine dikkat ediniz. Bu tarz
+    arka plan akışlara non-daemon thread denir. Bu konu ileride ele alınacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+class App {
+    public static void main(String[] args)
+    {
+        Timer t = new Timer();
+
+        t.schedule(new TimerTask() {
+            public void run()
+            {
+                System.out.print(".");
+            }
+        }, 0, 30);
+
+        System.out.println("Tekrar yapınız");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte TimerTask sınıfının cancel metodu ile TimerTask durudurulmuştur. Ancak Timer
+    durdurulmamıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+class App {
+    public static void main(String[] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Kaç tane nokta konsun?");
+        int n = Integer.parseInt(kb.nextLine());
+
+        Timer t = new Timer();
+
+        t.schedule(new TimerTask() {
+            private int m_count;
+
+            public void run()
+            {
+                if (m_count == n) {
+                    cancel();
+                    return;
+                }
+                System.out.print('.');
+                ++m_count;
+
+            }
+        }, 0, 1000);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte Timer durdurulmuştur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+class App {
+    public static void main(String[] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Kaç tane nokta konsun?");
+        int n = Integer.parseInt(kb.nextLine());
+
+        Timer t = new Timer();
+
+        t.schedule(new TimerTask() {
+            private int m_count;
+
+            public void run()
+            {
+                if (m_count == n) {
+                    t.cancel();
+                    return;
+                }
+
+                System.out.print('.');
+                ++m_count;
+
+            }
+        }, 0, 1000);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte TimeUnit enum türü kullanılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.TimerUtil;
+
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Kaç tane nokta konsun?");
+        int n = Integer.parseInt(kb.nextLine());
+
+        TimerUtil.show(n, '.', 0, 2, TimeUnit.SECONDS);
+    }
+}
+
+package org.csystem.util;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+public final class TimerUtil {
+    public static void show(int count, char ch, long delay, long period, TimeUnit timeUnit)
+    {
+        long delayInMs = TimeUnit.MILLISECONDS.convert(delay, timeUnit);
+        long periodInMs = TimeUnit.MILLISECONDS.convert(period, timeUnit);
+
+        Timer t = new Timer();
+
+        t.schedule(new TimerTask() {
+            private int m_count;
+
+            public void run()
+            {
+                if (m_count == count) {
+                    t.cancel();
+                    return;
+                }
+
+                System.out.print(ch);
+                ++m_count;
+            }
+        }, delayInMs, periodInMs);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Basit bir digital saat örneği
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.datetime.Time;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+class App {
+    public static void main(String[] args)
+    {
+        Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            public void run()
+            {
+                Time now = new Time();
+
+                System.out.printf("%s\r", now);
+            }
+        }, 0, 1000);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Basit bir Timer sınıfı ve test kodu. Bu sınıf Timer sınıfı kullanılarak geliştirilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.CSDTimer;
+import org.csystem.util.ITimerTask;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        CSDTimer timer = new CSDTimer(0, 1, TimeUnit.SECONDS);
+
+        timer.start(new ITimerTask() {
+            public void run()
+            {
+                System.out.print(".");
+            }
+        });
+        System.out.println("Tekrar yapınız");
+    }
+}
+
+package org.csystem.util;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+public class CSDTimer {
+    private Timer m_timer;
+    private long m_delay;
+    private long m_period;
+
+    public CSDTimer(long delay, long period, TimeUnit timeUnit)
+    {
+        m_timer = new Timer();
+        m_delay = TimeUnit.MILLISECONDS.convert(delay, timeUnit);
+        m_period = TimeUnit.MILLISECONDS.convert(period, timeUnit);
+    }
+
+    public void start(ITimerTask timerTask)
+    {
+        m_timer.schedule(new TimerTask() {
+            public void run()
+            {
+                timerTask.run();
+            }
+        }, m_delay, m_period);
+    }
+
+    public void cancel()
+    {
+        m_timer.cancel();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıda açıklanan sınıfı yazınız:
+    Açıklamalar:
+    1. Sınıfın ismi CoundownTimer olacaktır
+
+    2. Sınıf abstract olarak yazılacak ve tek bir ctor'unda millisaniye cinsinden toplam zamanı ve
+    period değerini milisaniye cinsinden alacaktır. Örnek bir kullanım aşağıdaki gibidir:
+
+    new CountdownTimer(10000, 1000) {...}
+
+    3. Sınıfın onTick ve onCompleted isimli iki adet abstract metodu olacaktır. onTick metodu
+    her periyotta çağrılan, onCompleted metodu ise geriye sayım bittiğinde çağrılan metot olarak
+    alınacaktır. onTick metodunun her çağrıldığında kalan zamanı milisaniye cinsinden alan bir
+    parametesi olacaktır. Örnek bir kullanım:
+
+     new CountdownTimer(10000, 1000) {
+        public void onTick(long remaininMs)
+        {
+            //Her adımda yapılacak iş
+        }
+
+        public void onCompleted()
+        {
+            // Geri sayım bittiğinde yapılacak iş
+        }
+     }
+    4. Sınıfın final start metodu ile timer başlatılatacaktır
+    5. Sınfın cancel isimli metodu geriye sayım timer'ını durdurmak için kullanılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
 
 
 

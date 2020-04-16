@@ -390,7 +390,7 @@
 - Tüm elemanlarda olduğu gibi içte bildirilen bir sınıf erişim belirleyicisi olabilir.(public, protected, private, non-modifier)
   Top level classes'ların private olması gibi bir durumu yokken bu inner class'lar için bu durum geçerlidir.
 
-- Static bildirilmiş sınıflar,  veri elemanlarına normal sınaflarda olduğu gibi elemanlara sahip olabilirler.
+- Static bildirilmiş sınıflar  normal sınaflarda olduğu gibi memberlara(method yada değişkene) sahip olabilirler.
 
 - static bildirilmiş sınıflar onu kapsayan sınıf dışından, kapsadığı sınıf ismi ve . operatörü ile erişilebilir.
     Myclass.innerMyclass b = new Myclass.innerMyclass();
@@ -420,12 +420,12 @@
 
 ------- non-static(inner) sınıf bildirimi -------
 
-- Bir sınıfın içerisindeki sınıf non-static bildirilmiş ise(inner class ise), böyle bir sınıfın static veri elemanı olamaz.
+- Bir sınıfın içerisindeki sınıf non-static bildirilmiş ise böyle sınıflara inner class denir
 
-- non-static bir inner class'ın static bir member yada static bir methodu olamaz.
+-  inner class'ın static bir member yada static bir methodu olamaz.
 
 - non-static bir sınıf(inner class) türünden bir nesne yaratmak için
-    <top  class>.<inner_class> <variablename> = <top  class reference>.new <innerclass>();
+    <top_class_name>.<inner_class_name> <variablename> = <top  class reference>.new <innerclass name>();
     A a1 = new A();
     A.B y = a1.new B();
     A.B z = a1.new B(); // şeklinde yapılabilir.
@@ -434,13 +434,15 @@
       class B{}
     }
 
+- içsel bildirilen bir nesnenin non-static bildirilmiş nesnesine ortada içsel türden bir nesne
+  yok ise errordur.
 - non static(inner) bildirilmiş bir nesne kapsayan sınıf dışında <referans>.new sentaksı ile
   yaratılabilir.
 
 - inner class'lığın inheritance'lık ile alakası yoktur. Ancak ve ancak bir ilişki veirlecek ise
   aggregation olabilir.
 
-- inner class'lar ilişkin olduğu kapsayan sınıf nesnesinin non-static veri elemanlarına doğrudan erişebilir.
+- inner class'lar ilişkin olduğu kapsayan sınıf nesnesinin non-static ve static veri elemanlarına doğrudan erişebilir.
 
 - inner class'lar da içteki nesneyi yaratılabilmek için onu kapsayan sınıf türünden bir nesneye ihtiyaç vardır.
 
@@ -474,6 +476,21 @@ class A {
         }
     }
 }
+
+
+- inner class'larda kapsayan sınıfın bir elemanı ile aynı ise sahip bir member var ise
+  top class'ın member'ına erişmek için <top_class_name>.this.member sentaksı kullanılır.
+  Bu duruma this expression denir.
+  class A {
+    private int x;
+    class B {
+        private int x;
+        public void foo()
+        {
+            System.out.println(A.this.x);
+        }
+    }
+  }
 --------------------------------------------------------------------------------------------------------------
                                                 05.04.2020
 --------------------------------------------------------------------------------------------------------------
@@ -492,10 +509,145 @@ class A {
 
 - örneğin factorial fonksiyonu recursive şeklinde yazılmak yerine iteratif şeklinde yazılması daha iyidir.
 
-- Bir yazının tersten yazdırılması recursive algoritma ile
+--------------------------------------------------------------------------------------------------------------
+                                                11.04.2020
+--------------------------------------------------------------------------------------------------------------
+
+- sınıf içerisinde enum türü bildirilebilir. Doğası gereği new operatörü ile yaratılamayacağı için statik bildirilsin
+  yada bildirilmesin statik kabul edilir. Hatta statik bildirilmesine gerek yoktur.
 
 
+- local classes(yerel sınıflar) :
+    - Bir sınıfın bir metodu içerisinde bildirilen sınıflara  yerel sınıflar denir.
 
+    class Sample {
+        public void foo(){
+            class A {
+
+            }
+            class B{
+
+            }
+        }
+        public void bar(){
+            class A {
+
+            }
+            class B{
+
+            }
+        }
+    }
+
+- Java da her bir sınıf kodu için bir .class dosyası üretilir.
+    - local sınıflar için durum : Sample$1A.class şeklinde oluşturur(<taban sınıfı>$<localsınıf ismi>)
+
+- yerel sınıflar faaliyet alanı bakımından bildirildileri fonksiyonun içinde bildirildikleri yerden
+  bloğun sonuna kadar görülebilirler.
+
+- yerel sınıflar erişim belirleyicisi  yada statik bildirilmesi gibi bir durumu yoktur. Böyle bir durumda bildirilmesi
+  errordur.
+  class A {
+    public void foo()
+    {
+          public class B {} // error
+          static class C {} // error
+    }
+  }
+
+- yerel sınıflar başka bir sınıftan(local bir sınıf olabilir.) türetilebilir.(Burada base class'ın türemiş sınıfın
+  görebileceği scope içerisinde olması gereklidir sadece).
+
+- yerel bir sınıf kendisinden önce bildirilen yerel değişkenleri ve parametre değişkenlerini yakalayabilir.
+  (Buna capture denir.)
+
+  class Sample {
+    public void foo(int val)
+    {
+        int a = 15;
+        class Util {
+            public boolean isEven(){return val % 2 == 0;}
+            public boolean isOdd(){ return val % 2 != 0;}
+        }
+        var util = new Util();
+        sout(util.isEven());
+        sout(util.isOdd());
+    }
+  }
+
+- Java da yerel fonksiyonlar olmadığı için  onların görevini yerel sınıflar ile yapılır.
+
+- Bir yerel değişken bir local sınıf içerisinde kullanılmış(yakalanmış) ise ikinci bir değer atanamaz.
+  Değiştirilmiş bir yerel değişkende yakalanamaz.
+
+- Java 8'den itibaren yakalanmış olan yerel veya parametre değişkenlerine effectively final denir.
+  Java 8 öncesinde ise yakalanabilecek değişkenler final bildirilmek zorundaydı
+
+- java 8 öncesinde yerel değişkenler de final kullanımı böyle durumlar için geçerliydi
+
+----- Anonim sınıflar -----
+
+- isimsiz bir sınıf nasıl yazılır, Anonim sınıf bildiriminin genel biçimi aşağıdaki gibidir
+  new <tür>([argümanlar]) {};
+
+- Yukarıdaki bildirim bir anonim sınıf bildirimidir, aynı zamanda da bir nesne yaratılması
+  işlemidir. Anonim sınıf bildirimi new operatörüne yazılan sınıf türünden türetilmiş olan bir sınıfın
+  hem bildirimi hem de o sınıf türünden nesne yaratılması anlamına gelir.
+
+   new Sample(){}; // Bu anonim bir sınıf bildirimidir.
+   class Sample {}
+
+- final bir sınıf türünden anonim sınıf yazılamaz.
+    new Sample(){}; // error.
+    final class Sample {}
+
+- anonim sınıf yazımı aynı zamanda bir bildirimdir. Bu yüzden anonim sınıfı yazarken ilgili
+  taban sınıfın fonksiyonları anonim sınıf içerisinde override edilebilir.
+
+   Sample s = new Sample() {
+                public void foo()
+                {
+                    sout("Anonim class");
+                }
+              };
+
+  class Sample {
+    public void foo(){}
+  }
+
+- anonim sınıfının bir çok kullanımı
+--------------------------------------------------------------------------------------------------------------
+                                                12.04.2020
+--------------------------------------------------------------------------------------------------------------
+
+- abstract sınıftan türetilmiş anonim sınıflar
+    - Anonim sınıflar abstract sınıflardan türetilirse, abstract sınıfın tüm abstract metodları
+      override edilmek zorundadır. Override edilmemesi halinde error oluşur.
+
+    - Abstract türünden referans'lar genellikle bir fonksiyonun parametre değişkeni olarak kullanılır.
+
+- anonim sınıflar farklı paketteki bir sınıf türünden isim ile yaratılıyor  ise bu sınıfların protected bölümüne
+  erişebilir.
+
+- anonim sınıflar da yerel sınıflarda olduğu gibi kendisinden önce bildirilen yerel değişkenleri veya
+  parametre değişkenlerini yakalayabilirler. Bu durumda yine final olmayan bir yerel değişken veya parametre değişkeni
+  için effectively final kuralları geçerlidir.
+
+- callback : Ne yapılacağını dışarıdan alacağımız(Yani bir bakıma functor sınıflardır.)
+
+- callback tarzı sınıflar genel olarak belirli periodlar ile çalışan metodlara geçilen metodlardır.  Böyle metodlara
+  timer metodlar denir.
+
+--- Timer class ----
+    - Timer işlemlerinde kullanılan en temel sınıflardan biridir.
+    - Kursta şu anda saddece default ctor'u kullanılacaktır.
+    - sınıfın scheduleXXX metorları ile ayrı bir akış oluşturulur. ve girilen perioda göre TimerTask referansı
+      ile aldığı türe ilişkin run metodu çağırılır. TimerTask parametresine, TimerTask türünden anonim bir sınıf
+      geçilebilir.
+
+
+--- Timeunit enum'ı -----
+    -
 
 
 
