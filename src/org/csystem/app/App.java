@@ -1,52 +1,51 @@
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıda açıklanan sınıfı yazınız:
+    Açıklamalar:
+    1. Sınıfın ismi CoundownTimer olacaktır
+
+    2. Sınıf abstract olarak yazılacak ve tek bir ctor'unda millisaniye cinsinden toplam zamanı ve
+    period değerini milisaniye cinsinden alacaktır. Örnek bir kullanım aşağıdaki gibidir:
+
+    new CountdownTimer(10000, 1000) {...}
+
+    3. Sınıfın onTick ve onCompleted isimli iki adet abstract metodu olacaktır. onTick metodu
+    her periyotta çağrılan, onCompleted metodu ise geriye sayım bittiğinde çağrılan metot olarak
+    alınacaktır. onTick metodunun her çağrıldığında kalan zamanı milisaniye cinsinden alan bir
+    parametesi olacaktır. Örnek bir kullanım:
+
+     new CountdownTimer(10000, 1000) {
+        public void onTick(long remaininMs)
+        {
+            //Her adımda yapılacak iş
+        }
+
+        public void onCompleted()
+        {
+            // Geri sayım bittiğinde yapılacak iş
+        }
+     }
+    4. Sınıfın final start metodu ile timer başlatılatacaktır
+    5. Sınfın cancel isimli metodu geriye sayım timer'ını durdurmak için kullanılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
+import org.csystem.util.CSDTimer;
+import org.csystem.util.ITimerTask;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.concurrent.TimeUnit;
 
 class App {
     public static void main(String[] args)
     {
-        Object[] names = new String[3];
-        names[0] = String.valueOf(0);
-        System.out.println(names[0]);
+        CSDTimer timer = new CSDTimer(0, 1, TimeUnit.SECONDS);
 
-        System.out.println(names.getClass().getName());
-    }
-
-}
-
-interface IX {
-    void foo();
-}
-interface IY {
-    void foo();
-}
-
-
-class Util {
-    public static OptionalLong findFirst(long [] a, LongPredicate pred)
-    {
-        for (long l : a)
-            if(pred.test(l))
-                return OptionalLong.of(l);
-
-        return OptionalLong.empty();
-    }
-    public static OptionalInt findFirst(int [] a, IntPredicate pred) {
-        for (int val : a)
-            if(pred.test(val))
-                return OptionalInt.of(val);
-
-            return OptionalInt.empty();
-    }
-
-    public static <T> Optional<T>  findFirst(ArrayList<T> arrayList, Predicate<T> pred)
-    {
-        for (T elem : arrayList)
-            if (pred.test(elem))
-                return Optional.of(elem);
-
-        return Optional.empty();
+        timer.start(new ITimerTask() {
+            public void run()
+            {
+                System.out.print(".");
+            }
+        });
+        System.out.println("Tekrar yapınız");
     }
 }
+
