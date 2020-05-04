@@ -647,7 +647,262 @@ class A {
 
 
 --- Timeunit enum'ı -----
-    -
+    - Timeunit enum'ı girilien değerin hangi saniye cinsinden olduğunu belirtir.(1,TimeUnit.HOURS) // Burada girilen 1
+      sayısı saat cinsinden verilmiştir. yani kullanıcıya TimerTask için milliseconds türünden değil saat, saniye, dakika
+      cinsinden istenildiği gibi verme gösterme imkanı sunulmuştur.
 
 
+
+--------------------------------------------------------------------------------------------------------------
+                                            19.04.2020
+--------------------------------------------------------------------------------------------------------------
+
+- anonim sınıflar sadece abstract sınıflardan değil ayrıca somut türlerden türetilebilir.
+
+- anoninm sınıflara non-static initializer yazılabilir. non-static initializer kullanılarak nesnelere değer verilebilir.
+- Burada eğer non-static initializer taban sınıfın nesnelerine erişiyor ise bu nesnelere ilk değer veriyormuş gibi
+  kullanılabilir.
+
+- Point p = new Point(){ {x = 10; y = 20;} }; // şeklinde bir kod sanki Point türüne kullanıcı tarafından istenilen bir
+  değer atanıyormuş.
+
+
+- anonoim sınıf herhangi bir  sınıftan türetiliyor ise hem yeni bir sınıf bildirimi hemde nesne yaratma işlemidir.
+- anonim interface ise bir interface bildirimi ve implementasyonudur.
+
+- teknik olarak ya bir interface'i implemente edecek yada anonim bir sınıftan türetilecektir.
+
+- anonim bir sınıf birden fazla interface'i implemente edecek şeklinde yazılamaz.
+
+- Bir metodun başka bir çağıracağı metodu yapabilmesine high  order function denir(Ne yapacaığını dışarıdan almak).
+  Timer sınıfının schedule metodu tamamen böyledir(Ne yapacağını TimerTask interface'inden alıyoruz.).
+
+- Java da doğrudan bir metod verilmesi gibi bir durum yoktur.
+
+
+
+--------------------------------------------------------------------------------------------------------------
+                                            Lambda ifadeleri(Lamba expressions)
+--------------------------------------------------------------------------------------------------------------
+
+
+- içerisinde bir ve yalnız bir tane abstract metod olan interface'lere fonksiyonel interface denir.
+    interface IX {
+        void foo();
+        default void bar()
+        {
+        }
+    } // IX interface'i bir functional interface'dir. Çünkü bar metotu abstract değildir.
+
+- Java 8 ile birlikte eklenmiştir.
+
+--- Lambda ifadelerinin genel biçimi ------
+
+- Lambda ifadeleri uygulanabilecek her yerde uygulanılmalıdır(always applicable).
+
+    1- (değişken_listesi) -> ifade
+    2- (değişken listesi) -> {...}
+    3- değişken -> ifade
+    4- değişken -> {...}
+    5- () -> ifade
+    6- () -> {}
+    7- (<tür değişken listesi>) -> ifade
+    8- (<tür değişken listesi>) -> {}
+
+- Yukarıdaki 8 yazım şekli lamba ifadelerinin genel implementasyon biçimidir.
+
+- Lambda ifadeleri ancak ve ancak uygun fonksiyonel arayüz(interface) referanslarına atanabilir. Arayüz dışında herhangi
+  bir referansa yada fonksiyonel olmayan arayüz referanslarına atanamaz(örneğin abstract bir sınıf referansı, yada
+  fonksiyonel  olmayan bir interface referansına atanamaz.).
+
+- Lambda ifadesi ile fonksiyonel bir arayüzün o bir tane olan fonksiyonunu override etmek yerine(Burada kastedilen
+  aşağıda implemente edilmiştir.) onun yerine geçen kodu kısa bir biçimde yazmış oluruz.
+
+--------------------------------------------------------------------------------------------------------------
+                                            25.04.2020
+--------------------------------------------------------------------------------------------------------------
+
+- Lambda ifadeleri bir ifade olduğu için bir türleri vardır.
+
+- Lambda ifadesi tam olarak atandığı fonksiyonel arayüz referansının ilgili abstract metodunu override edilmiş
+  hali gibidir.
+
+- Fonksiyonel arayüzler sanki  metot tutabilen bir türmüş gibi davranan arayüzlerdir. Lambda'lar da sanki
+  bu fonksiyon türüymüş ve fonksiyonel arayüze atanan bir tür gibidir.
+
+
+- callback kavramı tam olarak bir programa ne yapacağımızı bizim vermemizdir. Diyebiliriz. Burada yazılan kütüphane bir
+  callback ister ve ona geçilen callback'i çağırır.
+
+- Java da ki bu fonksiyonel arayüzler aynı bir function pointer gibi davranırlar
+- lambda ifadelerinde oktan öncesi kısım bize parametrik yapıyı gösterir.
+
+- Lambda ifadeleri için derleyici arka planda başka bir sınıf yad anonim sınıf oluşturmaz.
+
+- Lambda ifadelerine ilişkin olarak, ilgili ifade bir çok kez yeniden kullanılabilir.
+
+- Lambda ifadeleri uygun fonksiyonel inteface'lere atanabilir. Lambda ifadeleri tür çıkarımı yapılacak ise
+  tür çıkarımını kendisi yapacaktır.
+
+- Lambda ifadesinde tek bir değişken var ise tür tarafına yazılan parantezlere gerek yoktur.
+  IIntUnaryOperator op = a -> a * a; // burada oktan önceki yer bir bildirim gibidir. Burada sadece a değişkeni
+  bildirilmiştir.
+  IIntBinaryOperator op = (a, b) -> a + b; // burada a ve b değişkenleri bildirilmiştir.
+
+- Eğer birden fazla işlem yapılacak ise method gövdesi biçiminde yazılabilirler.
+     IIntBinaryOperator op = (a, b) -> {
+        sout(a + " " + b);
+        return a + b;
+     }
+
+- ilgili functional interface generic bildirilse bile tür çıkarımını kendisi yapabilir.
+    IBinaryOperator<Integer> opInt = (a, b) -> a + b;
+    IBinaryOperator<String> opStr = (name, surname) -> name + " " + surname;
+
+interface IBinaryOperator<T> {
+    T apply(T a, T b);
+}
+
+- anonim sınıflar lambda ifadelerinin yerine geçerken, lamba ifadeleri anonim sınıflar yerine kullanılamaz.
+  Kullanabilen her yerde lamba ifadeleri kullanılabilir.
+
+- Lambda ifadelerinin parametre değişkenleri yerel değişken kabul edilir ve ilgili Lambda ifadesi boyunca görülebilir.
+
+- Lambda ifadelerinde bildirilen bir yerel değişken ile aynı isimde başka bir yerel değişken o scope boyunca yeniden bildirilemez.
+
+- Lambda ifadeleri de yerel ve anonim sınıflar gibi bulunduğu kod bloğundaki bir değişkeni yakalayabilir. Burada
+  yakalanan değişken değiştirilemez.
+
+- Fonksiyonel arayüzler generic interface'ler ile kullanılada bilir.
+  Basit bir convert işlemi
+
+  IFunction  s2l = a -> a.length();
+  s2l.apply("ankara");//6 çıkar
+  interface IFunction<T, R> {
+    R apply(T t);
+  }
+
+- lambda parametreleri içerisinde tür yada var keywordu kullanılabilir. Ancak tür kullanılse bile lambda ifadelerinin atanacağı
+  referans var keyword'u ile belirtilemez.
+
+- Java 11 ile parametre tür dğeişkenleri var ile bildirilebilir.
+    IBinaryOperator binaryOperator(var a, var b) -> a + b; // since java 11;
+    interface IBinaryOperator {
+        int apply(int a, int b);
+    }
+
+- fonksiyonel arayüz referanslarına eğer elimizde parametrik yapısı tam uyumlu bir reference var ise bu metot ::
+  (çözünürlük) operatörü ile doğrudan atanabilir.
+- metod reference'lar non-static metodlar ile de yapılabilir.Ortada bir refence olması gerekir.
+
+
+
+- metot reference'ın genel biçimi statik metodlar için <class Name>::function_name;//şeklindedir.
+
+- metot reference'ın non-static metotlar için genel biçimi ise <reference>::function_name;
+
+- Metod reference'ları non-static fonksiyonları(Örneğin String length fonksiyonu), sanki bir statik metotmuş gibi
+  kullanılabilir. Bu tammen run-time'da static fonksiyonların non-static fonksiyonlara çevrilmesi ile alakalıdır.
+
+- <Sınıf ismi>::new sentaksı ctor çağrılmasını sağlayan sentaksıdır. Bu durumda interface'in ilgili sınıf türüne dönen
+  bir tan abstract metodu olmalıdır. Ayrıca sınıfın da bu abstract metodun parametrik yapısına uygun bir ctor'u
+  bulunmalıdır. Burada ctor parametresiz ise parametresiz bir abstract metod bulunmalıdır.
+
+- ctor parametreli yazılmış ise ona göre de interface'in  parametreli yazılmış olması gerekir. Bizde Yazacağımızı yapıyı
+  buna göre düzenlemeliyiz.
+
+--------------------------------------------------------------------------------------------------------------
+                                            26.04.2020
+--------------------------------------------------------------------------------------------------------------
+
+
+-------- Metot referans çeşitleri -------
+- Pratikte kullanılan 4 çeşit metot referans vardır.
+    1-) static metot referansları(reference to a static metod)
+    2-) Bir nesneye ilişkin non-static metotun reference(reference to an instance(non-static) method of particular object)
+    3-) Bir türe ilişkin  non-static metot referansı (reference to an instance(non-static) metot of any object of particular type)
+    4-) Ctor referansı(Reference to a ctor)
+
+- Java da generic sınıfların wrapper sınıflar için kullanılabilen bütün interface'lerin ayrıca primitive türler için
+  ayrıca temel türler için olan kısmı ayrıca yapılır.
+
+
+
+----- Java'nın function paketi ------
+
+- java.util paketi altındadır.
+
+- predicate interface'ler
+    - geri dönüş değeri boolean olan abstract fonksiyonu test ile isimlendirilmiş, veriyi alıp test eden interface'dir.
+
+- Supplier grupları
+    - Parametre almadan tür döndüren sınıflardır(Random sınıfının nextInt metodu için kullanılabilir.).
+
+- callback : bir metod dışarıdan hangi metodu çağıracağını alırsa böyle sınıflara call back denir. Bu tarz meotdlar high
+  order metodlar denir.
+
+- function paketinin detaylarını değil daha çok kullanımını göz önünde bulundurmalıyız.
+
+- function sınıfının bütün interface'lerini ezberlemek değil, kullanarak akılda kalması sağlanmalıdır.
+
+----- optional sınıfı -----
+
+- Java 8 ile eklenmiştir, Generic bir sınıftır. Bu tarz türlere nullable type'lar denir.
+
+- Optional türü bir nesne var ise kullanılıp, eğer nesne yok ise  herhangi bir şey yapmayacaktır. Optinal sınıfı ortada
+  bir işi exception olmadan halletmenin yöntemidir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            02.05.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- CommandPromptApp uygulaması yapıldı
+
+------------------------------------------------------------------------------------------------------------------------
+                                            03.05.2020
+------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Optional sınıfı
+------------------------------------------------------------------------------------------------------------------------
+
+- Sınıfın static empty metodu ile boş bir optional nesnesi elde edilir.
+- Sınıfın isPresent metodu ile bir optional nesnesinin dolu olup olmadığını test ederiz. isEmpty ilede argüman geçilen
+  nesnenin boş olup olmadığı test edilir.
+- Optional sınıfının of metodu ile bir bilgi Optional türüne dönüştürülür. Java da bir yerden sonra valueOf metodları of
+  metodları olarak isimlendirilmiştir.
+
+- Optional içerisindeki isPresent ve empty fonksiyonları bir flag ile kontrol edilerek yapılır.
+
+- sınıfın non-static get fonksiyonu ilgili optional referansın sarmaladığı değeri geri döndürür.
+
+- Optional sınıfının ctor'u private'tır.
+
+- sınıfın ofNullable metodu aldığı parametre null ise boş null değil ise dolu optional referansı döndürür.
+
+- bunu of metodu ile yapamayız, of metoduna null geçmek exception fırlatılmasına sebep olur.
+
+- orElse metodu eğer kullanılan referans boş ise geçilen default değeri, dolu ise içerisindekini verecektir.
+
+- orElseThrow metodu eğer verilen referans boş ise bir exception throw edilecektir.
+
+- ifPresent'in Consumer<? super T> action parametreli metodu eğer verilen optional referansı dolu ise yapılacka işi gösterir.
+
+- Consumer interface'i kendisine gönderilen parametre ile bir iş yapıp void değeri döndürür.
+
+- filter fonksiyonu argüman olarak geçilen predicate sağlanıyor ise, bu predicate' sağlayanlar için
+  ilgili referansı, sağlanmıyor ise empty Optipnal döner.
+
+- map fonksiyonu : parametresi Function interface'i türündendir. Bir optional sınıfından başka bir optional elde etmemizi
+  sağlar. map empty bir optional referansı ile çağırılırsa empty Optional türüne döner.
+
+- Function(BiFunction da dahil) açılımına göre verilen paramatrelere göre farklı bir değer üretir.
+
+- Optional sınıfının kullanım çeşitleri
+    1-) fonksiyonun geri dönüş değeri
+    2-) fonksiyon parametresi
+    3-) Sınıfların veri elemanları da optional olabilir.
+------------------------------------------------------------------------------------------------------------------------
+                                            Date sınıfı(Java'nın standart kütüphanesinin)
+------------------------------------------------------------------------------------------------------------------------
 

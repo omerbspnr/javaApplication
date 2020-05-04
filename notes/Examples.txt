@@ -4579,8 +4579,8 @@ class App {
         //...
     }
     Yukarıdaki bildirim bir anonim sınıf bildirimidir aynı zamanda da bir nesne yaratılması işlemidir. Yani anonim
-    sınıf bildirimi new operatörüne yazılan türden türetilmiş olan bir sınıfın hem bildirimi hemde o sınıf türünden
-    nesne yaratılması görevini verir
+    sınıf bildirimi new operatörüne yazılan türden türetilmiş eğer inteface implemente edilmiş olan bir sınıfın
+    hem bildirimi hemde o sınıf türünden nesne yaratılması görevini verir
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
@@ -5263,33 +5263,2668 @@ public class CSDTimer {
 /*----------------------------------------------------------------------------------------------------------------------
     Aşağıda açıklanan sınıfı yazınız:
     Açıklamalar:
-    1. Sınıfın ismi CoundownTimer olacaktır
+    1. Sınıfın ismi CountDownTimer olacaktır
 
     2. Sınıf abstract olarak yazılacak ve tek bir ctor'unda millisaniye cinsinden toplam zamanı ve
     period değerini milisaniye cinsinden alacaktır. Örnek bir kullanım aşağıdaki gibidir:
 
-    new CountdownTimer(10000, 1000) {...}
+    new CountDownTimer(10000, 1000) {...}
 
-    3. Sınıfın onTick ve onCompleted isimli iki adet abstract metodu olacaktır. onTick metodu
-    her periyotta çağrılan, onCompleted metodu ise geriye sayım bittiğinde çağrılan metot olarak
-    alınacaktır. onTick metodunun her çağrıldığında kalan zamanı milisaniye cinsinden alan bir
+    3. Sınıfın onTick ve onFinish isimli iki adet abstract metodu olacaktır. onTick metodu
+    her periyotta çağrılan, onFinish metodu ise geriye sayım bittiğinde çağrılan metot olarak
+    alınacaktır. onTick metodu her çağrıldığında kalan zamanı milisaniye cinsinden alan bir
     parametesi olacaktır. Örnek bir kullanım:
 
      new CountdownTimer(10000, 1000) {
-        public void onTick(long remaininMs)
+        public void onTick(long millisUntilFinished)
         {
             //Her adımda yapılacak iş
         }
 
-        public void onCompleted()
+        public void onFinish()
         {
             // Geri sayım bittiğinde yapılacak iş
         }
      }
-    4. Sınıfın final start metodu ile timer başlatılatacaktır
+    4. Sınıfın final start metodu ile timer başlatılacaktır
     5. Sınfın cancel isimli metodu geriye sayım timer'ını durdurmak için kullanılacaktır
 ----------------------------------------------------------------------------------------------------------------------*/
 
+package org.csystem.app;
+
+import org.csystem.util.CountDownTimer;
+
+class App {
+    public static void main(String[] args)
+    {
+        var countDownTimer = new CountDownTimer(10000, 1000) {
+            public void onTick(long millisUntilFinished)
+            {
+                System.out.printf("%02d\r", millisUntilFinished / 1000);
+            }
+
+            public void onFinish()
+            {
+                onTick(0);
+                System.out.println("\nGeri sayım bitti");
+            }
+        };
+
+        countDownTimer.start();
+    }
+}
+
+
+package org.csystem.app;
+
+import org.csystem.util.CountDownTimer;
+
+class App {
+    public static void main(String[] args)
+    {
+        var myCountDownTimer = new MyCountDownTimer(5000, 1000);
+
+        myCountDownTimer.start();
+    }
+}
+
+class MyCountDownTimer extends CountDownTimer {
+    public MyCountDownTimer(long millisFuture, long interval)
+    {
+        super(millisFuture, interval);
+    }
+
+    public void onTick(long millisUntilFinished)
+    {
+        System.out.printf("%02d\r", millisUntilFinished / 1000);
+    }
+
+    public void onFinish()
+    {
+        onTick(0);
+        System.out.println("\nGeri sayım bitti");
+    }
+}
+
+package org.csystem.app;
+
+import org.csystem.util.CountDownTimer;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        var countDownTimer = new CountDownTimer(10, 1, TimeUnit.SECONDS) {
+            public void onTick(long timeUntilFinished)
+            {
+                System.out.printf("%02d\r", timeUntilFinished);
+            }
+
+            public void onFinish()
+            {
+                onTick(0);
+                System.out.println("\nGeri sayım bitti");
+            }
+        };
+
+        countDownTimer.start();
+    }
+}
+
+
+package org.csystem.app;
+
+import org.csystem.util.CountDownTimer;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        var countDownTimer = new CountDownTimer(10, 2, 1, TimeUnit.SECONDS) {
+            public void onTick(long timeUntilFinished)
+            {
+                System.out.printf("%02d\r", timeUntilFinished);
+            }
+
+            public void onFinish()
+            {
+                onTick(0);
+                System.out.println("\nDers başlıyor");
+            }
+        };
+
+        countDownTimer.start();
+    }
+}
+
+package org.csystem.app;
+
+import org.csystem.util.CountDownTimer;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        var countDownTimer = new CountDownTimer(20, 1, TimeUnit.MINUTES) {
+            public void onTick(long timeUntilFinished)
+            {
+                System.out.printf("%02d\r", timeUntilFinished);
+            }
+
+            public void onFinish()
+            {
+                onTick(0);
+                System.out.println("\nDers başlıyor");
+            }
+        };
+
+        countDownTimer.start();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CountDownTimer sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.*;
+
+public abstract class CountDownTimer {
+    private Timer m_timer;
+    private long m_future, m_delay, m_interval;
+    private TimerTask m_timerTask;
+    private TimeUnit m_timeUnit;
+
+    private TimerTask getTimerTask()
+    {
+        return new TimerTask() {
+            private long m_value;
+
+            public void run()
+            {
+                var value = m_future - m_value;
+                var timeUntilFinished = m_timeUnit == MILLISECONDS ? value : m_timeUnit.convert(value, MILLISECONDS);
+
+                onTick(timeUntilFinished);
+                m_value += m_interval;
+                if (m_value < m_future)
+                    return;
+
+                onFinish();
+                m_timer.cancel();
+            }
+        };
+    }
+
+    private void initTimer()
+    {
+        m_timer = new Timer();
+        m_timerTask = getTimerTask();
+    }
+
+    protected CountDownTimer(long millisFuture, long interval)
+    {
+        this(millisFuture, interval, TimeUnit.MILLISECONDS);
+    }
+
+    protected CountDownTimer(long future, long interval, TimeUnit timeUnit)
+    {
+        this(future, 0, interval, timeUnit);
+    }
+
+    CountDownTimer(long future, long delay, long interval, TimeUnit timeUnit)
+    {
+        if (future < interval)
+            throw new IllegalArgumentException("interval must be less or equal than future");
+
+        m_timeUnit = timeUnit;
+        m_future = timeUnit == MILLISECONDS ? future : MILLISECONDS.convert(future, m_timeUnit);
+        m_delay = timeUnit == MILLISECONDS ? delay : MILLISECONDS.convert(delay, m_timeUnit);
+        m_interval = timeUnit == MILLISECONDS ? interval : MILLISECONDS.convert(interval, m_timeUnit);
+        this.initTimer();
+    }
+
+    public abstract void onTick(long timeUntilFinished);
+    public abstract void onFinish();
+
+    public final void start()
+    {
+        m_timer.schedule(m_timerTask, m_delay, m_interval);
+    }
+
+    public final void cancel()
+    {
+        m_timer.cancel();
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CountDownTimerEx sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.CountDownTimer;
+import org.csystem.util.CountDownTimerEx;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        var countDownTimer = new CountDownTimerEx(10, 3, 1, TimeUnit.SECONDS) {
+            public void onStart()
+            {
+                System.out.println("Geri sayım az sonra başlayacak...");
+            }
+            public void onTick(long timeUntilFinished)
+            {
+                System.out.printf("%02d\r", timeUntilFinished);
+            }
+
+            public void onFinish()
+            {
+                onTick(0);
+                System.out.println("\nGeri sayım bitti");
+            }
+        };
+
+        countDownTimer.startTimer();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CountDownTimerEx sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.concurrent.TimeUnit;
+
+public abstract class CountDownTimerEx extends CountDownTimer {
+    protected CountDownTimerEx(long millisFuture, long interval)
+    {
+        this(millisFuture, interval, TimeUnit.MILLISECONDS);
+    }
+
+    protected CountDownTimerEx(long future, long interval, TimeUnit timeUnit)
+    {
+        this(future, 0, interval, timeUnit);
+    }
+
+    protected CountDownTimerEx(long future, long delay, long interval, TimeUnit timeUnit)
+    {
+        super(future, delay, interval, timeUnit);
+    }
+
+    public void startTimer()
+    {
+        this.onStart();
+        super.start();
+    }
+
+    public abstract void onStart();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte x'in türü ne boolean ne de double olacaktır. Bu8na yönelik kullanılabilecek genel bir
+    türden olacaktır (Kabaca Comparable interface türünden). ileride daha detaylı olarak anlatılacak
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String[] args)
+    {
+        int a = Console.readInt("Bir sayı giriniz:");
+        var x = a > 0 ? true : 3.4;
+
+        System.out.println(x);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte x'in türü int double türüne dönüşebildiğinden double olacaktır. Buna yönelik derleyici kod üretir.
+    ileride daha detaylı olarak anlatılacak
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String[] args)
+    {
+        int a = Console.readInt("Bir sayı giriniz:");
+        var x = a > 0 ? 10 : 3.4;
+
+        System.out.println(x);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte non-static initializer ile adeta nesneye (anonim) ilk değer verme biçiminde kullanabiliyoruz.
+    Aşağıdaki kodun temsili eşdeğeri:
+    class App$1 extends Point {
+        {
+            x = 10;
+            y = 20;
+        }
+    }
+    p = new App$1();
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Point p = new Point() {{x = 10; y = 30;}};
+
+        System.out.println(p.getClass().getName());
+        System.out.println(p);
+    }
+}
+
+class Point {
+    public int x, y;
+
+    public Point()
+    {}
+
+    public Point(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    //...
+
+    public void offset(int dxy)
+    {
+        offset(dxy, dxy);
+    }
+    public void offset(int dx, int dy)
+    {
+        x += dx;
+        y += dy;
+    }
+
+    public String toString()
+    {
+        return String.format("(%d, %d)", x, y);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte yine non-static initilizer yazılarak adeta ilk değer verilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String[] args)
+    {
+        ArrayList list = new ArrayList() {{add("ankara"); add("istanbul"); add("zonguldak");}};
+
+        System.out.println(list.getClass().getName());
+
+        System.out.println(list);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arayüzler ile de anonim sınıflar bildirilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IX ix = new IX() {
+            public void foo()
+            {
+                System.out.println("foo");
+            }
+            public void bar()
+            {
+                System.out.println("bar");
+            }
+        };
+
+
+        System.out.println(ix.getClass().getName());
+        ix.foo();
+        ix.bar();
+    }
+}
+
+interface IX {
+    void foo();
+    void bar();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin genel biçimleri: (Since Java 8)
+    1. (değişken listesi) -> ifade
+    2. (değişken listesi) -> {...}
+    3. değişken -> ifade
+    4. değişken -> {...}
+    5. () -> ifade
+    6. () -> {...}
+    7. (<tür değişken listesi>) -> ifade
+    8. (<tür değişken listesi>) -> {...}
+
+    Lambda ifadeleri uygun fonksiyonel arayüz referanslarına atanabilir. Fonksiyonel olmayan arayüz referanslarına
+    atanamaz.
+    Hatırlatma: İçerisinde bir ve yalnız bir tane abstract metot olan arayüzlere fonksiyonel arayüzler denir.
+    Bir lambda ifadesi aslında atandığı fonksiyonel arayüzün abstract metodunun yerine geçen metodun yazılmasıdır
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+Aşağıdaki örnek anonim sınıf kullanılarak aşağıdaki gibi yazılabilir:
+
+    IIntBinaryOperator op = new IIntBinaryOperation() {
+        public int apply(int a, int b)
+        {
+            return a + b;
+        }
+    };
+
+    System.out.println(op.apply(10, 10));
+    System.out.println(op.apply(20, 30));
+
+Ancak lambda ifadelerinin arka plandaki yazılışları (closure) tam olarak böyle değildir. Bu ileride ele alınacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntBinaryOperator op = (a, b) -> a + b;
+
+        System.out.println(op.apply(10, 10));
+        System.out.println(op.apply(20, 30));
+    }
+}
+
+interface IIntBinaryOperator {
+    int apply(int a, int b);
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntBinaryOperator op = (a, b) -> a + b;
+
+        System.out.println(op.apply(10, 10));
+        System.out.println(op.apply(20, 30));
+
+        op = (a, b) -> a * b;
+
+        System.out.println(op.apply(10, 10));
+        System.out.println(op.apply(20, 30));
+    }
+}
+
+interface IIntBinaryOperator {
+    int apply(int a, int b);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadeleri uygun fonksiyonel arayüzlere atanabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntUnaryOperator op = a -> a * a;
+
+        System.out.println(op.apply(10));
+    }
+}
+
+interface IIntUnaryOperator {
+    int apply(int val);
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntUnaryOperator op = a ->  {
+            System.out.printf("a=%d%n", a);
+
+            return a * a;
+        };
+
+        System.out.println(op.apply(10));
+    }
+}
+
+interface IIntUnaryOperator {
+    int apply(int val);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Generic fonksiyonel arayüzler ile lambda ifadesinin kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IBinaryOperator<Integer> opInt = (a, b) -> a + b;
+
+        System.out.println(opInt.apply(10, 20));
+
+        IBinaryOperator<String> opStr = (name, surname) -> name + " " + surname;
+
+        System.out.println(opStr.apply("oğuz", "karan"));
+    }
+}
+
+interface IBinaryOperator<T> {
+    T apply(T t1, T t2);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin parametre değişkenleri (-> dan önceki değişkenler) yerel değişken kabul edilir ve
+    ilgili Lambda ifadesi boyunca görülebilirdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IUnaryOperator<Integer> opInt = a -> a * a;
+        IUnaryOperator<String> opStr = a -> a.toUpperCase();
+
+        System.out.println(opInt.apply(10));
+        System.out.println(opStr.apply("ankara"));
+    }
+}
+
+interface IUnaryOperator<T> {
+    T apply(T t1);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lamda ifadelerinde parametre değişkenleri yerel değişkenlerdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        int a = 10;
+
+        IUnaryOperator<Integer> opInt = a -> a * a; //error
+        IUnaryOperator<String> opStr = a -> a.toUpperCase(); //error
+
+        System.out.println(opInt.apply(10));
+        System.out.println(opStr.apply("ankara"));
+    }
+}
+
+interface IUnaryOperator<T> {
+    T apply(T t1);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lamda ifadeleri içerisinde kendisinden önce bildirilen yerel değişkenler kullanılabilir. Bu yerel değişkenler de
+    effectively final olur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String[] args)
+    {
+        int val = Console.readInt("Bir sayı giriniz:");
+
+        IUnaryOperator<Integer> opInt = a -> a + val;
+
+        System.out.println(opInt.apply(10));
+    }
+}
+
+interface IUnaryOperator<T> {
+    T apply(T t1);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDTimer sınıfının Lambda ifadesi ile kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.CSDTimer;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String[] args)
+    {
+        var timer = new CSDTimer(0, 1, TimeUnit.SECONDS);
+
+        timer.start(() -> System.out.print('.'));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IFunction<String, Integer> convert = s -> s.length();
+
+        System.out.println(convert.apply("ankara"));
+    }
+}
+
+interface IFunction<T, R> {
+    R apply(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        CityInfo ci = Util.create((p, n) -> new CityInfo(p, n), 34, "istanbul");
+
+        System.out.println(ci);
+
+        String fullName = Util.create((s1, s2) -> s2 + " " + s1, "karan", "oğuz");
+
+        System.out.println(fullName);
+
+        CityInfoFactory factory = new CityInfoFactory();
+
+        CityInfo ci2 = Util.create((p, n) -> factory.create(p, n), 34, "istanbul");
+
+        System.out.println(ci2);
+    }
+}
+
+interface IBiFunction<T, U, R> {
+    R apply(T t, U u);
+}
+
+class Util {
+    public static <T, U, R> R create(IBiFunction<T, U, R> biFunction, T t, U u)
+    {
+        return biFunction.apply(t, u);
+    }
+}
+
+class CityInfoFactory {
+    //...
+    public CityInfo create(int plate, String name)
+    {
+        //...
+        return new CityInfo(plate, name);
+    }
+}
+
+class CityInfo {
+    private int m_plate;
+    private String m_name;
+
+    public CityInfo(int plate, String name)
+    {
+        m_plate = plate;
+        m_name = name;
+    }
+
+    public int getPlate()
+    {
+        return m_plate;
+    }
+
+    public void setPlate(int plate)
+    {
+        m_plate = plate;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    public String toString()
+    {
+        return String.format("%d-%s", m_plate, m_name);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki örneğin metot referansları ile yapılışı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        CityInfo ci = Util.create(CityInfo::new, 34, "istanbul");
+
+        System.out.println(ci);
+
+        String fullName = Util.create((s1, s2) -> s2 + " " + s1, "karan", "oğuz");
+
+        System.out.println(fullName);
+
+        CityInfoFactory factory = new CityInfoFactory();
+
+        CityInfo ci2 = Util.create(factory::create, 34, "istanbul");
+
+        System.out.println(ci2);
+    }
+}
+
+interface IBiFunction<T, U, R> {
+    R apply(T t, U u);
+}
+
+class Util {
+    public static <T, U, R> R create(IBiFunction<T, U, R> biFunction, T t, U u)
+    {
+        return biFunction.apply(t, u);
+    }
+}
+
+class CityInfoFactory {
+    //...
+    public CityInfo create(int plate, String name)
+    {
+        //...
+        return new CityInfo(plate, name);
+    }
+}
+
+class CityInfo {
+    private int m_plate;
+    private String m_name;
+
+    public CityInfo(int plate, String name)
+    {
+        m_plate = plate;
+        m_name = name;
+    }
+
+    public int getPlate()
+    {
+        return m_plate;
+    }
+
+    public void setPlate(int plate)
+    {
+        m_plate = plate;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    public String toString()
+    {
+        return String.format("%d-%s", m_plate, m_name);
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda parametreleri içerisinde tür kullanılabilir. Ancak tür kullanılsa bile lambda ifadesinin atanacağı
+    referansın var olarak bildirilmesi geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IFunction<Integer, Integer> integerFunc = (Integer a) -> a * a;
+        var intFunc = (int a) -> a + ""; //error
+
+
+    }
+}
+
+interface IIntFunction<R> {
+    R apply(int val);
+}
+interface IFunction<T, R> {
+    R apply(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerine ilişkin parametrelerin uyumlu verilmesi zorunludur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        ILongOperator op = (int a, int b) -> a + b; //error
+    }
+}
+
+interface ILongOperator {
+    long apply(long a, long b);
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Fonksiyonel arayüz referanslarına eğer elimizde tam uyumlu bir metot varsa :: ile aşağıdaki gibi bir
+    atama yapılabilir. Aşağıdaki örnekte add metodu apply metodu yerine geçmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntOperator op = Operation::add; //method reference: (a, b) -> Operation.add(a, b);
+
+        System.out.println(op.apply(10, 20));
+    }
+}
+
+class Operation {
+    public static int add(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+interface IIntOperator {
+    int apply(int a, int b);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    non-static metotlar da :: ile kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        var operation = new Operation(3);
+
+        IIntOperator op = operation::add; //method reference: (a, b) -> operation.add(a, b);
+
+        System.out.println(op.apply(10, 20));
+    }
+}
+
+class Operation {
+    private int m_val;
+
+    public Operation(int val)
+    {
+        m_val = val;
+    }
+
+    public int add(int a, int b)
+    {
+        return a + b + m_val;
+    }
+}
+
+interface IIntOperator {
+    int apply(int a, int b);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    <sınıf ismi>::new sentaksı ctor çağrılmasını sağlayan sentakstır. Bu durumda interface'in ilgili sınıf
+    türüne dönen bir tan abstract metodu olmalıdır. Ayrıca sınıfın da bu abstract metodun parametrik yapısına
+    uygun bir ctor'u bulunmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IFactory<Sample> sampleFactory = Sample::new; //() -> new Sample();
+
+        Sample s = sampleFactory.create();
+
+        //
+    }
+}
+
+class Sample {
+    public Sample()
+    {
+        System.out.println("Sample.Sample()");
+    }
+    //...
+}
+
+interface IFactory<T> {
+    T create();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    <sınıf ismi>::new sentaksı ctor çağrılmasını sağlayan sentakstır. Bu durumda interface'in ilgili sınıf
+    türüne dönen bir tan abstract metodu olmalıdır. Ayrıca sınıfın da bu abstract metodun parametrik yapısına
+    uygun bir ctor'u bulunmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IFactory<String, Sample> sampleFactory = Sample::new; //() -> new Sample();
+
+        Sample s = sampleFactory.create("ankara");
+
+        //
+    }
+}
+
+class Sample {
+    public Sample(String val)
+    {
+        System.out.println("Sample.Sample(String)");
+    }
+    //...
+}
+
+interface IFactory<T, R> {
+    R create(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Method referensı çeşitleri:
+    1. static metot referansı (reference to a static method)
+    2. Bir nesneye ilişkin non static metot referansı (reference to an instance (non-static) method of particular object)
+    3. Bir türe ilişkin non-static metot referansı (reference to an instance (non-static) method of any object of a particular type)
+    4. Ctor referansı (reference to a constructor)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntBinaryOperator op = Operation::add; //1
+
+        System.out.println(op.apply(10, 20));
+        System.out.println("///////////////////////////////");
+        IIntPredicate pred = NumberUtil::isPrime; //1
+
+        System.out.println(pred.test(1_000_003) ? "Asal" : "Asal değil");
+
+        System.out.println("///////////////////////////////");
+        Random r = new Random();
+
+        IIntSupplier supplier = r::nextInt; //2 () -> r.nextInt();
+
+        System.out.println(supplier.get());
+        System.out.println("///////////////////////////////");
+
+        IRandomIntOperation randomOperation = Random::nextInt;//3 rand -> rand.nextInt()
+
+        System.out.println(randomOperation.get(r));
+
+        System.out.println("///////////////////////////////");
+
+        IStringToIntConverter converter = String::length; //3
+
+        System.out.println(converter.convert("ankara"));
+        System.out.println("///////////////////////////////");
+
+        IFactoryInt<Sample> factoryInt = Sample::new; //4
+
+        Sample s = factoryInt.create(10);
+
+        System.out.println(s.getVal());
+
+        System.out.println("///////////////////////////////");
+        IRandomIntBoundOperation randomIntBoundOperation = Random::nextInt; //3: (rand, val) -> rand.nextInt(val)
+
+        System.out.println(randomIntBoundOperation.get(r, 100));
+    }
+}
+
+class Operation {
+    public static int add(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+interface IFactoryInt<T> {
+    T create(int val);
+}
+
+class Sample {
+    private int m_val;
+
+    public Sample(int val)
+    {
+        m_val = val;
+        System.out.println("Sample.Sample(int)");
+    }
+
+    public int getVal()
+    {
+        return m_val;
+    }
+}
+
+interface IRandomIntBoundOperation {
+    int get(Random r, int bound);
+}
+interface IRandomIntOperation {
+    int get(Random r);
+}
+
+interface IIntSupplier {
+    int get();
+}
+
+interface IIntPredicate {
+    boolean test(int val);
+}
+
+interface IStringToIntConverter {
+    int convert(String s);
+}
+interface IIntBinaryOperator {
+    int apply(int a, int b);
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        String [] s = {"ankara", "istanbul", "izmir", "zonguldak"};
+
+        ConvertUtil.display(s, String::length);
+        System.out.println("*********************");
+        ConvertUtil.display(s, str -> str.length());
+    }
+}
+
+class ConvertUtil {
+    public static <T, R> void display(T [] a, IBiFunction<T, R> biFunction)
+    {
+        for (T t : a)
+            System.out.println(biFunction.apply(t));
+    }
+}
+
+interface IBiFunction<T, R> {
+    R apply(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Lambda ifadelerinin bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        String [] s = {"ankara", "istanbul", "izmir", "zonguldak"};
+
+        ConvertUtil.display(s, String::length);
+        System.out.println("*********************");
+        ConvertUtil.display(s, str -> str.length());
+    }
+}
+
+class ConvertUtil {
+    public static <T, R> void display(T [] a, IBiFunction<T, R> biFunction)
+    {
+        for (T t : a)
+            System.out.println(biFunction.apply(t));
+    }
+}
+
+interface IBiFunction<T, R> {
+    R apply(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    FunctionalUtil sınıfı ile fonksiyonel programlama kullanımı
+    Not: FunctionalUtil tasarımı ve detayları önemli değildir. Burada kullanıma odaklanınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.NumberUtil;
+import org.csystem.util.function.FunctionalUtil;
+
+class App {
+    public static void main(String[] args)
+    {
+        int [] a = ArrayUtil.getRandomArray(10, 1, 100);
+        int [] b = new int[a.length];
+
+        ArrayUtil.display(a);
+        int count = FunctionalUtil.copyIf(a, b, NumberUtil::isPrime);
+
+        FunctionalUtil.forEach(b, count, System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    FunctionalUtil sınıfı ile fonksiyonel programlama kullanımı
+    Not: FunctionalUtil tasarımı ve detayları önemli değildir. Burada kullanıma odaklanınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.NumberUtil;
+import org.csystem.util.function.FunctionalUtil;
+
+class App {
+    public static void main(String[] args)
+    {
+        int [] a = ArrayUtil.getRandomArray(10, 1, 100);
+        int [] b = new int[a.length];
+
+        ArrayUtil.display(a);
+        int count = FunctionalUtil.copyIf(a, b, NumberUtil::isPrime);
+
+        FunctionalUtil.forEach(b, count, val -> System.out.printf("%d ", val));
+
+        System.out.println();
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    FunctionalUtil sınıfı ile fonksiyonel programlama kullanımı
+    Not: FunctionalUtil tasarımı ve detayları önemli değildir. Burada kullanıma odaklanınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.NumberUtil;
+import org.csystem.util.function.FunctionalUtil;
+
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        int [] a = new int[10];
+        int [] b = new int[a.length];
+        Random r = new Random();
+
+        FunctionalUtil.fillArray(a, () -> r.nextInt(100));
+        ArrayUtil.display(a);
+        int count = FunctionalUtil.copyIf(a, b, NumberUtil::isPrime);
+
+        FunctionalUtil.forEach(b, count, val -> System.out.printf("%d ", val));
+
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    FunctionalUtil sınıfı ile fonksiyonel programlama kullanımı
+    Not: FunctionalUtil tasarımı ve detayları önemli değildir. Burada kullanıma odaklanınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.NumberUtil;
+import org.csystem.util.function.FunctionalUtil;
+
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        int [] a = new int[10];
+        int [] b = new int[a.length];
+        Random r = new Random();
+
+        FunctionalUtil.fillArray(a, r::nextInt);
+        ArrayUtil.display(a);
+        int count = FunctionalUtil.copyIf(a, b, NumberUtil::isPrime);
+
+        FunctionalUtil.forEach(b, count, val -> System.out.printf("%d ", val));
+
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki kod inceleyiniz:
+
+    Aşağıdaki kodun anonim sınıf ile bir yapılış biçimi:
+    Sample s = new Sample(10);
+
+    func = new ISupplier<String>() {
+        private Sample m_str = s;
+
+        public String get()
+        {
+            return m_str.toString();
+        }
+    };
+
+    s = new Sample(23);
+
+    System.out.println(func.get());
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample(10);
+
+        ISupplier<String> func = s::toString;
+
+        System.out.println(func.get());
+
+        s = new Sample(24);
+
+        System.out.println(func.get());
+    }
+}
+
+interface ISupplier<R> {
+    R get();
+}
+
+class Sample {
+    private int m_val;
+
+    public Sample(int val)
+    {
+        m_val = val;
+    }
+
+    public void setVal(int val)
+    {
+        m_val = val;
+    }
+
+    public int getVal()
+    {
+        return m_val;
+    }
+
+    public String toString()
+    {
+        return m_val + "";
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki kod inceleyiniz:
+
+    Aşağıdaki kodun anonim sınıf ile bir yapılış biçimi:
+    Sample s = new Sample(10);
+
+    func = new ISupplier<String>() {
+        private Sample m_str = s;
+
+        public String get()
+        {
+            return m_str.toString();
+        }
+    };
+
+    s.setVal(67);
+
+    System.out.println(func.get());
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        Sample s = new Sample(10);
+
+        ISupplier<String> func = s::toString;
+
+        System.out.println(func.get());
+
+        s.setVal(67);
+
+        System.out.println(func.get());
+    }
+}
+
+interface ISupplier<R> {
+    R get();
+}
+
+class Sample {
+    private int m_val;
+
+    public Sample(int val)
+    {
+        m_val = val;
+    }
+
+    public void setVal(int val)
+    {
+        m_val = val;
+    }
+
+    public int getVal()
+    {
+        return m_val;
+    }
+
+    public String toString()
+    {
+        return m_val + "";
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Generic parametreler temel türler olarak açılamazlar. Bu durumda temel türlere ilişkin sarmalayan sınıflar
+    olarak açılabilirler. Bu durumda otomatik kutulama ve otomatik kutuyu açma maliyeti programı etkileyebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IBinaryOperator<Integer> bo = (a, b) -> a + b;
+
+        int val = bo.apply(10, 20); //auto-boxing, auto-unboxing
+
+        System.out.println(val * val);
+    }
+}
+
+interface IBinaryOperator<T> {
+    T apply(T t1, T t2);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte int türü için ayrı bir interface yazıldığından yukarıdaki kutulama ve kutuyu açma maliyeti
+    ortadan kalkmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String[] args)
+    {
+        IIntBinaryOperator intBinaryOperator = (a, b) -> a + b;
+
+        int val = intBinaryOperator.apply(10, 20);
+
+        System.out.println(val * val);
+
+        IBinaryOperator<String> stringIBinaryOperator = (s1, s2) -> s1 + " " + s2;
+
+        System.out.println(stringIBinaryOperator.apply("oğuz", "karan"));
+    }
+}
+
+interface IIntBinaryOperator {
+    int apply(int a, int b);
+}
+
+interface IBinaryOperator<T> {
+    T apply(T t1, T t2);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    FunctionalUtil sınıfı ile fonksiyonel programlama kullanımı
+    Not: FunctionalUtil tasarımı ve detayları önemli değildir. Burada kullanıma odaklanınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+import org.csystem.util.function.FunctionalUtil;
+
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        String [] passwords = new String[10];
+        String [] newPassWord = new String[passwords.length];
+
+        Random r = new Random();
+
+        FunctionalUtil.fillArray(passwords, () -> StringUtil.getRandomStringTR(r, r.nextInt(10)  + 1));
+        FunctionalUtil.forEach(passwords, passwords.length, System.out::println);
+        System.out.println("/////////////////////////////");
+        int count = FunctionalUtil.copyIf(passwords, newPassWord, p -> p.length() > 5);
+
+        FunctionalUtil.forEach(newPassWord, count, System.out::println);
+    }
+}
+
+package org.csystem.util.function;
+
+public final class FunctionalUtil {
+    private FunctionalUtil() {}
+
+    public static <T> int copyIf(T [] src, T [] dest, IUnaryPredicate<T> pred)
+    {
+        int index = 0;
+
+        for (T t : src)
+            if (pred.test(t))
+                dest[index++] = t;
+
+        return index;
+    }
+
+    public static int copyIf(int [] src, int [] dest, IIntUnaryPredicate pred)
+    {
+        int index = 0;
+
+        for (int val : src)
+            if (pred.test(val))
+                dest[index++] = val;
+
+        return index;
+    }
+
+    public static void forEach(int [] a, int count, IIntConsumer con)
+    {
+        for (int i = 0; i < count; ++i)
+            con.accept(a[i]);
+    }
+
+    public static <T> void forEach(T [] a, int count, IConsumer<T> con)
+    {
+        for (int i = 0; i < count; ++i)
+            con.accept(a[i]);
+    }
+
+    public static void fillArray(int [] a, IIntSupplier supplier)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = supplier.get();
+    }
+
+    public static <T> void fillArray(T [] a, ISupplier<T> supplier)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = supplier.get();
+    }
+}
+package org.csystem.util.function;
+
+public interface IConsumer<T> {
+    void accept(T t);
+}
+package org.csystem.util.function;
+
+public interface IIntConsumer {
+    void accept(int val);
+}
+package org.csystem.util.function;
+
+public interface IIntSupplier {
+    int get();
+}
+package org.csystem.util.function;
+
+public interface IIntUnaryPredicate {
+    boolean test(int val);
+}
+package org.csystem.util.function;
+
+public interface ISupplier<T> {
+    T get();
+}
+package org.csystem.util.function;
+
+public interface IUnaryPredicate<T> {
+    boolean test(T t);
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının empty metodu ile boş bir optional nesnesi elde edilebilir. Optional sınıfının isPresent
+    metodu ile optional nesnesinin dolu olup olmadığı test edilebilir. Aynı zamanda isEmpty metodu ile de
+    boş olup olmadığı test edilebilir. Optional sınıfının of metodu ile bir bilgi Optioanl olarak elde edilebilir.
+    Optional içerisinden veri get metodu ile alınabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            optStr = r.nextBoolean() ? Optional.of(StringUtil.getRandomStringTR(r, 10)) : Optional.empty();
+            if (optStr.isPresent())  // Dolu optional
+                System.out.printf("Text:%s%n", optStr.get());
+            else
+                System.out.println("Boş optional");
+
+            if (optStr.isEmpty())
+                System.out.println("Boş optional");
+            else
+                System.out.printf("Text:%s%n", optStr.get());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının ofNullable metodu aldığı parametre null ise boş, null değil se dolu optional referansı
+    döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+
+            if (optStr.isPresent())  // Dolu optional
+                System.out.printf("Text:%s%n", optStr.get());
+            else
+                System.out.println("Boş optional");
+
+            if (optStr.isEmpty())
+                System.out.println("Boş optional");
+            else
+                System.out.printf("Text:%s%n", optStr.get());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının orElse metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+
+            System.out.println(optStr.orElse("ankara"));
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının orElseGet metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+
+            System.out.println(optStr.orElseGet(() -> "Sayı:" + r.nextInt(100)));
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının orElseThrow metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            try {
+                optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+
+                System.out.println(optStr.orElseThrow());
+            }
+            catch (NoSuchElementException ex) {
+                System.out.println("Boş optional");
+            }
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının orElseThrow metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            try {
+                optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+
+                System.out.println(optStr.orElseThrow(() -> new IllegalArgumentException("Geçersiz argüman")));
+            }
+            catch (IllegalArgumentException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının orElseThrow metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            try {
+                optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+
+                System.out.println(optStr.orElseThrow(IllegalArgumentException::new));
+            }
+            catch (IllegalArgumentException ex) {
+                System.out.println("Geçersiz argüman");
+            }
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının ifPresent metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+            optStr.ifPresent(System.out::println);
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının ifPresent metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 10; ++i) {
+            optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, 10) : null);
+            optStr.ifPresent(s -> System.out.printf("[%s]", s));
+        }
+
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının filter metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.StringUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        Optional<String> optStr;
+
+        for (int i = 0; i < 5; ++i) {
+            int n = r.nextInt(21);
+            optStr = Optional.ofNullable(r.nextBoolean() ? StringUtil.getRandomStringTR(r, n) : null);
+            int val = r.nextInt(21);
+
+            optStr.ifPresent(s -> System.out.printf("Text:%s%n", s));
+            System.out.printf("val=%d%n", val);
+            var optResult = optStr.filter(s -> s.length() > val);
+            System.out.printf("Result:%s%n", optResult.orElse("Koşul gerçeklenmedi"));
+            System.out.println("//////////////////////////");
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının map metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        RandomCityInfoApp app = new RandomCityInfoApp(10);
+
+        app.run();
+    }
+}
+
+class RandomCityInfoApp {
+    private int m_count;
+
+    public RandomCityInfoApp(int count)
+    {
+        m_count = count;
+    }
+
+    public void run()
+    {
+        for (int i = 0; i < m_count; ++i) {
+            Optional<CityInfo> optCityInfo = CityInfoFactory.getRandomCityInfo();
+            Optional<String> optStr = optCityInfo.map(CityInfo::toString); // ci -> ci.toString()
+
+            System.out.println(optStr.orElse("Şehir seçilemedi"));
+        }
+    }
+}
+
+final class CityInfoFactory {
+    private final static ArrayList<CityInfo> ms_cityInfos = new ArrayList<>();
+    private final static Random ms_random = new Random();
+
+    static {
+        ms_cityInfos.add(new CityInfo(34, "istanbul"));
+        ms_cityInfos.add(new CityInfo(6, "ankara"));
+        ms_cityInfos.add(new CityInfo(35, "izmir"));
+        ms_cityInfos.add(new CityInfo(67, "zonguldak"));
+        ms_cityInfos.add(null);
+        ms_cityInfos.add(null);
+        ms_cityInfos.add(null);
+    }
+    private CityInfoFactory() {}
+
+    public static Optional<CityInfo> getRandomCityInfo()
+    {
+        int index = ms_random.nextInt(ms_cityInfos.size());
+
+        return Optional.ofNullable(ms_cityInfos.get(index));
+    }
+}
+
+class CityInfo {
+    private int m_plate;
+    private String m_name;
+
+    public CityInfo(int plate, String name)
+    {
+        m_plate = plate;
+        m_name = name;
+    }
+
+    public int getPlate()
+    {
+        return m_plate;
+    }
+
+    public void setPlate(int plate)
+    {
+        m_plate = plate;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    public String toString()
+    {
+        return String.format("%d-%s", m_plate, m_name);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir metodun geri dönüş değerinin Optional (burada OptionalInt) olması durumu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.util.OptionalInt;
+
+class App {
+    public static void main(String[] args)
+    {
+        String str = Console.readLine("Bir yazı giriniz");
+
+        OptionalInt optionalInt = Util.toInt(str, 16);
+
+        if (optionalInt.isPresent())
+            Console.writeLine("val=%d%n", optionalInt.getAsInt());
+        else
+            Console.writeLine("int türü formatında giriş yapılmadı");
+    }
+}
+
+class Util {
+    public static OptionalInt toInt(String str)
+    {
+        return toInt(str, 10);
+    }
+
+    public static OptionalInt toInt(String str, int radix)
+    {
+        OptionalInt optionalInt = OptionalInt.empty();
+
+        try {
+            optionalInt = OptionalInt.of(Integer.parseInt(str, radix));
+        }
+        catch (NumberFormatException ex) {
+
+        }
+
+        return optionalInt;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir metodun geri dönüş değerinin Optional olması durumu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+class App {
+    public static void main(String[] args)
+    {
+        ArrayList<String> list = new ArrayList<>();
+
+        list.add("ankara");
+        list.add("istanbul");
+        //list.add("bolu");
+        //list.add("muş");
+
+        var optCity = Util.findFirst(list, s -> s.length() < 5);
+
+        System.out.println(optCity.orElse("Şehir bulunamadı"));
+    }
+}
+
+class Util {
+    public static <T> Optional<T> findFirst(ArrayList<T> list, Predicate<T> pred)
+    {
+        for (T t : list)
+            if (pred.test(t))
+                return Optional.of(t);
+
+        return Optional.empty();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bit metodun parametre değişkeninin Optional olması durumu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Optional;
+import java.util.Random;
+
+class App {
+    public static void main(String[] args)
+    {
+        int [] a = Util.getRandomArray(Optional.empty(), 10, 1, 100);
+
+        ArrayUtil.display(2, a);
+
+        Random r = new Random();
+
+        a = Util.getRandomArray(Optional.of(r), 10, 1, 100);
+        ArrayUtil.display(2, a);
+    }
+}
+
+class Util {
+    public static int [] getRandomArray(Optional<Random> optRand, int n, int min, int max)
+    {
+        Random r = optRand.orElse(new Random());
+
+        int [] a = new int[n];
+
+        for (int i = 0; i < n; ++i)
+            a[i] = r.nextInt(max - min) + min;
+
+        return a;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Optional sınıfının toString metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Optional;
+
+class App {
+    public static void main(String[] args)
+    {
+        System.out.println(Optional.empty());
+        System.out.println(Optional.of("ankara"));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir sınıfın Optional veri elemanı olması durumu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Optional;
+
+class App {
+    public static void main(String[] args)
+    {
+        var p1 = new Person();
+
+        p1.setFirstname("Oğuz");
+        p1.setSurname("Karan");
+
+        System.out.println(p1);
+
+        var p2 = new Person();
+
+        p2.setFirstname("Sılay");
+        p2.setSecondname("Beyza");
+        p2.setSurname("Erte");
+
+        System.out.println(p2);
+    }
+}
+
+class Person {
+    private String m_firstname;
+    private Optional<String> m_secondname = Optional.empty();
+    private String m_surname;
+
+    //...
+
+    public String getFirstname()
+    {
+        return m_firstname;
+    }
+
+    public void setFirstname(String firstname)
+    {
+        m_firstname = firstname;
+    }
+
+
+    public void setSecondname(String s)
+    {
+        m_secondname = (s == null || s.isBlank()) ? Optional.empty() : Optional.of(s);
+    }
+
+    public Optional<String> getSecondname()
+    {
+        return m_secondname;
+    }
+
+    public String getSurname()
+    {
+        return m_surname;
+    }
+
+    public void setSurname(String surname)
+    {
+        m_surname = surname;
+    }
+
+    public String toString()
+    {
+        return String.format("%s%s %s", m_firstname, m_secondname.map(s -> " " + s).orElse(""), m_surname);
+        //return String.format("%s%s %s", m_firstname, m_secondname.isPresent() ? " " + m_secondname.get() : "", m_surname);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Pair sınıfı ile basit bir MyOptional sınıfı tasarımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Pair;
+
+class App {
+    public static void main(String[] args)
+    {
+        var opt = MyOptional.of("ankara");
+
+        if (opt.isPresent())
+            System.out.println(opt.get());
+        else
+            System.out.println("Boş");
+    }
+}
+
+final class MyOptional<T> {
+    private Pair<T, Boolean> m_pair;
+
+    private MyOptional(Pair<T, Boolean> pair)
+    {
+        m_pair = pair;
+    }
+
+    public static <T> MyOptional<T> empty()
+    {
+        return new MyOptional<>(Pair.create(null, false));
+    }
+
+    public static <T> MyOptional<T> of(T t)
+    {
+        if (t == null)
+            throw new NullPointerException();
+
+        return new MyOptional<>(Pair.create(t, true));
+    }
+
+    public T get() {return m_pair.getFirst();}
+    public boolean isPresent() {return m_pair.getSecond();}
+    public boolean isEmpty() {return !isPresent();}
+    //...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java 1.0 ile eklenen ancak çok problemli olduğu için bir çok metodunun deprecated olduğu, bir Java programcısının
+    zorunlu olmadıkça kullanmaması gereken Date sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Date;
+
+class App {
+    public static void main(String [] args)
+    {
+        Date now = new Date();
+
+        long ms = now.getTime();
+
+        System.out.printf("Time in milliseconds:%d%n", ms);
+
+        Date dt = new Date(ms);
+
+        System.out.println(dt);
+        System.out.println(now);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Calendar abstract sınıfı ve GregorianCalendar sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        for (;;) {
+            Calendar now = new GregorianCalendar();
+
+            System.out.printf("%02d/%02d/%04d %02d:%02d:%02d\r",
+                    now.get(Calendar.DAY_OF_MONTH),
+                    now.get(Calendar.MONTH) + 1,
+                    now.get(Calendar.YEAR),
+                    now.get(Calendar.HOUR_OF_DAY),
+                    now.get(Calendar.MINUTE),
+                    now.get(Calendar.SECOND));
+        }
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Calendar abstract sınıfının getInstance metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        for (;;) {
+            Calendar now = Calendar.getInstance();
+
+            System.out.printf("%02d/%02d/%04d %02d:%02d:%02d\r",
+                    now.get(Calendar.DAY_OF_MONTH),
+                    now.get(Calendar.MONTH) + 1,
+                    now.get(Calendar.YEAR),
+                    now.get(Calendar.HOUR_OF_DAY),
+                    now.get(Calendar.MINUTE),
+                    now.get(Calendar.SECOND));
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    GregorianCalendar sınıfın tarih-zaman geçerlilik kontrolü yapmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        Calendar now = new GregorianCalendar(2019, 67, 45, 1234, 2345, 12345678);
+
+        System.out.printf("%02d/%02d/%04d %02d:%02d:%02d\r",
+                now.get(Calendar.DAY_OF_MONTH),
+                now.get(Calendar.MONTH) + 1,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                now.get(Calendar.SECOND));
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Calendar sınıfının getTimeInMillis metodu epoch time (1.1.1970 00:00:00.0) zamanına göre milisaniye değerini
+    döndürür. Aşağıdaki örnekte basit bir yaş bulma işlemi yapılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        Calendar birthDate = new GregorianCalendar(1976, 8, 10);
+        Calendar now = new GregorianCalendar();
+
+        double age = Math.abs((now.getTimeInMillis() - birthDate.getTimeInMillis())) / (1000. * 60 * 60 * 24 * 365);
+
+        System.out.printf("%.20f%n", age);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Calendar sınıfının getTimeInMillis metodu epoch time (1.1.1970 00:00:00.0) zamanına göre milisaniye değerini
+    döndürür. Aşağıdaki örnekte basit bir yaş bulma işlemi yapılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        Calendar birthDate = new GregorianCalendar(1999, 7, 17, 3, 2, 0);
+        Calendar now = new GregorianCalendar();
+
+        double age = Math.abs((now.getTimeInMillis() - birthDate.getTimeInMillis())) / (1000. * 60 * 60 * 24 * 365);
+
+        System.out.printf("%.20f%n", age);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Calendar sınıfının after ve before metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        Calendar birthDate = new GregorianCalendar(1976, 8, 10);
+        Calendar now = new GregorianCalendar();
+
+        System.out.println(now.after(birthDate));
+        System.out.println(now.before(birthDate));
+    }
+}
+
+XXXXXXXXXXXXXXXXXXXXXX
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Calendar sınıfı immutable değildir. Yani içeriği değiştiştirilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        Calendar now = new GregorianCalendar();
+
+
+        System.out.printf("%02d/%02d/%04d %02d:%02d:%02d%n",
+                now.get(Calendar.DAY_OF_MONTH),
+                now.get(Calendar.MONTH) + 1,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                now.get(Calendar.SECOND));
+
+        now.set(Calendar.HOUR_OF_DAY, 45);
+
+        System.out.printf("%02d/%02d/%04d %02d:%02d:%02d%n",
+                now.get(Calendar.DAY_OF_MONTH),
+                now.get(Calendar.MONTH) + 1,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                now.get(Calendar.SECOND));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Klavyeden alınan gün ay yıl bilgisine göre kişinin doğum günü geçmişse
+    "geçmiş doğum gününüzü kutlarım"
+    o an doğum günü ise
+    "doğum gününüz kutlu olsun"
+    doğum günü geçmemişse
+    "doğum gününüzü şimdiden kutlarım"
+
+    mesajlarından birini yazdıran programı Calendar sınıfını kullanarak yazınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Klavyeden alınan gün ay yıl bilgisine göre kişinin doğum günü geçmişse
+    "geçmiş doğum gününüzü kutlarım"
+    o an doğum günü ise
+    "doğum gününüz kutlu olsun"
+    doğum günü geçmemişse
+    "doğum gününüzü şimdiden kutlarım"
+
+    mesajlarından birini yazdıran programı org.csystem.util.datetime.DateTime sınıfını kullanarak yazınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate dt = LocalDate.of(1976, 9, 10);
+
+        System.out.printf("%02d/%02d/%02d%n", dt.getDayOfMonth(), dt.getMonthValue(), dt.getYear());
+        System.out.printf("%02d %s %02d %s%n", dt.getDayOfMonth(), dt.getMonth(), dt.getYear(), dt.getDayOfWeek());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının Month enum parametreli of metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+import java.time.Month;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate dt = LocalDate.of(1976, Month.SEPTEMBER, 10);
+
+        System.out.printf("%02d/%02d/%02d%n", dt.getDayOfMonth(), dt.getMonthValue(), dt.getYear());
+        System.out.printf("%02d %s %02d %s%n", dt.getDayOfMonth(), dt.getMonth(), dt.getYear(), dt.getDayOfWeek());
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfı geçerlilik kontrolünü yapar. Aslında Java 8 Datetime API sınıflarının hepsi bu kontrolleri
+    yapar
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+import java.time.Month;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate dt = LocalDate.of(1976, Month.SEPTEMBER, 45);
+
+        System.out.printf("%02d/%02d/%02d%n", dt.getDayOfMonth(), dt.getMonthValue(), dt.getYear());
+        System.out.printf("%02d %s %02d %s%n", dt.getDayOfMonth(), dt.getMonth(), dt.getYear(), dt.getDayOfWeek());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfı now isimli metodu ile çalışılan sistemdeki o anki tarih elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate dt = LocalDate.now();
+
+        System.out.printf("%02d/%02d/%02d%n", dt.getDayOfMonth(), dt.getMonthValue(), dt.getYear());
+        System.out.printf("%02d %s %02d %s%n", dt.getDayOfMonth(), dt.getMonth(), dt.getYear(), dt.getDayOfWeek());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının isAfter metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate now = LocalDate.now();
+        LocalDate dt = LocalDate.of(2019, 4, 10);
+
+        System.out.println(dt.isAfter(now));
+        System.out.println(now.isAfter(dt));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının isBefore metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate now = LocalDate.now();
+        LocalDate dt = LocalDate.of(2019, 4, 10);
+
+        System.out.println(dt.isBefore(now));
+        System.out.println(now.isBefore(dt));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Klavyeden alınan gün ay yıl bilgisine göre kişinin doğum günü geçmişse
+    "geçmiş doğum gününüzü kutlarım"
+    o an doğum günü ise
+    "doğum gününüz kutlu olsun"
+    doğum günü geçmemişse
+    "doğum gününüzü şimdiden kutlarım"
+
+    mesajlarından birini yazdıran programı LocalDate sınfını kullanarak yazınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının plusXXX metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate now = LocalDate.now();
+        LocalDate date = now.plusWeeks(3).plusDays(7);
+
+        System.out.println(now);
+        System.out.println(date);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ChronoUnit türü ile tarih-zaman fark ölçümleri yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+class App {
+    public static void main(String [] args)
+    {
+        Console.writeLine("Doğum tarihinizi giriniz:");
+        int day = Console.readInt("Gün:");
+        int mon = Console.readInt("Ay:");
+        int year = Console.readInt("Yıl:");
+
+        BirthDateController bdc = new BirthDateController(day, mon, year);
+
+        Console.writeLine("Yaşınız:%f%n", bdc.getAge());
+    }
+}
+
+class BirthDateController {
+    private LocalDate m_birthDate;
+    public enum Status {BEFORE, AFTER, EQUALS}
+
+    public BirthDateController(int day, int mon, int year)
+    {
+        m_birthDate = LocalDate.of(year, mon, day);
+    }
+
+    public double getAge()
+    {
+        return ChronoUnit.DAYS.between(m_birthDate, LocalDate.now()) / 365.;
+    }
+
+    public Status getStatus()
+    {
+        LocalDate now = LocalDate.now();
+
+        if (m_birthDate.isAfter(now))
+            throw  new DateTimeException("Invalid Birthdate");
+
+        LocalDate birthDay = m_birthDate.withYear(now.getYear());
+
+        if (now.equals(birthDay))
+            return Status.EQUALS;
+
+        if (now.isBefore(birthDay))
+            return Status.AFTER;
+
+        return Status.BEFORE;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalTime sınıfının atDate metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+class App {
+    public static void main(String [] args)
+    {
+        Console.writeLine("Tarih giriniz:");
+        int day = Console.readInt("Gün:");
+        int mon = Console.readInt("Ay:");
+        int year = Console.readInt("Yıl:");
+
+        LocalTime now = LocalTime.now();
+        LocalDateTime dt = now.atDate(LocalDate.of(year, mon, day));
+
+        System.out.println(dt);
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının atTime metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+class App {
+    public static void main(String [] args)
+    {
+        Console.writeLine("Tarih giriniz:");
+        int day = Console.readInt("Gün:");
+        int mon = Console.readInt("Ay:");
+        int year = Console.readInt("Yıl:");
+
+        var date = LocalDate.of(year, mon, day);
+
+        LocalDateTime dt = date.atTime(0, 0);
+
+        System.out.println(dt);
+
+    }
+}
 
 
 /*----------------------------------------------------------------------------------------------------------------------

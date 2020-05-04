@@ -1,0 +1,136 @@
+
+class AsciiImage implements MatrixOperations {
+    private String [] m_image, m_transposeOfImage;
+    private char [] m_forTransposeImage, m_forImage;
+    private static final int DEFAULT_LENGTH = 4;
+
+    private static final Commands [] m_commands = new Commands[DEFAULT_LENGTH];
+    private int m_index;
+
+    private  enum Commands {
+        TRANSPOSE, FLIPV;
+    }
+    private boolean transposed;
+
+    private static void flipv(String [] image)
+    {
+        int len = image.length;
+
+        for (int i = 0; i < len / 2; ++i)
+        {
+            String tmp = image[i];
+            image[i] = image[len - 1 - i];
+            image[len - 1 - i] = tmp;
+        }
+    }
+
+    private static void transpose(String [] source, String [] dest, char [] chars)
+    {
+
+        for (int i = 0; i < source[0].length(); ++i) {
+            for (int k = 0; k < source.length; ++k)
+                chars[k] = source[k].charAt(i);
+
+            dest[i] = new String(chars);
+        }
+
+    }
+
+    private void callForFlipV()
+    {
+        if (!transposed)
+            flipv(m_image);
+
+        if (transposed)
+            flipv(m_transposeOfImage);
+    }
+
+    private void callForTranspose()
+    {
+        if (m_transposeOfImage == null) {
+            m_forTransposeImage = new char[m_image.length];
+            m_forImage = new char[m_image[0].length()];
+            m_transposeOfImage = new String[m_image[0].length()];
+
+        }
+
+        if (!transposed)
+            transpose(m_image,m_transposeOfImage, m_forTransposeImage);
+
+        if (transposed)
+            transpose(m_transposeOfImage,m_image, m_forImage);
+    }
+
+    private void callFunctions()
+    {
+        for (int i = 1; i < m_index; ++i)
+            if (m_commands[i] == m_commands[i - 1]) {
+                m_commands[i] = m_commands[i - 1] = null;
+                ++i;
+            }
+
+        for (int i = 0; i < m_index; ++i)
+            if (m_commands[i] != null)
+                switch (m_commands[i])
+                {
+                    case TRANSPOSE:
+                        callForTranspose();
+                        transposed = ! transposed;
+                        break;
+                    case FLIPV:
+                        callForFlipV();
+                }
+        m_index = 0;
+    }
+
+    private void controlForCommand()
+    {
+        if (m_index != DEFAULT_LENGTH)
+            return;
+
+        callFunctions();
+    }
+
+    private void setImage(String [] image)
+    {
+        m_image = Arrays.copyOf(image, image.length);
+    }
+
+    public AsciiImage(String [] image)
+    {
+        m_image = new String[image.length];
+        setImage(image);
+    }
+
+    public void transpose()
+    {
+        controlForCommand();
+        m_commands[m_index++] = Commands.TRANSPOSE;
+    }
+
+
+    public void flipv()
+    {
+        controlForCommand();
+        m_commands[m_index++] = Commands.FLIPV;
+
+    }
+
+    public void disp()
+    {
+        callFunctions();
+        String [] res = !transposed ? m_image : m_transposeOfImage;
+
+        for (String s : res)
+            System.out.println(s);
+        System.out.printf("%d %d\n",res.length, res[0].length());
+    }
+
+}
+
+interface MatrixOperations {
+    void transpose();
+    void flipv();
+    void disp();
+
+}
