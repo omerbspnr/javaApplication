@@ -3,7 +3,10 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.collection;
 
-public class CSDArrayList<T> {
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class CSDArrayList<T> implements Iterable<T> {
     private static final int DEFAULT_CAPACITY = 10;
     private T[] m_elems;
     private int m_index;
@@ -99,7 +102,24 @@ public class CSDArrayList<T> {
 
         return oldElem;
     }
+    @Override
+    public Iterator<T> iterator ()
+    {
+        return new Iterator<T>(){
+            private int idx = 0;
 
+            public boolean hasNext()
+            {
+                return idx < size();
+            }
+            public T next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+                return CSDArrayList.this.get(idx++);
+            }
+        };
+    }
     public int size() {return m_index;}
 
     public void trimToSize()

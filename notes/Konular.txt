@@ -18,14 +18,15 @@
                                             StrinBuilder class
 --------------------------------------------------------------------------------------------------------------
 
-- String sınıfı immutable(Gösterdiği nesneyi değiştirimez) özelliğe sahip iken,
+- String sınıfı immutable(içerisindeki veri değiştirimez) özelliğe sahip iken,
   StringBuilder sınıfının içerisindeki veri değiştirilebilir.
 
 - String sınıfı türünden runtime'da atanan(Örneğin klavyeden girilen yada new operatörü ile oluşturaln) aynı
   yazılar birbirinden farklı adresler üretir.
-    - Yukarıdaki olayda derleyicinin olayın içinde olmadığı için aynı yer ayrılmaz.
+    - Yukarıdaki olayda derleyicinin olayın içinde olmadığı için bellekte aynı yer ayrılmaz.
     - String s = "ankara";
-    - String str = "ankara"; // derleyici "ankara" yazısı için tek bir adres üretir.
+    - String str = "ankara"; // derleyici "ankara" yazısı için tek bir adres üretir. Eğer bu nesneler new operatörü ile
+      yaratılsaydı farklı adresler üretilirdi.
 
 - Derleme zamanında çözülecek bir sorun var ise derleme zamanında çözülür.
 
@@ -33,9 +34,10 @@
 - StringBuilder sınıfı String sınıfının mutable halidir(StringBuilder içerde char türünden dizi tutar, String sınıfı
   içerisinde CharSequence denilen bir tür vardır.)
 
-- StringBuilder sınıfının size ve capacity denSpor düSpor dünyasından unutulmaz açıklamalar - HABERLER
-  size içeride tutulan değişkenin uzunluğunu döndürür.
-  Capacity ise maksimum artırılabilecek size'ı gösterir.(Capacity aşıldığında StringBuilder yeni bir yer tahsis edilir)
+- StringBuilder sınıfının size ve capacity denilen iki tane fonksiyonu vardır.
+  Size içeride tutulan yazının uzunluğunu döndürür.
+  Capacity ise maksimum artırılabilecek size'ı gösterir.(Capacity aşıldığında StringBuilder nesnesi için
+  yeni bir yer tahsis edilir)
 
 - amortized constant time (Çoğu zaman O(1) bazen ise O(n) karmaşıklığa çıkabilen karmaşıklıktır.)
 
@@ -53,7 +55,7 @@
 
 - Java'da bir programcı bir nesnenin hayatına son veremez.(C++' daki delete işlemi dinamik bir nesnenin hayatını sona erdirir.)
 
-- StringBuilder türüne String türünden bir nesne atanmaz.
+- StringBuilder türüne String türünden bir nesne atanmaz. StringBuilder s = "ankara";//error
 
 - StringBuilder sınıfının String parametreli ctor elemanı vardır.
     StringBuilder sb = new StringBuilder(String s);
@@ -70,6 +72,7 @@
 - StringBuilder sınıfı türünden nesne initialize edilirken verilen Stringin uzunluğu artı 16 byte'lık yer ayırır.
 
 - delete metodu StringBuilder sınıfında verilen range'i silip kaydırma yapar.
+   sb.delate(int begin, int end); [begin,end);
 
 - getChars metodu verilen bir char array'inin içini doldurur. Herhangi bir StringBuilder sınıfının
     sb.getChars(int srcBegin,int srcEnd,char [] chars, int destBegin); //
@@ -122,7 +125,7 @@
 - BigDecimal sınııfının valueOf metodu double türler için yuvarlama hatası olmaz. Verilen sayının kanonikal formunu döndürür.
   Sayı fonksiyona verilmeden önce yuvarlanmış ise kanonikal forma göre de  yuvarlanmış şekilde sayıdan nesne üretir.
 
-- BigDecimal sınıfının min ve max metotları member metot'tur.
+- BigDecimal sınıfının min ve max metotları vardır.
 
 - BigDecimal sınıfının public static final bazı  veri elemanları
     - BigDecimal.ZERO
@@ -137,8 +140,8 @@
 
 - BigDecimal sınıfının compareTo metodu karşılaştırma yapar.
     bd1.compareTo(bd2)
-    Değer +1 ise bd1 > bd2
-    değer -1 ise bd2 > bd1
+    Değer +1 ise bd1 > bd2(bunlar içeride tutulan değere göre karşılaştırma yapılır.)
+    değer -1 ise bd1 < bd2
     değer 0 ise bd1 == bd2 olur.
 
 
@@ -150,7 +153,7 @@
     a.divide(Bigdecimal number, int scale, RoundingMode )
         scale .'dan sonra kaç tane basamak verileceğini bilir.
         RoundingMode'da enum türünden bir sınıftır.RoundingMode'ın belirli değerleri vardır.(RoundingMode.HALF_UP //gibi)
-        Yuvurlamanın nasıl yapılacağını belirtmeliyiz.
+        RoundingMode ile yuvarlamanın nasıl yapılacağı belirtilir.
 
 
 
@@ -225,13 +228,13 @@
 
 - Metod ne şekilde yazılırsa yazılsın metodun içindeki parametre değişkeni dizi referansıdır.
 - Böyle fonksiyonlar değişken sayıda yani
-      Util.display(10,20,30,40); // derleyici burada new int[]{10,20,30,40} şeklinde gönderir.
+      Util.display(10,20,30,40); // derleyici burada new int[]{10,20,30,40} şeklinde bir kod üretir.
       Util.display();
       Util.display(new int[]{1,2})
   argümanları ile çağırılabilir.
 
-- class Uitl {
-    public static void display(int ...a) // değişken sayıda int türünü alabilir.
+- class Util {
+    public static void display(int ...a) // değişken sayıda int türden eleman alabilir.
     {
         //... atomuna elipsis atomu denir.
     }
@@ -263,11 +266,12 @@
     }
   }
 
-- varargs metodlar sadece fonksiyon bildiriminde bulunabilir.
+- varargs metodlar sadece fonksiyon bildiriminde bulunabilir. Bunun dışında değişken bildiriminde yada sınıf bildirimin
+  de bulunamazlar.
 
 - Burada fonksiyona geçilecek parametre ya elipsis atomundan önceki atom türünden 0 yada en az 1 adet olmalı,
   yada elipsis atomunu da kapsayacak şekilde (int ... a için int [], int [] ... a için  int [] []) bir adet argüman
-  gönderilebilir. birden fazla parametresi var ise
+  gönderilebilir.
 
 
 --------------------------------------------------------------------------------------------------------------
@@ -284,7 +288,7 @@
 - komut satırından uygulamayı çalıştırmak için, console'dan
     - java org.csystem.app.App <argümanlar>
 
-    - eğer uygulama bir jar dosyası olarak çıkarıldı ise
+    - eğer uygulama bir çalışabilen jar dosyası olarak çıkarıldı ise
       java -jar şeklinde <applicationname> <argümanlar> şeklinde çalıştırılmalıdır.
 --------------------------------------------------------------------------------------------------------------
                                                 var keyword
@@ -305,7 +309,7 @@
 
 - var bir sınıfın veri elemanı olarak ta belirlenemez.
 
-- sadece yerel değişkenler ve lambda ifadelerinde kullanılır.
+- sadece yerel değişkenler(Dikkat for deyiminin içi bir yerel bloktur.) ve lambda ifadelerinde kullanılır.
 
 -
 
@@ -323,7 +327,8 @@
 - Arrays sınıfının temel işlemler yapan metodları
     - fill metodları
         Arrays.fill(T [] a, int val); // verilen array'i verilen değer ile doldurur;
-        Arrays.fill(T [] a, int fromIndex, int toIndex, int val) [fromIndex, toIndex)
+        Arrays.fill(T [] a, int fromIndex, int toIndex, int val) [fromIndex, toIndex) // verilen array'i index'ler arası
+        verilen değer ile doldurur.
 
     - T [] a copyOf metodu // yeni bir dizi tahsis eder ve değerleri kopyalar, yeni üretilen diziyi küçültebilir.
 
@@ -335,7 +340,7 @@
 
     - booleans equals(T [] a, T [] b); // dizilerin eşitlik karşılaştırması yapar.
 
-    - int compare(T [] a, T [] b); // T burada herhangi bir tür anlamındadır.
+    - int compare(T [] a, T [] b);
         - Java 9 ile beraber eklenmiştir.
         - Eğer ilk parametredeki dizi büyük ise pozitif, küçük ise negatif, birbirine eşit iseler 0 değerini döner.
         - ilk farklı değer'den büyük olanın değerini döndürür.
@@ -347,13 +352,14 @@
 
 
     void sort(T [] a);
-        - verilen diziyi büyükten küçüğe sıralar.
+        - verilen diziyi küçükten büyüğe sıralar.
+
     void sort(T [] a, int fromIndex, int toIndex)
         - diziyi [fromIndex, toIndex) bu aralıkta sıralar.
 
-        Küçükten büyüğe de çalışır ancak bunun için collection'lar konusunu görmemiz gerekir.
+        Büyükten küçüğe de çalışır ancak bunun için collection'lar konusunu görmemiz gerekir.
 
-    String toString metodları
+    String toString() metodları
         Bir diziyi alıp Stringe dönüştürür [] içine alıp delim olaral ,  kullanılır.
         Yazıya çevirirken String sınıfının valueOf metodunu kullanır.
 
@@ -457,7 +463,7 @@
 
 - this anahtar sözcüğü non-static metod ile çağırılan referansın adresini gösterir.
 
-- this sınıfının inner class'lar ile kullanılımı
+- this expression'ının  inner class'lar ile kullanılımı
 
 class A {
     private int m_val;
@@ -470,7 +476,7 @@ class A {
         public void foo()
         {
             System.out.println("B.foo")
-            A.this.foo(); // this expression
+            A.this.foo(); // this expression A::foo çağrılmıştır.
             this.m_val = 10;
             A.this.m_val = 20; //
         }
@@ -518,7 +524,7 @@ class A {
 
 
 - local classes(yerel sınıflar) :
-    - Bir sınıfın bir metodu içerisinde bildirilen sınıflara  yerel sınıflar denir.
+    - Bir metod içerisinde bildirilen sınıflara  yerel sınıflar denir.
 
     class Sample {
         public void foo(){
@@ -587,14 +593,14 @@ class A {
 
 ----- Anonim sınıflar -----
 
-- isimsiz bir sınıf nasıl yazılır, Anonim sınıf bildiriminin genel biçimi aşağıdaki gibidir
+- Anonim sınıf bildiriminin genel biçimi aşağıdaki gibidir
   new <tür>([argümanlar]) {};
 
 - Yukarıdaki bildirim bir anonim sınıf bildirimidir, aynı zamanda da bir nesne yaratılması
   işlemidir. Anonim sınıf bildirimi new operatörüne yazılan sınıf türünden türetilmiş olan bir sınıfın
   hem bildirimi hem de o sınıf türünden nesne yaratılması anlamına gelir.
 
-   new Sample(){}; // Bu anonim bir sınıf bildirimidir.
+   new Sample(){};
    class Sample {}
 
 - final bir sınıf türünden anonim sınıf yazılamaz.
@@ -615,7 +621,6 @@ class A {
     public void foo(){}
   }
 
-- anonim sınıfının bir çok kullanımı
 --------------------------------------------------------------------------------------------------------------
                                                 12.04.2020
 --------------------------------------------------------------------------------------------------------------
@@ -633,7 +638,7 @@ class A {
   parametre değişkenlerini yakalayabilirler. Bu durumda yine final olmayan bir yerel değişken veya parametre değişkeni
   için effectively final kuralları geçerlidir.
 
-- callback : Ne yapılacağını dışarıdan alacağımız(Yani bir bakıma functor sınıflardır.)
+- callback : Ne yapılacağını dışarıdan alacağımız(Yani bir bakıma functor sınıflardır.) değişkenlerdir.
 
 - callback tarzı sınıflar genel olarak belirli periodlar ile çalışan metodlara geçilen metodlardır.  Böyle metodlara
   timer metodlar denir.
@@ -838,8 +843,8 @@ interface IBinaryOperator<T> {
 - Supplier grupları
     - Parametre almadan tür döndüren sınıflardır(Random sınıfının nextInt metodu için kullanılabilir.).
 
-- callback : bir metod dışarıdan hangi metodu çağıracağını alırsa böyle sınıflara call back denir. Bu tarz meotdlar high
-  order metodlar denir.
+- callback : bir metod dışarıdan hangi metodu çağıracağını alırsa böyle parametrelere call back denir. Bu tarz metodlar
+  high order metodlar denir.
 
 - function paketinin detaylarını değil daha çok kullanımını göz önünde bulundurmalıyız.
 
@@ -867,10 +872,15 @@ interface IBinaryOperator<T> {
 ------------------------------------------------------------------------------------------------------------------------
 
 - Sınıfın static empty metodu ile boş bir optional nesnesi elde edilir.
+
+- Optional sınıfının of metodu ile bir bilgi Optional türüne dönüştürülür. Java'nın x. versiyonundan sonra valueOf
+  metodları of olarak isimlendirilmeye başlamıştır. Optional.of(T t)
+
 - Sınıfın isPresent metodu ile bir optional nesnesinin dolu olup olmadığını test ederiz. isEmpty ilede argüman geçilen
   nesnenin boş olup olmadığı test edilir.
-- Optional sınıfının of metodu ile bir bilgi Optional türüne dönüştürülür. Java da bir yerden sonra valueOf metodları of
-  metodları olarak isimlendirilmiştir.
+
+- Sınıfın static ofNullable fonksiyonuna geçilen parametre null ise empty bir optional değil ise dolu optional referansı
+  döndürür.
 
 - Optional içerisindeki isPresent ve empty fonksiyonları bir flag ile kontrol edilerek yapılır.
 
@@ -880,11 +890,15 @@ interface IBinaryOperator<T> {
 
 - sınıfın ofNullable metodu aldığı parametre null ise boş null değil ise dolu optional referansı döndürür.
 
-- bunu of metodu ile yapamayız, of metoduna null geçmek exception fırlatılmasına sebep olur.
+- bunu of metodu ile yapamayız, of metoduna null geçmek NullPointerException fırlatılmasına sebep olur.
 
 - orElse metodu eğer kullanılan referans boş ise geçilen default değeri, dolu ise içerisindekini verecektir.
+  orElse metodunun karşılığı aşağıdaki gibidir
+  Optional<String> r  = Optional.of("ankara");
+    String s = r.isPresent() ? r.get() : "ankara";
 
-- orElseThrow metodu eğer verilen referans boş ise bir exception throw edilecektir.
+- orElseThrow metodu eğer verilen referans boş ise bir NoSuchElementException throw edilecektir.
+  bir tane overload'ı vardır.
 
 - ifPresent'in Consumer<? super T> action parametreli metodu eğer verilen optional referansı dolu ise yapılacka işi gösterir.
 
@@ -900,9 +914,417 @@ interface IBinaryOperator<T> {
 
 - Optional sınıfının kullanım çeşitleri
     1-) fonksiyonun geri dönüş değeri
-    2-) fonksiyon parametresi
+    2-) fonksiyon parametresi (az rastlanmaktadır.)
     3-) Sınıfların veri elemanları da optional olabilir.
 ------------------------------------------------------------------------------------------------------------------------
-                                            Date sınıfı(Java'nın standart kütüphanesinin)
+                                            09.05.2020
 ------------------------------------------------------------------------------------------------------------------------
 
+
+- API nedir ?
+    - Aslında aşağı seviyeli kullanılan bir kavramdır.
+    - İşin detaylarını bize göstermeden kullanıma odaklı kullanılan sınıflar(örneğin yazdığımız DateTime sınıfı).
+
+------------------------------------------------------------------------------------------------------------------------
+                                            LocalDate, LocalTime ve LocalDateTime sınıfı
+------------------------------------------------------------------------------------------------------------------------
+
+- Java 8 ile birlikte bir LocalDate, LocalDate ve LocalDateTime API'leri eklenmiştir. Immutable  sınıflardır.
+
+- LocalDate sınıfının ctor'u yoktur. of metodu ile nesne yaratılır. getter'ları ayrı ayrı yazılmıştır. setter'ları yoktur
+- Month enumları vardır, ayrıca int'e dönen month değerleri doğru tarihleri döner.
+- Geçerlilik kontrollerini yaparlar.
+- now metodu ilgili günü döndürür.
+- isAfter ve isBefore metodları vardır.
+
+- sınıfın plusXXX metodları ve minusXXX metodları ilgili tarihe ekleme ve çıkarma yapabilir.
+
+- LocalTime sınıfının atDate fonksiyonu parametresine geçirilen LocalDate göre bir LocalDateTime nesnesi döner.
+- LocalDate sınıfının atTime fonksiyonu parametresine geçirilen LocalTime göre bir LocalDateTime nesnesi döner.
+
+- ChronoUnit enum'ı
+    - belirli  olan(seconds,days,months) gibi enum constant'larına sahip
+    - between adlı metodu ile verilen iki tarih arasındaki farkı ilgili enum sabitine çevirir.
+        ChronoUnit.DAYS.between(m_birthDate,LocalDate.now());//iki tarih arasındaki gün farkını bulur
+
+
+- Void sınıfı işlen
+------------------------------------------------------------------------------------------------------------------------
+                                            10.05.2020
+------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+                                            assert işlemi
+------------------------------------------------------------------------------------------------------------------------
+
+- assert expression'ının kullanımı
+    assert [boolean ifade]  [: void olmayan ifade]
+    assert true; // bu kod doğrudur, eğer bir belirli bir sonuç basılmak istenirse aşağıdaki gibi yapılmalıdır
+    assert true : "Assert edildi";
+
+- eğer ki assert deyimine ilişkin ifade true ise akış assertten devam eder false ise AssertionError nesnesi fırlatılır.
+  void olmayan ifade de burada exception'a ilişkin mesajı temsil eder.
+- dile özgü bazı testleri çok anlaşılır bir şekilde yapılmasını sağlar.
+
+- assert expression'ı program ancak ve ancak -ea yada -enableassertions modunda çalıştırıldığı zaman  çalışan
+  bir expression'dır.
+
+- assert işlemi derlemeye yönelik bir işlem değildir. runtime da yapılacak bir işlemdir. Ancak bu kullanıcıyı
+  ilgilendiren bir işlemde değildir. Bu kodu yazan kişinin kendisinin yazdığı kodu kontrol edilmesi için kullanılır.
+
+- assert işleminde eğer fonksiyon çağrılıyor ise dikkatli olunması gerekir. Eğer ki -ea flagı girilmemiş ise ve ilgili
+  fonksiyonun her türlü çağrılması isteniyor ise ilgili fonksiyon çağrısını daha önceden yapmalıyız.
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Annotation(Ek açıklama)
+------------------------------------------------------------------------------------------------------------------------
+
+- Java 5 ile eklenmiştir.
+- bir annotation bildirimi @interface bitişik biçiminde yapılır.
+    @interface MyAnnotation {
+    }
+
+- annotation nerelere konulabilir?
+    1- Bir sınıfın başına
+    2- Bir metoda
+    3- Bir veri elemanına
+    4- bir metodun parametresine(Java 8 ile birlikte eklenmiştir.)
+
+    @MyAnnotation
+    class MyClass {
+        @MyAnnotation
+        private int m_val;
+
+        @MyAnnotation
+        public void foo(@MyAnnotation int x)
+        {
+        }
+    }
+    @interface MyAnnotation {
+    }
+
+
+- Bir annotation içerisinde geri dönüş değeri olan adeta metot bildirimi gibi property'ler bildirebilir.
+  Bunlar metod değildir. Bu yüzden herhangi bir parametre bildirilemez.
+    @interface MyAnnotation{
+        String value(); // bu propertyler default anahtar sözcüğü ile de bildirilebilir
+        String value() default "Any";
+    }
+
+- Bu property'lerden en az bir tane bile  default anahtar sözcüğü ile belirtilmemiş ise  annotation doğrudan
+  kullanılamaz. İlgili property'ye bir atama yapılmalıdır. Eğer hepsi default anahtar sözcüğü ile belirtilmiş ise
+  annotation doğrudan kullanılabilir.
+
+   @MyAnnotation
+   class Myclass {
+       @MyAnnotation(value = "member variable")
+       private int x;
+
+       @MyAnnotation(value = "method")
+       public void foo(@MyAnnotation(value = "parameter") int x)
+
+   }
+   @interface MyAnnotation {
+       String value() default "";
+       String value2() default "";
+   }
+   //örnekte ki  value2'nin default'ı kaldırılır ise kodlar error verir.
+
+- Bu default sözcüğünün 3. kullanım şeklidir.
+    1-) switch
+    2-) interface'lerin default fonksiyonları
+    3-) annotation da property
+
+
+- Bir annotation'ın nerelere konulabileceğini Target annotation'ı ile bildirilebilir.
+  Target annotation'ı bir annotation'ının nereye konulacağını belirtir.
+  Bu annotation'ın value isimli bir attribute'ı vardır. Bu attribute ElementType enum'ı türünden bir dizi alır.
+
+    @Target(value = {ElementType.TYPE, ElementType.MODULE})
+    @interface Entity {
+
+    }
+- annotation'larda daha çok varolan annotationlar kullanılacaktır.
+- annotation metadata, işaret veya dipnot anlamında kullanılabilir.
+
+- Annotation kendisinden hemen sonra gelen uygulandığı elemanı kapsar.
+   @ColumnInfo
+   private String m_citizienId,name;// burada ikisini de kapsar.
+
+
+- annotation 3 şekilde kullanılabilir. Buna Retention denir. Retention bir annotation'ın nasıl kullanabileceğini belirtir.
+    1-) runtime da(RetentionPolicy.RUNTIME) // Annotation'ın runtime da kullanabileceğini gösterir.
+    2-) class işaretleyebilir. // (RetentionPolicy.CLASS)
+    3-) source işaratleyebilir.//(RetentionPolicy.SOURCE)Derleyiciye daha derlemede yapmadan önce yapılacak işlemler.
+
+- @Override annotation'ın retention türü source'dur.(Kullanmamız gereken her yerde kullanılmalıdır.).
+  target'ı sadece metotlardır.
+
+- Override annotation'ı bir sınıftan türetilmiş ve override edilmiş metotlar için kullanılır.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            19.05.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Annotation'ların elemanın ismi value ise ve işaretleme sırasında yalnızca value elemanına değer verilecekse
+  value =  biçiminde yazılmasına gerek yoktur(Bu durum value ismine özgü bir kavramdır.). Eğer value elemanı dışındaki
+  elemanlara da değer verilecek ise value = biçiminde yapılması gerekir.
+
+- Deprecated annotation'ı bir elemanın(metot, class vs.) deprecated olarak işaretlenmesi için kullanılır.
+- Deprecated annotation'ı bir runtime annotation'dır. Neredeyse bütün türlere uygulanabilir(Annotation'lar hariç).
+
+- Java 9'dan önce bu annotation'ın herhangi bir property'si yoktur.
+
+- Java 9 ile beraber bu annotationa iki tane property eklendi.Bunlardan biri String türünden since, diğeri de
+  boolean türünden forRemoval'dır. forRemoval takip ettiği şeyin ileri de silinip silinmeyeceğini belirtir.
+  since ise versiyon belirtmek için kullanılır.
+
+- @Inherited annotation'ı da vardır. Eğer taban sınıf bir annotation'a sahipse normalde bu sınıftan türetilen bir sınıf
+  ilgili  annotation'a sahip değildir. Ancak bu annotatiton @Inherited annotation'ı ile işaretlenir ise
+  türemiş sınıflarda ilgili annotation'a sahip olur. Target'ı sadece ve sadece annotation'dır.
+
+- FunctionalInterface annotation'ı(Java 8 ile eklenmiştir.)
+    - Önceden oluşturulmuş bir interface'in fonksiyonel olup olmadığını ilişkin işaret koymak amaçlı kullanılabilir.
+    - Bildilendirme amaçlı bir annotation'dır. Türü RunTime'dır.
+    - Bu annotation ile işaretlenmiş bir arayüz içerisinde bir ve yalnız bir tane abstract metot olmalıdır. Aksi
+      durumda error oluşur.
+
+- SuppressWarnings annotation'ı(warningleri görmezden gel)
+    - Aldığı value değerine ilişkin warning'i görmezden gelir. Örneğin CSDArrayList'e ki Object dizi türünden ilgili
+      T türüne dönüşümün yapılmasında kullanılmalıdır. Bu annotation kullanılırken programcının emin olması gerekir.
+    - Çünkü derleyicinin verdiği hatalar önemlidirler ve dikkate alınmadırlar. Eğer programcı emin ise bu annotation'ı
+      kullanmalıdır.
+
+
+- Java da Generic sınıflar   invariant olduğundan aşağıdaki kod errordur. Generic sınıfları covariant yapmak için
+  ? extends sentaksı kullanılır.
+    ArrayList<Number> ss = new ArrayList<Integer>();//error
+    ArrayList<? extends Number> ss = new ArrayList<Integer>();//covariant haline getirilmiştir. upcasting tarzı durumlar
+    için ? extends sentaksı ile kullanılmalıdır(Burada denilmek istenilen Number veya Number'dan türemiş olmalıdır demek
+    istenir. Yani bir üst kısıt getirilmiştir. Dikkat bu referansa Integer, Double, BigDecimal, BigInteger sınıfları
+    atanabailir.).
+
+- Javada covariant bir generic sınıf yazılamaz. Sınıflar invariant olarak yazılabilir.
+
+- generic bir sınıfa bir kısıt getirilmek istenirse bu kısıt bir sınıftan türetilmek yada bir interface'i implemente
+  etmek olacak ise ikisi içinde extends keywordu ile yapılır(Dikkat interface için implements kullanılmaz.).
+    class A<T extends <Bir_tür>
+
+- Generic bir sınıfı contravariant yapmak(açılımları downcasting'e uygun hale getirmek için) ? super sentaksı
+  kullanılır.
+    ArrayList<? super Integer> arrayList; //burada bu arrayList ancak ve ancak Integer veya Integer'a parent class
+    larından bir sınıf atanabilir. atanabilir.
+    ArrayList<? super Integer> arrayList = new ArrayList<Number>();
+
+- invariant durumlar : atamanın doğrudan yapılabileceği (Java da default generic türü invarant'tır.)
+
+- covariant durumlar : generic türler için atamanın bir upcasting işlemi gibi ypaılabilmesi
+    (bir üst sınır verme işlemidir. ? extends [Type] sentaksı ile yapılır. Type'dan türemiş sınıflar atanabilir.)
+
+- contravariant durumlar : generic türler için atamanın bir downcasting işlemi gibi ypaılabilmesi
+    (Bir alt sınır verme işlemidir. ? super [Type] sentaksı ile yapılır. Type'ın super class'ları atanabilir.)
+
+- covariant bir generic referans'a ? extends ile belirtilen type sınıfının metodları veya o sınıfın super class'larının
+  metodları  kullanılabilir. Bunun dışındaki metodlar kullanılamaz. Örneğin ilgili type Number ise sadece Number
+  ve Object sınıfının fonksiyonları kullanılabilir.
+
+- contravariant bir generic referans'a ancak ve ancak ? super sentaksı ile belirtilen sınıf türünden veya bu sınıftan
+  türemiş bir sınıftan ekleme yapılabilir. Bunun dışındaki bir türden ekleme yapılamaz. Örneğin iligli type Object ise
+  bütün türler eklenebilir. Ancak ilgili type Integer ise sadece Integer sınıfı türünden bir tür eklenebilir.
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                            REFLECTION
+------------------------------------------------------------------------------------------------------------------------
+
+- Çalışma zamanı sırasında bir türe ilişkin bilgilere(metadatalara) bakmaktır.
+
+- metadata : bir kavramla ilişkin bilgilere(Bir sınıfın veri elemanları) erişmektir.
+
+- Java da programın çalışma zamanı sırasında her tür için(temel türler dahil) bir Class nesnesi yaratır.
+  Bu .class dosyası değildir. Bir Class sınıfıdır.
+
+- Her tür için bir tane Class nesnesi vardır(Singleton).
+
+- Class sınıfı generic bir sınıf olup bir türe ilişkin bilgileri içeren bir sınıftır.
+
+- Reflection işlemleri Class sınıfı ile gerçekleşir. Türün Class nesnesini üretmek için <tür>.class sentaksı kulalnılır.
+
+- Eğer ilgili sınıf bir primitive tür ise aşağıdaki gibi elde edilmelidir. Bu sentaks daki soru işareti any type
+  anlamında kullanılır.
+    Class<?> clsInt = int.class;
+
+- Eğer ilgili sınıf bir referans türü ise
+  Class <Sample> clsSample = Sample.class;
+  Class <String > clsString = String.class;
+
+- Class sınıfının static forName metodu ile türü String olarak elde etmemizi sağlar.
+    Class<?> clsSample = Class.forName("org.csystem.app.Sample"); //ilgili paketteki Sample sınıfını getir.
+    Dikkat eğer sınıf bulunamaz ise checked exception olan ClassNotFoundException nesnesi fırlatılır.
+
+- Class sınıfının getName fonksiyonu ilgili sınıfın ismini nitelenmiş bir şekilde verir.
+
+- Object sınıfının getClass metodu ile referansın dinamik türüne ilişkin Class referansı elde edilir.
+
+- Class sınıfının getDeclaredXXX(Methods, Fields ...) metodu ile türe ilişkin elemanlarına erişim belirleyiciden bağımsız
+  erişilebilir. Bu metod taban sınıfın metoduna erişemez.
+
+- Sınıfın getXXX(Method,Field,Annotation) metodu ile türe ilişkin sınıfın  ve taban sınıflarının yalnızca public bölümündeki
+  elemanlarına erişilir(taban sınıfların sadece public bölümüne  erişilir. protected bölümüne erişilemez.).
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                            23.05.2020
+------------------------------------------------------------------------------------------------------------------------
+- Reflection için kullanılan sınıfın herhangi bir ctor'una erişim Class sınıfının getDeclaredConstructor metodu ile
+  sağlanabilir. Bu metod generic bir sınıf olan Contructor sınıfını geri döndürür. Eğer bulunamaz ise
+  NoSuchMethodException hatası fırlatır.
+    Class<?> cls = Class.forName("org.csystem.app.Sample"); // checked bir exception fırlatır.
+    cls.getDeclaredConstructor();// eğer parametreli bir ctor alınmak istenirse ilgili ctor'un parametre'lerinin
+    class nesneleri verilmelidir.
+    Eğer Sample sınıfının int, double parametrelerine sahip bir ctor'u var ise aşağıdaki gibi yazılır.
+    Constructor<?> intDoubleCtor = cls.getDeclaredConstructor(int.class, double.class);
+    intDoubleCtor.setAccesible(true); // Eğer ki ctor private bildirilmiş ise bu kod yazılmadan çağrılması errordur.
+    intDoubleCtor.newInstance();// eğerki constructor erişilebilir ise bu kodlar çağırılır. Eğerki erişilebilir
+
+- Class sınıfının getDeclaredXXX(Method, Field ...) String parametreli methodları sınıfın erişim belirleyicisinden
+  bağımsız ilgili  elemanına erişmemizi sağlar. Eğer verilen String parametresine uygun bir eleman bulunamaz
+  ise checked exception throw eder.
+- Class sınıfının getXXX(Method, Field ...) String parametreli methodları ilgili türün ve taban sınıflarının public
+  bölümündeki elemanına erişmemizi sağlar. Eğer verilen String parametresine uygun bir eleman bulunamaz  ise CHECKED
+  exception throw eder.
+
+- Yukarıdaki iki durum içinde  Erişilen elemana göre(eğer eleman Method ise Method sınıfı, field ise Field) o sınıf
+  türünden nesne elde edilir.
+    Class<?> clsSample = Class.forName("org.csystem.app.App");
+    Class<Sample> clsSample = Sample.class;//Eğer tür biliniyor iseşeklinde yazılabilir.
+    Constructor<?> ctor = clsSample.getDeclaredConstructors(/*Parametrik yapıya uygun class nesnesi verilmelidir.*/);
+    Constructor<Sample> intCtor = clsSample.getDeclaredConstructors(int.class);//int parametreli ctor istenmiştir.
+    Field field = clsSample.getDeclaredField("x");//eğer  ilgili method yok ise checked error fırlatılır.
+    Method method = clsSample.getDecleradMethod("getX", int.class, double.class);//eğer ki sınıfın int ve double
+    parametreli getX methodu var ise elde edilir yoksa error oluşur.
+- Elde edilen bir Method, Field yada Ctor .... sınıfın içinde private bildirilmiş ise ve kullanılması gerekiyor ise
+  bu sınıfların setAccessilbe(true); şeklinde çağrılması gerekmektedir. işlem bittikten sonra setAccessible yeniden false
+  yapılmalıdır.
+
+- Elde edilen tür bir ctor ise ve yeni bir nesne yaratılmak istenir ise tür Constructor sınıfının non-static ctor'ı sınıf
+  any Type ile açılmış(Yani Constructor<?>) ise new Instance methodu geriye Object döndürür. Type Cast yapılması zorunludur.
+
+- Elde edilen tür bir Method ise ve sınıfın ilgili metodu çağrılmak istenir ise Method sınıfının non-static invoke metodu
+  ile bu işlem yapılır. Ne olursa olsun non-static bir method için ortada bir nesne olmak zorundadır.
+  invoke methodunun birinci parametresi ilgili sınıf türü ne ise o sınıf türünden bir referans ister. Eğer ki method
+  static bir method ise bu parametreye null geçilebilir.
+
+
+- Singleton design pattern'i Reflection ile delinebilir. Ancak enum türünden reflection ile elde edilemez. Enum türünden
+  sadece enum sabitlerinden kaç tane  var ise program boyunca o sayı da nesne vardır.
+
+- constructor kodları ara koda yazılırken init ismi ile yazılır.
+
+- @Deprecated annotation'ı Inherited bir annotation değildir.
+
+- DynamicLoadingApp uygulaması yapıldı.
+    - Uygulama çalışırken SampleClasses modülündeki .class dosyaları  uygulamanın çalıştığı modüle( yani out'un altındaki
+      production'ın altındaki 004-SampleDynamicLoading modülüne eklendi);
+
+- GameObject örneği yapıldı(Dikkatlice incelenmesi gereken bir örnektir).
+
+- Method sınıfının invoke methodu
+    1. parametresi -> ilgili metodun hangi referans ile çağıralacağı(static bir metot ise null geçilebilir.)
+    2. parametresi -> ise Object ... args'dır. Metota geçilecek argümanlar içindir
+    m.invoke(gameObject,other); // gameObject.onCollision(other);
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                            24.05.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Generic'ler de Programlama da 3 farklı yaklaşım vardır
+    1- C++'da ki gibi(Derleyici compile time'da kod yazar)
+    2- C# da ise her açılım için farklı bir tür vardır(Derleyici ayrıca bir kod yazmaz).
+    3- Java da ise her açılım için tek bir tür vardır().
+
+- Generic sınıflar'ın tek bir tür olduğunu ilgili sınıfın farklı açılımlar için getClass fonksiyonlarını çağırıp
+  karşılaştırma yapılarak ispatlanabilir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Collection lara yönelik interface'ler
+------------------------------------------------------------------------------------------------------------------------
+
+--- iterable interface'i
+- Java da tüm collection sınıfların başında yer alan özel bir interface vardır. Bu interface'in ismi iterable'dır.
+
+- Herhangi bir veri yapısının datalarının nasıl tutulduğundan BAĞIMSIZ OLARAK dolaşabilmeye iterator pattern'i denir.
+  (C++'ın STL'i tamamen iterator kalıbına dayalıdır.)
+
+- iterable olmak iterator biçiminde kullanılabilir olmak anlamına gelmektedir. Bu interface java 5 ile eklenen generic
+  bir interface'dir. Java 5 ile beraber for-each döngü deyimi de eklenmiştir.
+
+- Bir sınıfın foreach döngü deyimi ile dolaşılabilir olması için sınıfın iterable interface'ini desteklemesi gerekir.
+
+- iterable sınıfının yalnızca bir adet abstract  metodu vardır. Metodun ismi iterator'dur. parametrik yapısı aşağıdaki
+  gibidir.
+    Iterable<T> iterator();
+
+- Iterator interface'i(Java 1.2) Iterable interface'inden  daha önce implemente edilmiş generic  bir interface'dir.
+
+- Iterator<E> interface'inin iki tane abstract metodu vardır.Bunun dışında metodları vardır.
+    boolean hasNext();
+    E next();
+
+- Java 8'den önce üç tane abstract metodu vardı.
+    void remove(); //3. fonksiyon remove idi.
+
+- Java 5'den önce yani iterable interface'inden önce(Yani foreach döngüsü yokken) iterator dolaşımı şu şekilde
+  yapılmaktaydı.
+
+  ArrayList<Integer> list = new ArrayList();
+   Iterator<Integer> iter = list.iterator(); // iterable'dan önce Iterator döndüren iterator fonksiyonu vardı.
+   while(s.hasNext()) {
+        int val = s.next();
+   }
+
+- foreach always applicable'dır.
+
+- foreach kodunun karşılığı tam karşılığı şağıdaki gibidir.
+    ArrayList<Integer> list = new ArrayList();
+   for(int val : list) {
+        System.out.printf("%d ", val);
+   }
+
+   {
+       Iterator<Integer> iter = list.iterator();
+
+       while (iter.hasNext()) {
+           int val = iter.next();
+
+           System.out.printf("%d ", val);
+       }
+   }
+
+- burada hasNext() metodu bir sonraki elemanın olup olmadığını kontrol eden metoddur.
+
+- next() metodu ise bir sonraki elemanı geri döndüren metoddur(Eğer eleman yoksa ve çağrılmış ise NoSuchElementException
+  fırlatılır.). next fonksiyonu aynı zamanda iterator'de ilerlemeyi sağlayan fonksiyondur.Nasıl yapıldığı o kodu
+  implemente eden kod belirler(Örneğin yazılan IntRange'de belirtilmiştir).
+
+- Java'da Iterable'dan sonra Iterable'dan türetilmiş generic Collectin arayüzü vardır. Collection'ının da bir iterator
+  metodu vardır. Collection'ın iterator dışında bir çok abstract metodu vardır.
+
+- NOT : java'da iterable olabilmek için sınıfın iterable interface'ini implemente etmek yada iterable türetilmiş bir
+  interface'i implemente etmek zorunludur.
+- Collection'dan türetilmiş
+    List interface'ini implemente eden Collection sınıflar (ArrayList, Vector, LinkedList(bağlı liste))
+        Bu collection'ların aralarında öncelik sonralık ilişkisi vardır.
+
+    Set interface'ini implemente eden Collection sınıflar (Küme Collection'larıdır.)
+        1- Bu collection'lar içinde sıranın önemi yoktur(İçerisinde sıranın önemi olanlar vardır.).
+        2- Kümenin elemanlarının her biri bir tanedir.
+
+    Queue interface'ini implemente eden Collection sınıflar
+
+- Collection'dan türetilmemiş Map interface'i vardır.
+    - Map'i destekleyen sınıflara sözlük tarzı collection'lar denir.
+    - Map'ten türetilmiş sınıflar iterable DEĞİLDİR(Çünkü collection'dan yada iterable'dan türetilmemiştir).

@@ -1,0 +1,24 @@
+önemli interface'ler
+
+- UnaryFunction<T>
+    - açılan türe dönen tek bir parametre alan fonksiyon
+
+- BinaryFucntion<T>
+    - açıldığı türe dönen, iki parametre alan fonksiyon
+
+- Function<T,R>, BiFunction<T,U,R> interface'leri(String::length)
+    - verilen parametreye bağlı olarakbir çıktı üretirler(String::length, bir örnektir).
+    - fonksiyonu apply'dır
+
+- Supplier<T>(Random::nextInt)
+    - verilen parametreye göre bir çıktı döner.
+    - fonksiyonun ismi get'tir.
+
+- Consumer<T>, BiConsumer<T,U>
+    - açılımı türünden Consumer için tek BiCosumer için iki parametre alan fonksiyonel interface
+    - geri dönüş değeri yoktur
+    - fonksiyonun ismi accept'tir.
+
+- Predicate<T>, BiPredicate<T,U>
+    - Fonksiyona girilen parametrele göre bir test işlemi yapan interface'dir. boolean türüne döner
+    - fonksiyonun ismi test'tir.

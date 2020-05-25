@@ -7617,10 +7617,9 @@ class App {
     }
 }
 
-XXXXXXXXXXXXXXXXXXXXXX
 
 /*----------------------------------------------------------------------------------------------------------------------
-    Calendar sınıfı immutable değildir. Yani içeriği değiştiştirilebilir
+    Calendar sınıfı immutable değildir. Yani içeriği değiştirilebilir
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
@@ -7663,7 +7662,57 @@ class App {
 
     mesajlarından birini yazdıran programı Calendar sınıfını kullanarak yazınız
 ----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
 
+import org.csystem.util.Console;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+class App {
+    public static void main(String [] args)
+    {
+        BirthDateApp app = new BirthDateApp();
+
+        app.run();
+    }
+}
+
+class BirthDateApp {
+    private int m_day, m_mon, m_year;
+
+    private void fillDate()
+    {
+        Console.writeLine("Doğum tarihi bilgilerinizi giriniz:");
+        m_day = Console.readInt("Gün?");
+        m_mon = Console.readInt("Ay?");
+        m_year = Console.readInt("Yıl?");
+    }
+
+    private Calendar dateTimeToDate(Calendar calendar)
+    {
+        return new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    private void displayMessage()
+    {
+        Calendar today = dateTimeToDate(Calendar.getInstance());
+        Calendar birthDay = new GregorianCalendar(today.get(Calendar.YEAR), m_mon - 1, m_day);
+
+        if (birthDay.after(today))
+            System.out.printf("Doğum gününüzü şimdiden kutlarım");
+        else if (birthDay.before(today))
+            System.out.printf("Geçmiş doğum gününüzü kutlarım");
+        else
+            System.out.println("Doğum gününüz kutlu olsun");
+    }
+
+    public void run()
+    {
+        this.fillDate();
+        this.displayMessage();
+    }
+}
 
 /*----------------------------------------------------------------------------------------------------------------------
     Sınıf Çalışması: Klavyeden alınan gün ay yıl bilgisine göre kişinin doğum günü geçmişse
@@ -7675,7 +7724,511 @@ class App {
 
     mesajlarından birini yazdıran programı org.csystem.util.datetime.DateTime sınıfını kullanarak yazınız
 ----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
 
+import org.csystem.util.Console;
+import org.csystem.util.datetime.DateTime;
+import org.csystem.util.datetime.DateTimeException;
+
+class App {
+    public static void main(String [] args)
+    {
+        BirthDateApp app = new BirthDateApp();
+
+        app.run();
+    }
+}
+
+class BirthDateApp {
+    private DateTime m_birthDate;
+
+    private void fillDate()
+    {
+        for(;;) {
+            try {
+                Console.writeLine("Doğum tarihi bilgilerinizi giriniz:");
+                int day = Console.readInt("Gün?");
+                int mon = Console.readInt("Ay?");
+                int year = Console.readInt("Yıl?");
+                m_birthDate = DateTime.of(day, mon, year);
+                break;
+            }
+            catch (DateTimeException ex) {
+                System.out.println("Geçersiz tarih girdiniz");
+            }
+        }
+    }
+
+    private void displayMessage()
+    {
+        DateTime today = DateTime.today();
+        DateTime birthDay = m_birthDate.withYear(today.getYear());
+
+        if (birthDay.isAfter(today))
+            System.out.printf("Doğum gününüzü şimdiden kutlarım");
+        else if (birthDay.isBefore(today))
+            System.out.printf("Geçmiş doğum gününüzü kutlarım");
+        else
+            System.out.println("Doğum gününüz kutlu olsun");
+    }
+
+    public void run()
+    {
+        this.fillDate();
+        this.displayMessage();
+    }
+}
+
+
+package org.csystem.util.datetime;
+
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import static java.util.Calendar.*;
+
+public final class DateTime implements Serializable, Comparable<DateTime> {
+    private static final long serialVersionUID = 1L;
+    private static final int [] DAYS_OF_MONTHS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    private final Calendar m_calendar;
+
+    private static boolean isValidDate(int day, int mon, int year)
+    {
+        if (day < 1 || day > 31 || mon < 1 || mon > 12)
+            return false;
+
+        int days = mon == 2 && isLeapYear(year) ? 29 :  DAYS_OF_MONTHS[mon];
+
+        return day <= days;
+    }
+
+    private static boolean isLeapYear(int year)
+    {
+        return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+    }
+
+    private static boolean isValidForTime(int hour, int minute, int second, int millisecond)
+    {
+        return isValidForHour(hour) && isValidForMinute(minute)
+                && isValidForSecond(second) && isValidForMillisecond(millisecond);
+    }
+
+    private static boolean isValidForHour(int hour)
+    {
+        return isValidForBounds(hour, 23);
+    }
+
+    private static boolean isValidForMinute(int minute)
+    {
+        return isValidForBounds(minute, 59);
+    }
+
+    private static boolean isValidForSecond(int second)
+    {
+        return isValidForBounds(second, 59);
+    }
+    private static boolean isValidForMillisecond(int second)
+    {
+        return isValidForBounds(second, 999);
+    }
+
+    private static boolean isValidForBounds(int val, int max)
+    {
+        return 0 <= val && val <= max;
+    }
+
+    private static void controlForDate(int day, int mon, int year, String msg)
+    {
+        if (!isValidDate(day, mon, year))
+            doWorkForException(msg);
+    }
+    private static void controlForTime(int hour, int minute, int second, int millisecond, String msg)
+    {
+        if (!isValidForTime(hour, minute, second, millisecond))
+            doWorkForException(msg);
+    }
+
+    public static void controlForHour(int hour)
+    {
+        if (!isValidForHour(hour))
+            doWorkForException("Invalid Hour");
+    }
+
+    public static void controlForMinute(int minute)
+    {
+        if (!isValidForMinute(minute))
+            doWorkForException("Invalid Minute");
+    }
+
+    public static void controlForSecond(int second)
+    {
+        if (!isValidForSecond(second))
+            doWorkForException("Invalid Second");
+    }
+
+    public static void controlForMillisecond(int millisecond)
+    {
+        if (!isValidForMillisecond(millisecond))
+            doWorkForException("Invalid Millisecond");
+    }
+
+    private static void control(int day, int mon, int year, int hour, int minute, int second, int millisecond, String msg)
+    {
+        controlForDate(day, mon, year, msg);
+        controlForTime(hour, minute, second, millisecond, msg);
+    }
+
+    private static void doWorkForException(String msg)
+    {
+        throw new DateTimeException(msg);
+    }
+
+    private DateTime(Calendar calendar)
+    {
+        m_calendar = calendar;
+    }
+
+    private DateTime()
+    {
+        m_calendar = Calendar.getInstance();
+    }
+
+    private DateTime(int day, int mon, int year, int hour, int minute, int second, int milliseconds)
+    {
+        control(day, mon, year, hour, minute, second, milliseconds, "Invalid DateTime");
+        m_calendar = new GregorianCalendar(year, mon - 1, day, hour, minute, second);
+        m_calendar.set(MILLISECOND, milliseconds);
+    }
+
+    private DateTime plus(int field, int amount)
+    {
+        Calendar calendar = (Calendar)m_calendar.clone();
+
+        calendar.add(field, amount);
+
+        return new DateTime(calendar);
+    }
+
+    private DateTime with(int field, int value)
+    {
+        Calendar calendar = (Calendar)m_calendar.clone();
+
+        calendar.set(field, value);
+
+        return new DateTime(calendar);
+    }
+
+    public static DateTime of(long milliseconds)
+    {
+        DateTime dateTime = new DateTime();
+
+        dateTime.m_calendar.setTimeInMillis(milliseconds);
+
+        return dateTime;
+    }
+
+    public static DateTime of(int day, int mon, int year)
+    {
+        return of(day, mon, year, 0, 0);
+    }
+
+    public static DateTime of(int day, Month mon, int year)
+    {
+        return of(day, mon.ordinal() + 1, year);
+    }
+
+    public static DateTime of(int day, Month mon, int year, int hour, int minute)
+    {
+        return of(day, mon.ordinal() + 1, year, hour, minute);
+    }
+
+    public static DateTime of(int day, int mon, int year, int hour, int minute)
+    {
+        return of(day, mon, year, hour, minute, 0);
+    }
+
+    public static DateTime of(int day, Month mon, int year, int hour, int minute, int second)
+    {
+        return of(day, mon.ordinal() + 1, year, hour, minute, second);
+    }
+
+    public static DateTime of(int day, int mon, int year, int hour, int minute, int second)
+    {
+        return of(day, mon, year, hour, minute, second, 0);
+    }
+
+    public static DateTime of(int day, Month mon, int year, int hour, int minute, int second, int millisecond)
+    {
+        return of(day, mon.ordinal() + 1, year, hour, minute, second, millisecond);
+    }
+
+    public static DateTime of(int day, int mon, int year, int hour, int minute, int second, int millisecond)
+    {
+        return new DateTime(day, mon, year, hour, minute, second, millisecond);
+    }
+
+    public static DateTime now() {return new DateTime();}
+    public static DateTime today()
+    {
+        DateTime now = now();
+
+        now.m_calendar.set(HOUR_OF_DAY, 0);
+        now.m_calendar.set(MINUTE, 0);
+        now.m_calendar.set(SECOND, 0);
+        now.m_calendar.set(MILLISECOND, 0);
+
+        return now;
+    }
+
+    public int getDay() {return m_calendar.get(DAY_OF_MONTH);}
+
+    public int getMonthValue() {return m_calendar.get(MONTH) + 1;}
+
+    public Month getMonth() {return Month.values()[getMonthValue() - 1];}
+
+    public int getYear() {return m_calendar.get(YEAR);}
+
+    public DayOfWeek getDayOfWeek() {return DayOfWeek.values()[m_calendar.get(DAY_OF_WEEK) - 1];}
+
+    public int getDayOfYear() {return m_calendar.get(DAY_OF_YEAR);}
+
+    public int getHour() {return m_calendar.get(HOUR_OF_DAY);}
+
+    public int getMinute() {return m_calendar.get(MINUTE);}
+
+    public int getSecond() {return m_calendar.get(SECOND);}
+
+    public int getMillisecond() {return m_calendar.get(MILLISECOND);}
+
+    public long getTimeInMillis()
+    {
+        return m_calendar.getTimeInMillis();
+    }
+
+    public int getEndOfMonth() {return m_calendar.getActualMaximum(DAY_OF_MONTH);}
+
+    public boolean isAfter(DateTime other) {return compareTo(other) > 0;}
+
+    public boolean isBefore(DateTime other) {return compareTo(other) < 0;}
+
+    public boolean isEqual(DateTime other) {return equals(other);}
+
+    public boolean isLeapYear()
+    {
+        return isLeapYear(getYear());
+    }
+
+    public boolean isWeekday() {return !isWeekend();}
+
+    public boolean isWeekend()
+    {
+        DayOfWeek dow = getDayOfWeek();
+
+        return dow == DayOfWeek.SAT || dow == DayOfWeek.SUN;
+    }
+
+    public DateTime plusDays(int days)
+    {
+        return plus(DAY_OF_MONTH, days);
+    }
+
+    public DateTime plusMonths(int months)
+    {
+        return plus(MONTH, months);
+    }
+
+    public DateTime plusYears(int years)
+    {
+        return plus(YEAR, years);
+    }
+
+    public DateTime plusHours(int hours)
+    {
+        return plus(HOUR_OF_DAY, hours);
+    }
+
+    public DateTime plusMinutes(int minutes)
+    {
+        return plus(MINUTE, minutes);
+    }
+
+    public DateTime plusSeconds(int seconds)
+    {
+        return plus(SECOND, seconds);
+    }
+
+    public DateTime plusMilliseconds(int milliseconds)
+    {
+        return plus(MILLISECOND, milliseconds);
+    }
+
+    public DateTime minusDays(int days)
+    {
+        return plusDays(-days);
+    }
+
+    public DateTime minusMonths(int months)
+    {
+        return plusMonths(-months);
+    }
+
+    public DateTime minusYears(int years)
+    {
+        return plusYears(-years);
+    }
+
+    public DateTime minusHours(int hours)
+    {
+        return plusHours(-hours);
+    }
+
+    public DateTime minusMinutes(int minutes)
+    {
+        return plusMinutes(-minutes);
+    }
+
+    public DateTime minusSeconds(int seconds)
+    {
+        return plusSeconds(-seconds);
+    }
+
+    public DateTime minusMilliseconds(int milliseconds)
+    {
+        return plusMilliseconds(-milliseconds);
+    }
+
+
+    public DateTime withDay(int day)
+    {
+        controlForDate(day, getMonthValue(), getYear(), "Invalid Day");
+
+        return with(DAY_OF_MONTH, day);
+    }
+
+    public DateTime withMonthValue(int month)
+    {
+        controlForDate(getDay(), month, getYear(), "Invalid Month");
+
+        return with(MONTH, month - 1);
+    }
+
+    public DateTime withMonth(Month month)
+    {
+        return withMonthValue(month.ordinal() + 1);
+    }
+
+    public DateTime withYear(int year)
+    {
+        controlForDate(getDay(), getMonthValue(), year, "Invalid Year");
+
+        return with(YEAR, year);
+    }
+
+    public DateTime withHour(int hour)
+    {
+        controlForHour(hour);
+
+        return with(HOUR_OF_DAY, hour);
+    }
+
+    public DateTime withMinute(int minute)
+    {
+        controlForMinute(minute);
+
+        return with(MINUTE, minute);
+    }
+
+    public DateTime withSecond(int second)
+    {
+        controlForSecond(second);
+
+        return with(SECOND, second);
+    }
+
+    public DateTime withMillisecond(int millisecond)
+    {
+        controlForMillisecond(millisecond);
+
+        return with(MILLISECOND, millisecond);
+    }
+
+    @Override
+    public int compareTo(DateTime other)
+    {
+        return m_calendar.compareTo(other.m_calendar);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof DateTime))
+            return false;
+
+        return m_calendar.equals(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return m_calendar.hashCode();
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return toString('/');
+    }
+
+    public String toString(char delim)
+    {
+        return String.format("%s %s", toDateString(delim), toTimeString());
+    }
+
+    public String toDateString()
+    {
+        return toDateString('/');
+    }
+
+    public String toDateString(char delim)
+    {
+        return String.format("%02d%c%02d%c%04d",
+                getDay(), delim, getMonthValue(), delim, getYear());
+    }
+
+    public String toLongTimeString()
+    {
+        return String.format("%s.%d", toTimeString(), getMillisecond());
+    }
+
+    public String toTimeString()
+    {
+        return String.format("%02d:%02d:%02d", getHour(), getMinute(), getSecond());
+    }
+}
+package org.csystem.util.datetime;
+
+public class DateTimeException extends RuntimeException  {
+    public DateTimeException()
+    {}
+
+    public DateTimeException(String msg)
+    {
+        super(msg);
+    }
+}
+package org.csystem.util.datetime;
+
+public enum DayOfWeek {
+    SUN, MON, TUE, WED, THU, FRI, SAT
+}
+package org.csystem.util.datetime;
+
+public enum Month {
+    JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC
+}
 
 /*----------------------------------------------------------------------------------------------------------------------
     LocalDate sınıfı
@@ -7719,21 +8272,27 @@ class App {
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
 
 class App {
     public static void main(String [] args)
     {
-        LocalDate dt = LocalDate.of(1976, Month.SEPTEMBER, 45);
+        try {
+            LocalDate dt = LocalDate.of(1976, Month.SEPTEMBER, 45);
 
-        System.out.printf("%02d/%02d/%02d%n", dt.getDayOfMonth(), dt.getMonthValue(), dt.getYear());
-        System.out.printf("%02d %s %02d %s%n", dt.getDayOfMonth(), dt.getMonth(), dt.getYear(), dt.getDayOfWeek());
+            System.out.printf("%02d/%02d/%02d%n", dt.getDayOfMonth(), dt.getMonthValue(), dt.getYear());
+            System.out.printf("%02d %s %02d %s%n", dt.getDayOfMonth(), dt.getMonth(), dt.getYear(), dt.getDayOfWeek());
+        }
+        catch (DateTimeException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
-    LocalDate sınıfı now isimli metodu ile çalışılan sistemdeki o anki tarih elde edilebilir
+    LocalDate sınıfının now isimli metodu ile çalışılan sistemdeki o anki tarih elde edilebilir
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.app;
 
@@ -7795,6 +8354,61 @@ class App {
 
     mesajlarından birini yazdıran programı LocalDate sınfını kullanarak yazınız
 ----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.time.DateTimeException;
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        BirthDateApp app = new BirthDateApp();
+
+        app.run();
+    }
+}
+
+class BirthDateApp {
+    private LocalDate m_birthDate;
+
+    private void fillDate()
+    {
+        for(;;) {
+            try {
+                Console.writeLine("Doğum tarihi bilgilerinizi giriniz:");
+                int day = Console.readInt("Gün?");
+                int mon = Console.readInt("Ay?");
+                int year = Console.readInt("Yıl?");
+                m_birthDate = LocalDate.of(year, mon, day);
+                break;
+            }
+            catch (DateTimeException ex) {
+                System.out.println("Geçersiz tarih girdiniz");
+            }
+        }
+    }
+
+    private void displayMessage()
+    {
+        LocalDate today = LocalDate.now();
+        LocalDate birthDay = m_birthDate.withYear(today.getYear());
+
+        if (birthDay.isAfter(today))
+            System.out.println("Doğum gününüzü şimdiden kutlarım");
+        else if (birthDay.isBefore(today))
+            System.out.println("Geçmiş doğum gününüzü kutlarım");
+        else
+            System.out.println("Doğum gününüz kutlu olsun");
+    }
+
+    public void run()
+    {
+        this.fillDate();
+        this.displayMessage();
+    }
+}
 
 /*----------------------------------------------------------------------------------------------------------------------
     LocalDate sınıfının plusXXX metotları
@@ -7808,6 +8422,24 @@ class App {
     {
         LocalDate now = LocalDate.now();
         LocalDate date = now.plusWeeks(3).plusDays(7);
+
+        System.out.println(now);
+        System.out.println(date);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının minusXXX metotları
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+        LocalDate now = LocalDate.now();
+        LocalDate date = now.minusWeeks(3).minusDays(7).plusYears(3);
 
         System.out.println(now);
         System.out.println(date);
@@ -7925,6 +8557,2083 @@ class App {
 
     }
 }
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Basit bir dijital tarih zaman uygulaması
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.CSDTimer;
+import org.csystem.util.datetime.DateTime;
+
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String [] args)
+    {
+        DigitalTimeApp.run();
+    }
+}
+
+class DigitalTimeApp {
+    public static void run()
+    {
+        CSDTimer timer = new CSDTimer(0, 1, TimeUnit.SECONDS);
+
+        timer.start(() -> System.out.printf("%s\r", DateTime.now()));
+    }
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Basit bir dijital tarih zaman uygulaması
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.CSDTimer;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
+
+class App {
+    public static void main(String [] args)
+    {
+        DigitalTimeApp.run();
+    }
+}
+
+class DigitalTimeApp {
+    public static void displayDateTime()
+    {
+        LocalDateTime now = LocalDateTime.now();
+
+        System.out.printf("%02d/%02d/%04d %02d:%02d:%02d\r", now.getDayOfMonth(), now.getMonthValue(), now.getYear(),
+                                                            now.getHour(), now.getMinute(), now.getSecond());
+    }
+
+    public static void run()
+    {
+        CSDTimer timer = new CSDTimer(0, 1, TimeUnit.SECONDS);
+
+        timer.start(DigitalTimeApp::displayDateTime);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LocalDate sınıfının bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        Person p = new Person("Oğuz", "", "Karan", LocalDate.of(1976, 9, 10));
+
+        System.out.printf("Age:%.10f%n", p.getAge());
+    }
+}
+
+class Person {
+    private String m_firstname;
+    private Optional<String> m_secondname;
+    private String m_surname;
+    private LocalDate m_birthDate;
+
+    public Person(String firstname, String secondname, String surname, LocalDate birthDate)
+    {
+        m_firstname = firstname;
+        m_secondname = secondname.isBlank() ? Optional.empty() : Optional.of(secondname);
+        m_surname = surname;
+        m_birthDate = birthDate;
+    }
+
+    //...
+    public double getAge()
+    {
+        return ChronoUnit.DAYS.between(m_birthDate, LocalDate.now()) / 365.;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Void sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        IFunction<Void, Void> v = dummy -> {Console.writeLine(10); return null;};
+
+        v.apply(null);
+    }
+}
+
+interface IFunction<T, R> {
+    R apply(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Void sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.util.function.Function;
+
+class App {
+    public static void main(String [] args)
+    {
+        Function<Void, Void> v = dummy -> {Console.writeLine(10); return null;};
+
+        v.apply(null);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    assert <boolean türden ifade> [:<void olmayan ifade>]
+
+    assert deyimine ilişkin ifade true ise akış assert den itibaren yoluna devam eder.
+    Yanlış ise AssertionError nesnesi fırlatılır. assert deyimindeki void olmayan ifade exception' a ilişkin
+    mesajı temsil eder.
+
+    assert kullanımı için java programına -ea veya -enableassertions seçeneği verilmelidir.
+    Eğer bu seçeneklerden biri verilmezse assert deyimi çalışma zamanı sırasında
+    görmezden gelinir. assert deyimleri derleme sırasında olduğundan seçenekler verilemese bile
+    byte code içerisinde bulunulurlar. Öyleyse bunu da devre dışı bırakacak kod yazılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String [] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.println("Bir sayı giriniz");
+        int val = Integer.parseInt(kb.nextLine());
+
+        Sample s = new Sample();
+
+        s.bar(val);
+    }
+}
+
+class Sample {
+    private void foo(int val)
+    {
+        assert val > 0: "val must be positive";
+
+        System.out.println("foo");
+    }
+
+    public void bar(int val)
+    {
+        //val = Math.abs(val);
+        System.out.println("bar");
+
+        foo(val);
+    }
+}
+
+package org.csystem.app;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String [] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.println("Bir sayı giriniz");
+        int val = Integer.parseInt(kb.nextLine());
+
+        Sample s = new Sample();
+
+        s.bar(val);
+    }
+}
+
+class Sample {
+    private void foo(int val)
+    {
+        assert val > 0: String.format("%d değeri pozitif olmalıdır", val);
+
+        System.out.println("foo");
+    }
+
+    public void bar(int val)
+    {
+        //val = Math.abs(val);
+        System.out.println("bar");
+
+        foo(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte assert deyimi içerisinde bir metot çağrılmıştır. Bu metot assert
+    devrede değilken çağrılmaz. Eğer çağrılsın isteniyorsa buna dikkat edilmelidir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String [] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.println("Bir sayı giriniz");
+        int val = Integer.parseInt(kb.nextLine());
+
+        Sample s = new Sample();
+
+        s.bar(val);
+    }
+}
+
+class Sample {
+    private boolean tar(int val)
+    {
+        System.out.println("tar");
+
+        return val % 2 == 0;
+    }
+
+    private void foo(int val)
+    {
+        assert tar(val): "return value must be true";
+
+        System.out.println("foo");
+    }
+
+    public void bar(int val)
+    {
+        System.out.println("bar");
+
+        foo(val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki problem aşağıdaki gibi düzeltilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String [] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.println("Bir sayı giriniz");
+        int val = Integer.parseInt(kb.nextLine());
+
+        Sample s = new Sample();
+
+        s.bar(val);
+    }
+}
+
+class Sample {
+    private boolean tar(int val)
+    {
+        System.out.println("tar");
+
+        return val % 2 == 0;
+    }
+
+    private void foo(int val)
+    {
+        boolean status = tar(val);
+
+        assert status: "return value must be true";
+
+        System.out.println("foo");
+    }
+
+    public void bar(int val)
+    {
+        System.out.println("bar");
+
+        foo(val);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte SampleTest sınıfının test metodu yazlnızca assert deyimleri devrede iken çağrılmak amaçlı
+    kullanılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String [] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.println("Bir sayı giriniz");
+        int val = Integer.parseInt(kb.nextLine());
+
+        Sample s = new Sample();
+
+        s.bar(val);
+    }
+}
+
+
+class SampleTest  {
+    public static boolean test(boolean status)
+    {
+        System.out.println("Test starts");
+
+        return status;
+    }
+}
+class Sample {
+    private boolean tar(int val)
+    {
+        System.out.println("tar");
+
+        return val % 2 == 0;
+    }
+
+    private void foo(int val)
+    {
+        boolean status = tar(val);
+
+        assert SampleTest.test(status): "return value must be true";
+
+        System.out.println("foo");
+    }
+
+    public void bar(int val)
+    {
+        System.out.println("bar");
+
+        foo(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Derleyiciler akışın bir koda erişemeyeceği derleme durumlarında ya error oluşturur ya da
+    kullanılabilecek bir kod ise bu durumda bunu arakoda eklemez. Örneğin final ve boolean bir değişken
+    false değerindeyse ve bu değişkene göre if deyimi ile bir akış oluşturulmuşsa derleyici
+    değişkenin değeri false ve değişken final olduğundan bu if deyimini arakoda eklemez.
+    Bu durumda assert deyimlerinin ürünün son aşamasında arakoddan çıkartılması
+    aşağıdaki gibi yapılabilir. final değişken kendi sınıfına ya da başka sınıfa da konabilir.
+    Aşağıdaki kodu inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.util.Scanner;
+
+class App {
+    public static void main(String [] args)
+    {
+        Scanner kb = new Scanner(System.in);
+        System.out.println("Bir sayı giriniz");
+        int val = Integer.parseInt(kb.nextLine());
+
+        Sample s = new Sample();
+
+        s.bar(val);
+    }
+}
+
+class Test {
+    public void foo()
+    {
+
+    }
+}
+
+class Sample {
+    private static final boolean DEBUG = false;
+
+    private boolean tar(int val)
+    {
+        System.out.println("tar");
+
+        return NumberUtil.isPrime(val);
+    }
+
+    private void foo(int val)
+    {
+        boolean status = tar(val);
+
+        if (DEBUG) { //DEBUG false ise bu deyimi arakoda eklemesin
+            assert status : "return value must be true";
+        }
+
+        System.out.println("foo");
+    }
+
+    public void bar(int val)
+    {
+        System.out.println("bar");
+
+        foo(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte switch deyiminin default kısmında assert yapılmıştır. Çünkü algoritma gereği
+    akışın default a gelmemesi gerekir. Bu durumda programcı algoritmanın doğruluğuna ilişkin
+    basit bir test yapmış olur. Ayrıca ikinci assert deyimi ise switch deyiminde unutulmuş bir
+    case işleminin de olup olmadığını test eder. Hatta aşağı düşme bile bu şekilde test edilebilir.
+    Aşağıdaki örneği sınır değerleri değiştirirerek ve case bölümlerindeki değerlerden bazılarını silerek
+    çalıştırılabilirsiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        int val = Console.readInt("Bir sayı giriniz");
+
+        System.out.println(NumberUtil.getDigitStrTR(val));
+    }
+}
+
+class NumberUtil {
+    private static final boolean DEBUG = true;
+
+    public static String getDigitStrTR(int digit)
+    {
+        if (digit < 0 || digit > 9)
+            return "";
+
+        String str = "";
+
+        switch (digit) {
+            case 0:
+                str = "sıfır";
+                break;
+            case 1:
+                str = "bir";
+                break;
+            case 2:
+                str =  "iki";
+                break;
+            case 3:
+                str = "üç";
+                break;
+            case 4:
+                str =  "dört";
+                break;
+            case 5:
+                str =  "beş";
+                break;
+            case 6:
+                str =  "altı";
+                break;
+            case 7:
+                str =  "yedi";
+                break;
+            case 8:
+                str = "sekiz";
+                break;
+            case 9:
+                str =  "dokuz";
+                break;
+            default:
+                if (DEBUG) {
+                    String msg = String.format("digit:%d", digit);
+
+                    assert 0 <= digit && digit <= 9: msg + ":cause:control for bounds";
+                    assert digit < 0 || digit > 9: msg + ":cause=case statement";
+                }
+        }
+
+        return str;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Annotation bildirimi
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@interface MyAnnotation {
+    //Annotation bildirimi
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Annotation Java' da çeşitli kod parçalarına konabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@MyAnnotation
+class Sample {
+    @MyAnnotation
+    private int m_val;
+
+    @MyAnnotation
+    public void foo()
+    {}
+
+    public void foo(@MyAnnotation int x)
+    {
+        //...
+    }
+
+}
+
+@interface MyAnnotation {
+    //Annotation bildirimi
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Annotation'ların elemanları annotation uygulanmasında kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@MyAnnotation(value = "Sample class")
+class Sample {
+    @MyAnnotation(value = "m_val", type = Type.MEMBER_VARIABLE)
+    private int m_val;
+
+    @MyAnnotation(value = "foo", type = Type.METHOD)
+    public void foo()
+    {}
+
+    public void foo(@MyAnnotation(value = "x", type = Type.PARAMETER_VARIABLE) int x)
+    {
+        //...
+    }
+}
+
+enum Type {CLASS, METHOD, MEMBER_VARIABLE, PARAMETER_VARIABLE}
+
+@interface MyAnnotation {
+    String value() default "Object";
+    Type type() default Type.CLASS;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Çalışma zamanı annotation kullanımı. İleride işaratlenmiş bir elemanınn annotation bilgilerinin nasıl alınacağını
+    inceleyeceğiz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.time.LocalDate;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@Entity(tableName = "products")
+class Person {
+    @ColumnInfo(name = "citizen_id", unique = true, nullable = false)
+    private String m_citizenId;
+
+    @ColumnInfo(name = "birth_date")
+    private LocalDate m_birthDate;
+
+    @Ignore
+    private int m_dummy;
+
+    //...
+}
+
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = ElementType.FIELD)
+@interface Ignore {
+
+}
+
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = {ElementType.TYPE, ElementType.MODULE})
+@interface Entity {
+    String tableName() default "";
+}
+
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = ElementType.FIELD)
+@interface ColumnInfo {
+    String name() default "";
+    boolean unique() default false;
+    boolean nullable() default true;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir annotation içerisindeki elemanın ismi value ise ve işaretleme sırasında yalnızca value elemanına
+    değer verilecekse "value =" biçiminde yazılmayabilir. Ancak başka elemana da değer verilecekse
+    "value =" yazılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@Sample("xxx")
+class A {
+
+}
+
+@Sample(value = "yyy", val = 10)
+class B {
+
+}
+
+@Mample("") //error
+class C {
+
+}
+
+@interface Sample {
+    String value() default "";
+    int val() default 0;
+}
+
+@interface Mample {
+    String str() default "";
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Ovveride annotation'ı bir metoda uygulanabilir. Metodun doğru şekilde override edilip
+    edilemeyeceğini derleme zamanında anlamak için kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        A a = new B();
+
+        a.foo(10, 20);
+    }
+}
+
+
+class B extends A {
+    @Override
+    public void foo(double a, double b)
+    {
+        System.out.println("B.foo");
+    }
+}
+
+class A {
+    public void foo(double a, double b)
+    {
+        System.out.println("A.foo");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Override annotation'ı bir metoda uygulanamabilir. Metodun doğru şekilde override edilip
+    edilemeyeceğini derleme zamanında anlamak için kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+
+class B extends A {
+    @Override //error
+    public void foo(double a, int b)
+    {
+        System.out.println("B.foo");
+    }
+}
+
+class A {
+    public void foo(double a, double b)
+    {
+        System.out.println("B.foo");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Deprecated annotation'ı bir elemanın (metot, class vs.) deprecated olarak işaretlenmesi için kullanılır.
+    Bu annotation bir RUNTIME annotation olmasına karşın derleyiciler burada bir uyarı mesajı verirler
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        Sample s = new Sample();
+
+        s.foo();
+        s.bar();
+    }
+}
+
+class Sample {
+    @Deprecated
+    public void foo()
+    {
+        //...
+    }
+
+    public void bar()
+    {
+        //...
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Deprecated annotation'ına Java 9 ile birlikte forRemoval ve since elemanları eklenmiştir. forRemoval default
+    olarak false'dur. Deprecated işaretlenen bir elemanının ileride silinip silinmeyeceğini de belirtmek için
+    kullanılır. since elemanı ise String türden versiyon belirtmek için kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        Sample s = new Sample();
+
+        s.foo();
+        s.bar();
+    }
+}
+
+class Sample {
+    @Deprecated(since = "1.2.3", forRemoval = true)
+    public void foo()
+    {
+        //...
+    }
+
+    public void bar()
+    {
+        //...
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Inherited annotation'ı yalnızca annotation'lara uygulanabilir. Bu durumda Inherited işaretlenmiş bir annotation'ın
+    sınıfa uygulanması o türemiş sınıflarında bu annotation' a sahip olacağı anlamına gelir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Target;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@Inherited
+@Target(value = {ElementType.TYPE})
+@interface MyAnnotation {
+
+}
+
+@MyAnnotation
+class A {
+
+}
+
+class B extends A {
+
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    FunctionalInterface annotation sınıfı bir arayüzün fonksiyonel olup olmadığına ilişkin işaret koymak amaçlı
+    kullanılır. Bu annotation'da bilgilendirme amaçlı bir annotation'dır. Bu annotation ile işaratlenmiş bir arayüz
+    içerisinde bir ve yalnız bir tane abstract metot olmalıdır. Aksi durumda error oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+@FunctionalInterface
+interface IX {
+    void foo();
+    default void bar()
+    {}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    SuppressWarnings annotation'ı ile derleyiciye "bunun için uyarı verme" demek için kullanılır. Bu annotation
+    kullanılırken programcının emin olması gerekir. Çoğu uyarı mesajı önemlidir ve dikkate alınmalıdır. Bilinçsizce
+    kullanılmamalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+
+class Sample<T> {
+    private T [] m_t;
+
+    @SuppressWarnings("unchecked")
+    public Sample(int n)
+    {
+        m_t = (T[])new Object[n];
+    }
+
+    //
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        Object [] objs = new Object[2];
+        Sample<String> sample = new Sample<>(objs);
+
+        objs[0] = "ankara";
+        objs[1] = 10;
+
+        for (int i = 0; i < sample.size(); ++i)
+            System.out.println(sample.get(i).toUpperCase());
+    }
+}
+
+
+class Sample<T> {
+    private T [] m_t;
+
+    public Sample(Object [] obj)
+    {
+        m_t = (T[])obj;
+    }
+
+    public int size() {return m_t.length;}
+
+    public T get(int index) {return m_t[index];}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java'da generic türler invariant olduğundan aşağıdaki çağırma geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Integer> integers = new ArrayList<>();
+
+        //...
+        Sample.display(integers);  //error
+    }
+}
+
+class Sample {
+    public static void display(ArrayList<Number> numbers)
+    {
+        for (var n : numbers)
+            System.out.println(n);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   ? extends ile parametre covariant yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Integer> integers = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            System.out.println(integers.add(i * 10));
+
+        Sample.display(integers);
+    }
+}
+
+class Sample {
+    public static void display(ArrayList<? extends Number> numbers)
+    {
+        for (var n : numbers)
+            System.out.println(n);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte foo nun parametresi invariant'dır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        A<Integer> aint = new A<>();
+
+        Sample.foo(aint);
+    }
+}
+
+
+class A<T extends Number> { //constraint
+
+}
+
+class Sample {
+    public static void foo(A<Number> a) //invariant
+    {
+        //...
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte foo nun parametresi contravariant olarak verilmiştir
+   ? super ile alttan sınır verilmiş olur. Yani super anahtar sözcüğünden sonra yazılan türün taban türleri
+   (class, interface'ler) açılım olarak verilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Number> arrayList = new ArrayList<>();
+
+        Sample.foo(arrayList);
+    }
+}
+
+class Sample {
+    public static void foo(ArrayList<? super Integer> list) //contravariant
+    {
+        //...
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte foo metoduna ArrayLit'in her açılımı atanabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Number> arrayList = new ArrayList<>();
+
+        Sample.foo(arrayList);
+    }
+}
+
+class Sample {
+    public static void foo(ArrayList<? extends Object> list) //covariant
+    {
+        //...
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte display metoduna ArrayList'in her açılımı geçilebilir (unknown type)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Integer> arrayList = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            arrayList.add(i * 10);
+
+        Sample.display(arrayList);
+    }
+}
+
+class Sample {
+    public static void display(ArrayList<?> list)
+    {
+        for (var val : list)
+            System.out.println(val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte ArrayList referansı unknown type olduğu için error oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<?> arrayList = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            arrayList.add(i * 10); //error
+
+        Sample.display(arrayList);
+    }
+}
+
+class Sample {
+    public static void display(ArrayList<?> list)
+    {
+        for (var val : list)
+            System.out.println(val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte fill metodu içerisinde ArrayList' e ekleme yapılabilmesi için açılımda ya doğrudan tür kullanılması
+   ya da contravariant özellikte olması gerekir.
+   Yani şu contarvariant ve covariant şu özellikler geçerlidir
+   1. covariant olarak bildirilmiş bir referans ile o türe ilişkin sınıfın bir metodunun parametresi generic türden
+   ise ? extends den sonra gelen tür argüman olarak geçilemez. Ancak bu tür geri dönüş değeri olarak alınabilir
+
+   2. contravariant olrak bildirilmiş bir değişken ile o türe ilişkin sınıfın bir metodunun parametresi generi türden ise
+   ? super'den sonra geken tür argüman olarak geçilebilir.  Ancak bu tür geri dönüş değer türü olarak alınamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+
+    }
+}
+
+class Sample {
+    public static void fill(ArrayList<? extends Integer> list, Random r, int n)
+    {
+        double val = list.get(0).doubleValue();
+
+        for (int i = 0; i < n; ++i)
+            list.add(r.nextInt()); //error
+    }
+}
+
+
+class Mample {
+    public static void fill(ArrayList<? super Integer> list, Random r, int n)
+    {
+        double val = list.get(0).doubleValue(); //error
+
+        for (int i = 0; i < n; ++i)
+            list.add(r.nextInt());
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java' da programın çalışma zamanı sırasında her tür için (temel türler dahil) bir Class nesnesi yaratılır.
+    Reflection işlemleri Class sınıfı ile gerçekleştirilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Her tür isminin (temel türler de dahil) yaında nokta ile birlikte class anahtar sözüğü kullanıldığında
+   bu ifade o türe ilişkin Class referansını üretir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        Class<Sample> clsSample = Sample.class;
+        Class<Mample> clsMample = Mample.class;
+        Class<String> clsString = String.class;
+        Class<Integer> clsInteger = Integer.class;
+        Class<?> clsInt = int.class;
+
+        //...
+    }
+}
+
+class Sample {
+    //...
+}
+
+
+class Mample {
+    //...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Class sınıfının forName isimli metodu ile türün paket ismiyle beraber yazılması durumunda Class referansı
+  elde edilebilir. Tür bulunamazsa ClassNotFoundException nesnesi fırlatılır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        try {
+            Class<?> clsSample = Class.forName("org.csystem.app.Sample");
+
+            System.out.println("Sınıf bulundu");
+        }
+        catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+}
+
+class Sample {}
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Class sınıfının getName metodu ile türün ismi fully qualified elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        try {
+            Class<?> clsSample = Class.forName("org.csystem.app.Sample");
+
+            System.out.println("Sınıf bulundu");
+
+            System.out.println(clsSample.getName());
+        }
+        catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+}
+
+class Sample {}
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Object sınıfının getClass metodu ile referansın dinamik türüne ilişkin Class referansı elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        Sample s = new Sample();
+        Object object = s;
+        X x = s;
+
+        Class<?> cls1 = object.getClass();
+        Class<?> cls2 = x.getClass();
+
+        System.out.println(cls1 == cls2);
+
+        System.out.println(cls1.getName());
+        System.out.println(cls2.getName());
+    }
+}
+
+class X {
+
+}
+class Sample extends X {
+
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Anonim sınıfa ilişkin Class referansının elde edilmesi getClass metodu ile yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        IX ix = new IX() {
+            @Override
+            public void foo()
+            {
+
+            }
+
+            @Override
+            public void bar()
+            {
+
+            }
+        };
+
+        Class<?> cls = ix.getClass();
+
+        System.out.println(cls.getName());
+    }
+}
+
+
+interface IX {
+    void foo();
+    void bar();
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Class sınıfının getDeclaredXXX metodu ile türün elemanlarına erişim belirleyiciden bağımsız erişilebilir.
+  Taban sınıfının hiç bir bölümüne bu metot ile erişilemez. getXXX metotları ile taban sınıf da dahil public
+  bölümdeki elemanlara erişilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+class App {
+    public static void main(String [] args)
+    {
+        Class<?> cls = Sample.class;
+
+        System.out.println("Declared Fields:");
+        for (Field field : cls.getDeclaredFields())
+            System.out.printf("Type:%s, Name:%s%n", field.getType().getName(), field.getName());
+
+        System.out.println("Fields:");
+        for (Field field : cls.getFields())
+            System.out.printf("Type:%s, Name:%s%n", field.getType().getName(), field.getName());
+
+        System.out.println("////////////////////////////");
+
+        System.out.println("Declared Methods:");
+        for (Method method : cls.getDeclaredMethods())
+            System.out.printf("Type:%s, Name:%s%n", method.getReturnType().getName(), method.getName());
+
+        System.out.println("Methods:");
+        for (Method method : cls.getMethods())
+            System.out.printf("Type:%s, Name:%s%n", method.getReturnType().getName(), method.getName());
+    }
+}
+
+class X {
+    public double m_y;
+
+    public void bar()
+    {}
+}
+
+class Sample extends X {
+    private int m_x;
+
+    private void foo(int a, int b)
+    {
+        //...
+    }
+
+    public Sample()
+    {
+
+    }
+
+    public Sample(int x)
+    {
+        m_x = x;
+    }
+
+    public int getX()
+    {
+        return m_x;
+    }
+
+    public void setX(int x)
+    {
+        m_x = x;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return m_x + "";
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Aşağıdaki örnekte Sample sınıfına ilişkin private elemanlara da erişilebilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+class App {
+    public static void main(String [] args)
+    {
+        try {
+            Class<?> clsSample = Class.forName("org.csystem.app.Sample");
+            Constructor<?> ctorDefault = clsSample.getDeclaredConstructor();
+            Constructor<?> ctorInt = clsSample.getDeclaredConstructor(int.class);getDeclaredConstructor
+
+            ctorDefault.setAccessible(true);
+
+            Object s = ctorDefault.newInstance();
+
+            ctorDefault.setAccessible(false);
+
+            Method mgetX = clsSample.getDeclaredMethod("getX");
+
+            System.out.println((int)mgetX.invoke(s));
+
+            var s1 = ctorInt.newInstance(10);
+
+            System.out.println(mgetX.invoke(s1));
+
+            var fooid = clsSample.getDeclaredMethod("foo", int.class, double.class);
+
+            fooid.setAccessible(true);
+
+            fooid.invoke(null, 10, 20);
+            fooid.invoke(null); //exception
+
+            fooid.setAccessible(false);
+        }
+        catch (Throwable ex) {
+            System.out.printf("Exception:%s%n", ex.getMessage());
+        }
+    }
+}
+
+class Sample {
+    private int m_x;
+
+    private static void foo(int a, double b)
+    {
+        System.out.println("foo(int, double)");
+    }
+    private static void foo()
+    {
+        System.out.println("foo()");
+    }
+
+
+    private Sample()
+    {
+        System.out.println("Sample.Sample()");
+    }
+
+    public Sample(int x)
+    {
+        System.out.println("Sample.Sample(int)");
+        m_x = x;
+    }
+
+    public int getX()
+    {
+        return m_x;
+    }
+
+    public void setX(int x)
+    {
+        m_x = x;
+    }
+
+    @Override
+    public String toString()
+    {
+        return m_x + "";
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Aşağıdaki örnekte singleton yazılmış bir sınıf türünden çalışma zamanı sırasında nesnelere yaratılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        try {
+            Class<Sample> clsSample = Sample.class;
+
+            var ctor = clsSample.getDeclaredConstructor();
+
+            ctor.setAccessible(true);
+            Sample s1 = (Sample)ctor.newInstance();
+            Sample s2 = (Sample)ctor.newInstance();
+            ctor.setAccessible(true);
+
+            System.out.println(s1 == s2);
+        }
+        catch (Throwable ex) {
+            System.out.printf("Exception:%s%n", ex.getMessage());
+        }
+    }
+}
+
+class Sample {
+    private Sample() {}
+
+    public static final Sample INSTANCE = new Sample();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+  enum türünden bir nesne reflection kullanılarak da yaratılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        try {
+            Class<Sample> clsSample = Sample.class;
+
+            var ctor = clsSample.getDeclaredConstructor();
+
+            ctor.setAccessible(true);
+            Sample s1 = (Sample)ctor.newInstance();
+            Sample s2 = (Sample)ctor.newInstance();
+            ctor.setAccessible(true);
+
+            System.out.println(s1 == s2);
+        }
+        catch (Throwable ex) {
+            System.out.printf("Exception:%s%n", ex.getMessage());
+        }
+    }
+}
+
+enum Sample {
+    INSTANCE;
+    //..
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+  Aşağıdaki örnekte onCollisionEnter metodunun sınıfta var olması durumunda çağrıldığı basit örnek yapılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Random;
+import java.util.function.Supplier;
+
+class App {
+    public static void main(String [] args)
+    {
+        MyGameFramework myGameFramework = new MyGameFramework();
+        PoolGameGenerator generator = new PoolGameGenerator();
+
+        myGameFramework.run(generator::getRandomGameObjects);
+    }
+}
+
+class ThreadUtil {
+    public static void sleep(long ms)
+    {
+        try {
+            Thread.sleep(ms);
+        }
+        catch (InterruptedException ex) {
+
+        }
+    }
+}
+
+class PoolGameGenerator {
+    private final GameObject [] m_gameObjects;
+    private final Random m_random = new Random();
+
+    public PoolGameGenerator()
+    {
+        m_gameObjects = new GameObject[3];
+        m_gameObjects[0] = new WhiteBall("oğuz");
+        m_gameObjects[1] = new OtherWhiteBall("güray");
+        m_gameObjects[2] = new RedBall();
+    }
+
+    public GameObject [] getRandomGameObjects()
+    {
+        var gameObjects = new GameObject[2];
+        boolean [] flags = new boolean[3];
+        int index;
+
+        for (int i = 0; i < 2; ++i) {
+            for (;;) {
+                index = m_random.nextInt(3);
+
+                if (!flags[index])
+                    break;
+            }
+            flags[index] = true;
+        }
+
+        index = 0;
+        for (int i = 0; i < 3; ++i)
+            if (flags[i])
+                gameObjects[index++] = m_gameObjects[i];
+
+        return gameObjects;
+    }
+}
+
+class WhiteBall extends GameObject {
+    private Color m_color;
+    //...
+
+    public WhiteBall(String name)
+    {
+        super(name);
+        m_color = new Color(255, 255, 255);
+    }
+    private void onCollisionEnter(GameObject other)
+    {
+        System.out.println("White ball collides");
+    }
+}
+
+class OtherWhiteBall extends GameObject {
+    private Color m_color;
+    //...
+
+    public OtherWhiteBall(String name)
+    {
+        super(name);
+        m_color = new Color(255, 255, 255);
+    }
+    private void onCollisionEnter(GameObject other)
+    {
+        System.out.println("Other White ball collides");
+    }
+}
+
+class RedBall extends GameObject {
+    private Color m_color;
+    //...
+
+    public RedBall()
+    {
+        super("red");
+        m_color = new Color(255, 0, 0);
+    }
+}
+
+//Framework'ün sınıfları
+class MyGameFramework {
+    //...
+    private void onCollisionEnterDefaullt()
+    {
+        System.out.println("Default collision");
+    }
+
+    private void doWorkForGameObject(GameObject gameObject, GameObject other)
+            throws IllegalAccessException, InvocationTargetException
+    {
+        try {
+            System.out.printf("Name:%s%n", gameObject.getName());
+            Class<?> cls = gameObject.getClass();
+            Method m = cls.getDeclaredMethod("onCollisionEnter", GameObject.class);
+
+            m.setAccessible(true);
+            m.invoke(gameObject, other);
+            m.setAccessible(false);
+        }
+        catch (NoSuchMethodException x) {
+            onCollisionEnterDefaullt();
+        }
+    }
+
+    private void doWorkForCollision(GameObject gameObject, GameObject other)
+            throws IllegalAccessException, InvocationTargetException
+    {
+        doWorkForGameObject(gameObject, other);
+        doWorkForGameObject(other, gameObject);
+    }
+
+    public void run(Supplier<GameObject[]> supplier)
+    {
+        try {
+            for (;;) {
+                var gameObjects = supplier.get();
+
+                this.doWorkForCollision(gameObjects[0], gameObjects[1]);
+
+                System.out.println("///////////////////////");
+                ThreadUtil.sleep(3000);
+            }
+        }
+        catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+
+class Color {
+    private final byte m_r, m_g, m_b;
+
+    public Color(int r, int g, int b)
+    {
+        //...
+        m_r = (byte)r;
+        m_g = (byte)g;
+        m_b = (byte)b;
+    }
+
+    public byte getR()
+    {
+        return m_r;
+    }
+
+    public byte getG()
+    {
+        return m_g;
+    }
+
+    public byte getB()
+    {
+        return m_b;
+    }
+}
+
+
+class GameObject {
+    private String m_name;
+    //...
+
+    public GameObject(String name)
+    {
+        m_name = name;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Soru: Generic bir sınıf için kaç tane açılım yapılırsa yapılsın yalnızca tek bir sınıf vardır.
+    Yani generic bir sınıfın her açılımı ayrı bir tür belirmez. Bunu kod ile kanıtlayınız.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        Sample<String> ss = new Sample<>();
+        Sample<Integer> sint = new Sample<>();
+
+        System.out.println(ss.getClass() == sint.getClass());
+    }
+}
+
+class Sample<T> {
+    //...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Iterable arayüzünden önce yani for-each döngüsünden önce iterator dolaşımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Integer> list = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        Iterator<Integer> iter = list.iterator();
+
+        while (iter.hasNext()) {
+            int val = iter.next();
+
+            System.out.printf("%d ", val);
+        }
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki kodda for-each döngü deyimine yönelik üretilebilecek bir kod yazılmıştır:
+
+    for (int val : list)
+        System.out.printf("%d ", val);
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Integer> list = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        {
+            Iterator<Integer> iter = list.iterator();
+
+            while (iter.hasNext()) {
+                int val = iter.next();
+
+                System.out.printf("%d ", val);
+            }
+        }
+
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    next metodu veri yoksa NoSuchElementException nesnesi fırlatır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Integer> list = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+
+        var iter = list.iterator();
+
+        try {
+            for (;;) {
+                int val = iter.next();
+
+                System.out.printf("%d ", val);
+            }
+        }
+        catch (NoSuchElementException ex) {
+            System.out.println();
+        }
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    IntRange sınıfı ve Iterable arayüzünün anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.IntRange;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<String> cities = new ArrayList<>();
+
+        cities.add("ankara");
+        cities.add("istanbul");
+        cities.add("izmir");
+        cities.add("zonguldak");
+
+        IntRange range = new IntRange(10, 20);
+
+        Util.doWork(cities, System.out::println);
+        Util.doWork(range, val -> System.out.printf("%d ", val * val));
+        System.out.println();
+    }
+}
+
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    IntRange sınıfı ve Iterable arayüzünün anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.IntRange;
+
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        IntRange range = new IntRange(10, 20, 3);
+
+        Util.doWork(range, val -> System.out.printf("%d ", val));
+        System.out.println();
+    }
+}
+
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    IntRange sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class IntRange implements Iterable<Integer> {
+    private final int m_min, m_max;
+    private final int m_step;
+
+    public IntRange(int min, int max)
+    {
+        this(min, max, 1);
+    }
+
+    public IntRange(int min, int max, int step)
+    {
+        if (min >= max)
+            throw  new IllegalArgumentException("min must be less than max");
+
+        m_min = min;
+        m_max = max;
+        m_step = step <= 0 ? 1 : step;
+    }
+
+
+
+    public int getMin()
+    {
+        return m_min;
+    }
+
+    public int getMax()
+    {
+        return m_max;
+    }
+
+    @Override
+    public Iterator<Integer> iterator()
+    {
+        return new Iterator<Integer>() {
+            private int m_curElem = m_min;
+
+            @Override
+            public boolean hasNext()
+            {
+                return m_curElem <= m_max;
+            }
+
+            @Override
+            public Integer next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                int val = m_curElem;
+
+                m_curElem += m_step;
+
+                return val;
+            }
+        };
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    IntRange sınıfı ve Iterable arayüzünün anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.IntRange;
+
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        IntRange range = new IntRange(10, 100, val -> 2 * val + 1);
+
+        Util.doWork(range, val -> System.out.printf("%d ", val));
+        System.out.println();
+    }
+}
+
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    IntRange sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.IntUnaryOperator;
+
+public class IntRange implements Iterable<Integer> {
+    private final int m_min, m_max;
+    private final IntUnaryOperator m_intUnaryOperator;
+
+    public IntRange(int min, int max)
+    {
+        this(min, max, 1);
+    }
+
+    public IntRange(int min, int max, int step)
+    {
+        this(min, max, (step <= 1) ? (val -> val + 1) : (val -> val + step));
+    }
+
+    public IntRange(int min, int max, IntUnaryOperator intUnaryOperator)
+    {
+        if (min >= max || intUnaryOperator == null)
+            throw  new IllegalArgumentException("min must be less than max OR intUnaryOperator can not be null");
+
+        m_min = min;
+        m_max = max;
+        m_intUnaryOperator = intUnaryOperator;
+    }
+
+    public int getMin()
+    {
+        return m_min;
+    }
+
+    public int getMax()
+    {
+        return m_max;
+    }
+
+    @Override
+    public Iterator<Integer> iterator()
+    {
+        return new Iterator<Integer>() {
+            private int m_curElem = m_min;
+
+            @Override
+            public boolean hasNext()
+            {
+                return m_curElem <= m_max;
+            }
+
+            @Override
+            public Integer next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                int val = m_curElem;
+
+                m_curElem = m_intUnaryOperator.applyAsInt(m_curElem);
+
+                return val;
+            }
+        };
+    }
+}
+
 
 
 /*----------------------------------------------------------------------------------------------------------------------

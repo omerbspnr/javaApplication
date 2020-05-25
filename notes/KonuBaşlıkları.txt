@@ -29,4 +29,27 @@ içiçe sınıf bildirimleri
     - Yerel sınıf bildirimi(local)
     - isimsiz sınıf bildirimi(anonymous)
 
-Recursive functionsgit
+Recursive functions
+
+anonim sınıflar
+
+Timer sınıfı
+    TimeUnit enum'ı
+
+Lambda expression
+    - metot referansları
+
+Optional sınıflar
+
+Standart Date, Calendar, LocalDate, LocalTime, LocalDateTime sınıfları
+
+Void sınıfı
+
+assert işlemleri
+
+Annotation
+
+Reflection
+
+Collection'lara yönelik interface'ler.
+
