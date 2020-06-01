@@ -53,3 +53,7 @@ Reflection
 
 Collection'lara yönelik interface'ler.
 
+Iterator ve Iterable interface'i
+
+
+

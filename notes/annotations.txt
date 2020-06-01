@@ -1,0 +1,7 @@
+@Target annotation'ı -> Bir annotation'a uygulanır. uygulanan annotation'ın nerelere uygulanabileceğini belirtir.
+@Retention -> Bir annotation'ın türünü belirtir. value'sı RetentionPolicy enum'ı türündendir.
+@Inherited -> sadece annotation'lara uygulanabilir. Inherited işaretlenmiş bir annotation bir sınıfa uygulanırsa ondan
+              türemiş sınıflar aynı annotation'a sahip olurlar.
+
+@FunctionalInterface -> bir arayüzün fonksiyonel olup olmadığını belirtir.
+@SupressWarnings -> önemli bir annotation'dır. Kullanılırken dikkat edilmesi gerekir.

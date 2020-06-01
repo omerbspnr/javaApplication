@@ -1,0 +1,4810 @@
+/*----------------------------------------------------------------------------------------------------------------------
+    RandomIntGenerator sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.RandomIntGenerator;
+
+public class App {
+    public static void main(String[] args)
+    {
+        RandomIntGenerator randomIntGenerator = new RandomIntGenerator(5, 1, 100);
+
+        Util.display(randomIntGenerator);
+    }
+}
+
+class Util {
+    public static <T> void display(Iterable<T> iterable)
+    {
+        for (T t : iterable)
+            System.out.printf("%s ", t);
+
+        System.out.println();
+    }
+}
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
+
+public final class RandomIntGenerator implements Iterable<Integer> {
+    private final int m_count, m_min, m_max;
+    private final Random m_random;
+
+    public RandomIntGenerator(int count, int min, int max)
+    {
+        this(count, min, max, new Random());
+    }
+
+    public RandomIntGenerator(int count, int min, int max, Random r)
+    {
+        if (count < 0 || min > max || r == null)
+            throw new IllegalArgumentException("Illegal arguments");
+
+        m_count = count;
+        m_min = min;
+        m_max = max;
+        m_random = r;
+    }
+
+    public Iterator<Integer> iterator()
+    {
+        return new Iterator<Integer>() {
+            private int m_i;
+
+            public boolean hasNext()
+            {
+                return m_i < m_count;
+            }
+
+            public Integer next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                ++m_i;
+
+                return m_random.nextInt(m_max - m_min) + m_min;
+            }
+        };
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    RandomDoubleGenerator sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.RandomDoubleGenerator;
+
+public class App {
+    public static void main(String[] args)
+    {
+        RandomDoubleGenerator randomDoubleGenerator = new RandomDoubleGenerator(5, 2.345, 7.987);
+
+        Util.display(randomDoubleGenerator);
+    }
+}
+
+class Util {
+    public static <T> void display(Iterable<T> iterable)
+    {
+        for (T t : iterable)
+            System.out.printf("%s ", t);
+
+        System.out.println();
+    }
+}
+
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
+
+public final class RandomDoubleGenerator implements Iterable<Double> {
+    private final int m_count;
+    private final double m_min, m_max;
+    private final Random m_random;
+
+    public RandomDoubleGenerator(int count, double min, double max)
+    {
+        this(count, min, max, new Random());
+    }
+
+    public RandomDoubleGenerator(int count, double min, double max, Random r)
+    {
+        if (count < 0 || min > max || r == null)
+            throw new IllegalArgumentException("Illegal arguments");
+
+        m_count = count;
+        m_min = min;
+        m_max = max;
+        m_random = r;
+    }
+
+    public Iterator<Double> iterator()
+    {
+        return new Iterator<Double>() {
+            private int m_i;
+
+            public boolean hasNext()
+            {
+                return m_i < m_count;
+            }
+
+            public Double next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                ++m_i;
+
+                return m_random.nextDouble() * (m_max - m_min) + m_min;
+            }
+        };
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    DoubleRange sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.DoubleRange;
+
+public class App {
+    public static void main(String[] args)
+    {
+        DoubleRange doubleRange = new DoubleRange(1.23, 1.70, 0.1);
+
+        Util.display(doubleRange);
+    }
+}
+
+class Util {
+    public static <T> void display(Iterable<T> iterable)
+    {
+        for (T t : iterable)
+            System.out.printf("%s ", t);
+
+        System.out.println();
+    }
+}
+
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
+
+public final class RandomDoubleGenerator implements Iterable<Double> {
+    private final int m_count;
+    private final double m_min, m_max;
+    private final Random m_random;
+
+    public RandomDoubleGenerator(int count, double min, double max)
+    {
+        this(count, min, max, new Random());
+    }
+
+    public RandomDoubleGenerator(int count, double min, double max, Random r)
+    {
+        if (count < 0 || min > max || r == null)
+            throw new IllegalArgumentException("Illegal arguments");
+
+        m_count = count;
+        m_min = min;
+        m_max = max;
+        m_random = r;
+    }
+
+    public Iterator<Double> iterator()
+    {
+        return new Iterator<Double>() {
+            private int m_i;
+
+            public boolean hasNext()
+            {
+                return m_i < m_count;
+            }
+
+            public Double next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                ++m_i;
+
+                return m_random.nextDouble() * (m_max - m_min) + m_min;
+            }
+        };
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   CSDArrayList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDArrayList<Integer> list = new CSDArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        int size = list.size();
+
+        for (int i = 0; i < size; ++i) {
+            int val = list.get(i);
+
+            System.out.printf("%d ", val * val);
+        }
+
+        System.out.println();
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDArrayList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDArrayList<Integer> list = new CSDArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        for (int val : list)
+            System.out.printf("%d ", val);
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   CSDArrayList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDArrayList<Integer> list = new CSDArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        for (int val : list)
+            System.out.printf("%d ", val * val);
+
+        System.out.println();
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   CSDArrayList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDArrayList<Integer> list = new CSDArrayList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+       Util.display(list);
+    }
+}
+
+
+class Util {
+    public static <T> void display(Iterable<T> iterable)
+    {
+        for (T t : iterable)
+            System.out.printf("%s ", t);
+
+        System.out.println();
+    }
+}
+
+package org.csystem.collection;
+
+import java.util.Iterator;
+
+public class CSDArrayList<T> implements Iterable<T>, Cloneable {
+    private static final int DEFAULT_CAPACITY = 10;
+    private T [] m_elems;
+    private int m_index;
+
+    private static <E> void copy(E [] src, E [] dest)
+    {
+        for (int i = 0; i < src.length; ++i)
+            dest[i] = src[i];
+    }
+
+    private static void checkForBounds(int index, int bound, String msg)
+    {
+        if (index < 0 || index > bound)
+            throw new IndexOutOfBoundsException(msg);
+    }
+
+    private static void checkForCapacity(int capacity, String msg)
+    {
+        if (capacity < 0)
+            throw new IllegalArgumentException(msg);
+    }
+
+    private void allocateCapacity(int capacity)
+    {
+        T [] temp = (T[])new Object[capacity];
+
+        for (int i = 0; i < m_index; ++i)
+            temp[i] = m_elems[i];
+
+        m_elems = temp;
+    }
+
+    public CSDArrayList()
+    {
+        this(DEFAULT_CAPACITY);
+    }
+
+    public CSDArrayList(int initialCapacity)
+    {
+        checkForCapacity(initialCapacity, "ctor:Illegal Argument");
+        m_elems = (T[])new Object[initialCapacity == 0 ? DEFAULT_CAPACITY : initialCapacity];
+    }
+
+    public void add(int index, Object elem)
+    {
+        //TODO:
+    }
+
+    public boolean add(T elem)
+    {
+        if (m_elems.length == m_index)
+            this.allocateCapacity(m_elems.length * 2);
+
+        m_elems[m_index++] = elem;
+
+        return true;
+    }
+
+    public int capacity() {return m_elems.length;}
+
+    public void clear()
+    {
+        for (int i = 0; i < m_index; ++i)
+            m_elems[i] = null;
+
+        m_index = 0;
+    }
+
+    public Object clone()
+    {
+        CSDArrayList clone = new CSDArrayList(m_elems.length);
+
+        copy(m_elems, clone.m_elems);
+
+        clone.m_index = m_index;
+
+        return clone;
+    }
+
+    public void ensureCapacity(int capacity)
+    {
+        if (capacity <= m_elems.length)
+            return;
+
+        if (capacity < 2 * m_elems.length)
+            this.allocateCapacity(2 * m_elems.length);
+        else
+            this.allocateCapacity(capacity);
+    }
+
+    public T get(int index)
+    {
+        checkForBounds(index, m_index - 1, "get:Index Out Of Bounds");
+
+        return m_elems[index];
+    }
+
+    public int indexOf(Object o)
+    {
+        if (o == null) {
+            for (int i = 0; i < m_index; ++i)
+                if (m_elems[i] == null)
+                    return i;
+        }
+        else {
+            for (int i = 0; i < m_index; ++i)
+                if (o.equals(m_elems[i]))
+                    return i;
+        }
+
+        return -1;
+    }
+
+    public Object remove(int index)
+    {
+        //TODO:
+
+        return null;
+    }
+
+    public T set(int index, T elem)
+    {
+        checkForBounds(index, m_index - 1, "set:Index Out Of Bounds");
+        T oldElem = m_elems[index];
+
+        m_elems[index] = elem;
+
+        return oldElem;
+    }
+
+    public int size() {return m_index;}
+
+    public void trimToSize()
+    {
+        this.allocateCapacity(m_index == 0 ? DEFAULT_CAPACITY : m_index);
+    }
+
+    public String toString()
+    {
+        String str = "[";
+
+        for (int i = 0; i < m_index; ++i)
+            str += m_elems[i].toString() + ",";
+
+        if (str.length() != 1)
+            str = str.substring(0, str.length() - 1);
+
+        return str + "]";
+    }
+
+    public Iterator<T> iterator()
+    {
+        return new Iterator<T>() {
+            private int m_curIndex;
+
+            public boolean hasNext()
+            {
+                return m_curIndex < m_index;
+            }
+
+            public T next()
+            {
+                if (!hasNext())
+                    throw new UnsupportedOperationException();
+
+                return m_elems[m_curIndex++];
+            }
+        };
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Bilindiği gibi String sınıfı ve StringBuilder sınıfı Iterable arayüzünü desteklemez. Yani
+    bu durumda biz bu sınıflar içerisindeki bilgileri for-each döngü deyimi ile dolaşamayız. String ve StringBuilder
+    sınıflarını kullanarak Iterable yazı işlemleri yapan IterableString ve IterableStringBuilder sınıflarını
+    yazınız
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.IterableStringBuilder;
+
+class App {
+    public static void main(String [] args)
+    {
+        IterableStringBuilder iterableStringBuilder = new IterableStringBuilder();
+
+        iterableStringBuilder.append("ankara");
+
+        Util.display(iterableStringBuilder);
+    }
+}
+
+
+class Util {
+    public static <T> void display(Iterable<T> iterable)
+    {
+        for (T t : iterable)
+            System.out.printf("%s ", t);
+
+        System.out.println();
+    }
+}
+
+
+package org.csystem.collection;
+
+import java.util.Iterator;
+import java.util.stream.IntStream;
+
+public class IterableStringBuilder implements Iterable<Character> {
+    private StringBuilder m_stringBuilder;
+
+    public IterableStringBuilder()
+    {
+        m_stringBuilder = new StringBuilder();
+    }
+
+    public IterableStringBuilder(int initialCapacity)
+    {
+        m_stringBuilder = new StringBuilder(initialCapacity);
+    }
+
+    public IterableStringBuilder append(String str) //delegate method
+    {
+        m_stringBuilder.append(str);
+
+        return this;
+    }
+
+    //...
+
+    public int compareTo(StringBuilder another)
+    {
+        return m_stringBuilder.compareTo(another);
+    }
+
+    public int indexOf(String str)
+    {
+        return m_stringBuilder.indexOf(str);
+    }
+
+    public int indexOf(String str, int fromIndex)
+    {
+        return m_stringBuilder.indexOf(str, fromIndex);
+    }
+
+    public int lastIndexOf(String str)
+    {
+        return m_stringBuilder.lastIndexOf(str);
+    }
+
+    public int lastIndexOf(String str, int fromIndex)
+    {
+        return m_stringBuilder.lastIndexOf(str, fromIndex);
+    }
+
+    public int length()
+    {
+        return m_stringBuilder.length();
+    }
+
+    public int capacity()
+    {
+        return m_stringBuilder.capacity();
+    }
+
+    public void ensureCapacity(int minimumCapacity)
+    {
+        m_stringBuilder.ensureCapacity(minimumCapacity);
+    }
+
+    public void trimToSize()
+    {
+        m_stringBuilder.trimToSize();
+    }
+
+    public void setLength(int newLength)
+    {
+        m_stringBuilder.setLength(newLength);
+    }
+
+    public char charAt(int index)
+    {
+        return m_stringBuilder.charAt(index);
+    }
+
+    public int codePointAt(int index)
+    {
+        return m_stringBuilder.codePointAt(index);
+    }
+
+    public int codePointBefore(int index)
+    {
+        return m_stringBuilder.codePointBefore(index);
+    }
+
+    public int codePointCount(int beginIndex, int endIndex)
+    {
+        return m_stringBuilder.codePointCount(beginIndex, endIndex);
+    }
+
+    public int offsetByCodePoints(int index, int codePointOffset)
+    {
+        return m_stringBuilder.offsetByCodePoints(index, codePointOffset);
+    }
+
+    public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
+    {
+        m_stringBuilder.getChars(srcBegin, srcEnd, dst, dstBegin);
+    }
+
+    public void setCharAt(int index, char ch)
+    {
+        m_stringBuilder.setCharAt(index, ch);
+    }
+
+    public String substring(int start)
+    {
+        return m_stringBuilder.substring(start);
+    }
+
+    public CharSequence subSequence(int start, int end)
+    {
+        return m_stringBuilder.subSequence(start, end);
+    }
+
+    public String substring(int start, int end)
+    {
+        return m_stringBuilder.substring(start, end);
+    }
+
+    public IntStream chars()
+    {
+        return m_stringBuilder.chars();
+    }
+
+    public IntStream codePoints()
+    {
+        return m_stringBuilder.codePoints();
+    }
+
+    public static int compare(CharSequence cs1, CharSequence cs2)
+    {
+        return CharSequence.compare(cs1, cs2);
+    }
+
+    public String toString()
+    {
+        return m_stringBuilder.toString();
+    }
+
+    public Iterator<Character> iterator()
+    {
+        return new Iterator<>() {
+            private int m_index;
+            private final int m_len = m_stringBuilder.length();
+
+            public boolean hasNext()
+            {
+                return m_index < m_len;
+            }
+
+            public Character next()
+            {
+                if (!hasNext())
+                    throw new UnsupportedOperationException();
+
+                return m_stringBuilder.charAt(m_index++);
+            }
+        };
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün pratikteki anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>();
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+        ArrayList<Number> list = new ArrayList<>(vec);
+
+
+        Vector<Double> vecd = new Vector<>();
+
+        for (int i = 0; i < 10; ++i)
+            vecd.add(i * 0.4);
+
+        list.addAll(vecd);
+
+        ArrayList<BigInteger> bigList = new ArrayList<>();
+
+        bigList.add(new BigInteger("9999999999999999999999999999999999999999999"));
+        bigList.add(new BigInteger("9999999999999999999999999999999999999999998"));
+
+
+        list.addAll(bigList);
+
+
+        for (Number number : list)
+            System.out.println(number);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün pratikteki anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>();
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+        ArrayList<Object> list = new ArrayList<>(vec);
+
+        Vector<Double> vecd = new Vector<>();
+
+        for (int i = 0; i < 10; ++i)
+            vecd.add(i * 0.4);
+
+        list.addAll(vecd);
+
+        Vector<String> cities = new Vector<>();
+
+        cities.add("ankara");
+        cities.add("istanbul");
+        cities.add("izmir");
+
+        list.addAll(cities);
+
+        for (Object object : list)
+            System.out.println(object);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayList sınıfının indexOf metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<String> cities = new ArrayList<>();
+
+        cities.add("ankara");
+        cities.add("istanbul");
+        cities.add("izmir");
+
+        int index = cities.indexOf("ankara");
+
+        System.out.println(index);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayList sınıfının indexOf metodu null değer aranmıyorsa equals metodunu çağırır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Color> colors = new ArrayList<>();
+
+        colors.add(Color.RED);
+        colors.add(Color.BLUE);
+        colors.add(Color.GREEN);
+        colors.add(Color.GREEN);
+
+        int index = colors.indexOf(Color.BLUE);
+
+        System.out.println(index);
+    }
+}
+
+enum Color {RED, GREEN, BLUE}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayList sınıfının indexOf metodu null değer aranmıyorsa equals metodunu çağırır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 123, 6700));
+        products.add(new Product(2, "mouse", 100, 67));
+        products.add(new Product(3, "bal", 34, 300));
+
+        int index = products.indexOf(new Product(2, "mouse"));
+
+        if (index >= 0) {
+            Product p = products.get(index);
+
+            System.out.println(p);
+        }
+        else
+            System.out.println("Aranan ürün bulunamadı");
+    }
+}
+
+
+
+package org.csystem.samples;
+
+public class Product {
+    private int m_id;
+    private String m_name;
+    private int m_stock;
+    private double m_price;
+
+    public Product()
+    {
+
+    }
+
+    public Product(int id, String name)
+    {
+        this(id, name, 0, 0);
+    }
+
+    public Product(int id, String name, int stock, double price)
+    {
+        m_id = id;
+        m_name = name;
+        m_stock = stock;
+        m_price = price;
+    }
+
+    public int getId()
+    {
+        return m_id;
+    }
+
+    public void setId(int id)
+    {
+        m_id = id;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    public int getStock()
+    {
+        return m_stock;
+    }
+
+    public void setStock(int stock)
+    {
+        m_stock = stock;
+    }
+
+    public double getPrice()
+    {
+        return m_price;
+    }
+
+    public void setPrice(double price)
+    {
+        m_price = price;
+    }
+
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof Product))
+            return false;
+
+        Product p = (Product)other;
+        return p.m_id == m_id && p.m_name == m_name;
+    }
+
+
+    public String toString()
+    {
+        return String.format("[%d]%s:%d * %.2f=%.2f", m_id, m_name, m_stock, m_price, m_price * m_stock);
+    }
+}
+
+
+package org.csystem.test;
+
+import org.csystem.util.Pair;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Pair<Integer, String>> cities = new ArrayList<>();
+
+        cities.add(Pair.create(34, "istanbul"));
+        cities.add(Pair.create(6, "ankara"));
+        cities.add(Pair.create(35, "izmir"));
+
+        Pair<Integer, String> city = Pair.create(34, "istanbul");
+
+        if (cities.contains(city))
+            System.out.printf("%s şehri listede var%n", city);
+        else
+            System.out.printf("%s şehri listede yok%n", city);
+    }
+}
+
+package org.csystem.util;
+
+public final class Pair<F, S> {
+    private final F m_first;
+    private final S m_second;
+
+    public static <F1, S1> Pair<F1, S1> create(F1 first, S1 second)
+    {
+        return new Pair<>(first, second);
+    }
+
+    public Pair(F first, S second)
+    {
+        m_first = first;
+        m_second = second;
+    }
+
+    public F getFirst() {return m_first;}
+    public S getSecond() {return m_second;}
+
+    public boolean equals(Object other)
+    {
+        Pair<F, S> otherPair = (Pair<F, S>)other;
+
+        return m_first.equals(otherPair.m_first) && m_second.equals(otherPair.m_second);
+    }
+
+    public String toString()
+    {
+        return String.format("(%s, %s)", m_first, m_second);
+    }
+}
+
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte foo metodu static olduğu için generic olarak açılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        int result = Sample.foo(10);
+
+        System.out.println(result * result);
+    }
+}
+
+class Sample<T> {
+    public static <K> K foo(K val)
+    {
+        return val;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Vector sınıfı capacity değerini herhangi bir belirtilme olmazsa
+    o anki capacity değerinin 2 katına çıkartır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>(4);
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Vector sınıfının capacityIncrement parametreli ctor'u ile capacity miktarının
+    ne kadar artacağı belirlenebilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>(4, 3);
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte Vector sınıfının capacityIncrement miktarı ctor ile
+    alınan çarpım miktarına ayarlanmıştır. capacityIncrement veri elemanı
+    protected olarak bildirilmiştir. Sınıfın capacity artırması gereken metotları
+    override edilmeli ve capacity artımı ona göre belirlenmelidir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        MyVector<Integer> vec = new MyVector<>(3, 3);
+
+        for (int i = 0; i < 4; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+
+        for (int i = 0; i < 6; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+
+    }
+}
+
+class MyVector<T> extends Vector<T> {
+    private int m_capacityFactor;
+
+    private void calibrateCapacityInc()
+    {
+        if (capacity() == size()) {
+            int curCapacity = capacity();
+
+            capacityIncrement = curCapacity * m_capacityFactor - curCapacity;
+        }
+    }
+
+    public MyVector()
+    {
+        super();
+    }
+
+    public MyVector(int initialCapacity)
+    {
+        super(initialCapacity);
+    }
+
+    public MyVector(int initialCapacity, int capacityFactor)
+    {
+        this(initialCapacity);
+
+        m_capacityFactor = capacityFactor <= 1 ? 2 : capacityFactor;
+    }
+
+    public boolean add(T t)
+    {
+        if (t == null)
+            throw new IllegalArgumentException("Argument can not be null");
+
+        this.calibrateCapacityInc();
+
+        return super.add(t);
+    }
+
+    //...
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stack veri yapısı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Stack;
+
+class App {
+    public static void main(String [] args)
+    {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        while (!stack.empty())
+            System.out.println(stack.pop());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stack veri yapısı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.EmptyStackException;
+import java.util.Stack;
+
+class App {
+    public static void main(String [] args)
+    {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        try {
+            for(;;) {
+                System.out.println(stack.pop());
+            }
+        }
+        catch (EmptyStackException ex) {
+            System.out.println("Stack artık boş");
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stack sınıfının search metodu en üstteki elemanı 1 numaralı indekste kabul ederek
+    bulursa indeks numarasını döndürür. Bulamazsa -1 değerini döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+import java.util.Stack;
+
+class App {
+    public static void main(String [] args)
+    {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        int index = stack.search(10);
+
+        System.out.println(index);
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf çalışması: ArrayList sınıfından türetilmiş bir Stack sınıfı yazınız.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDStack;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDStack<Integer> stack = new CSDStack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        while (!stack.empty())
+            System.out.println(stack.pop());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf çalışması: ArrayList sınıfından türetilmiş bir Stack sınıfı yazınız.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDStack;
+
+import java.util.EmptyStackException;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDStack<Integer> stack = new CSDStack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        try {
+            for (;;) {
+                System.out.println(stack.pop());
+                //...
+            }
+        }
+        catch (EmptyStackException ex) {}
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDStack sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDStack;
+
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDStack<Integer> stack = new CSDStack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        int index = stack.search(4);
+
+        System.out.println(index);
+    }
+}
+
+
+
+package org.csystem.collection;
+
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+
+public class CSDStack<T> extends ArrayList<T> {
+    public boolean empty()
+    {
+        return isEmpty();
+    }
+
+    public T push(T elem)
+    {
+        this.add(elem);
+
+        return elem;
+    }
+
+    public T pop()
+    {
+        if (empty())
+            throw new EmptyStackException();
+
+        return this.remove(this.size() - 1);
+    }
+
+    public T peek()
+    {
+        if (empty())
+            throw new EmptyStackException();
+
+        return this.get(this.size() - 1);
+    }
+
+    public int search(Object obj)
+    {
+        int index = this.indexOf(obj);
+
+        return index == -1 ? index : this.size() - index;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        System.out.println(list);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfının addFirst metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        System.out.println(list);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        System.out.println(list);
+
+        ArrayList<Integer> arrayList = new ArrayList<>(list);
+
+        System.out.println(arrayList);
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        while (!list.isEmpty())
+            System.out.println(list.poll());
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        while (!list.isEmpty())
+            System.out.println(list.pollFirst());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfının poll ve pollFirst metotları eleman kalmadığında null değeri döndürür. Ancak LinkedList sınıfı
+    null değer tutabildiğinden bu şekilde bir kontrol her zaman anlamlı olmayabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        list.add(null);
+
+        list.add(67);
+
+        Integer val;
+
+        while ((val = list.poll()) != null)
+            System.out.println(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki problem null değerle tutmak yerine Optional sınıfı kullanılarak da yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        list.add(Optional.empty());
+
+        list.add(Optional.of(67));
+
+        while (!list.isEmpty()) {
+            list.poll().ifPresent(val -> System.out.println(val * val));
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün toArray metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        Optional<Integer> [] numbers = new Optional[list.size()];
+
+        list.toArray(numbers);
+
+        for (Optional<Integer> val : numbers)
+            System.out.println(val.get());
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün toArray metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        Optional<Integer> [] numbers = new Optional[list.size()];
+
+        for (Optional<Integer> val : list.toArray(numbers))
+            System.out.println(val.get());
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün toArray metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        for (Optional<Integer> val : list.toArray(new Optional[list.size()]))
+            System.out.println(val.get());
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashSet sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.HashSet;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+        Random r = new Random();
+        HashSet<Integer> hashSet = new HashSet<>();
+
+        for (int i = 0; i < 20; ++i) {
+            int val = r.nextInt(100);
+
+            System.out.printf("%d:%b ", val, hashSet.add(val));
+        }
+
+        System.out.println();
+
+        System.out.println(hashSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashSet kullanılarak sırasız bir biçimde kupon üreten Lottary sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Lottary;
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        int n = Console.readInt("Kaç kupon oynamak istersiniz?");
+
+        Lottary lot = new Lottary();
+
+        ArrayUtil.display(lot.getColumns(n), 2);
+    }
+}
+
+
+package org.csystem.samples;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
+
+public class Lottary {
+    private Random m_random;
+
+    public Lottary()
+    {
+        m_random = new Random();
+    }
+
+    public int [] getColumn()
+    {
+        int [] column = new int[6];
+
+        HashSet<Integer> hashSet = new HashSet<>();
+
+        while (hashSet.size() != 6)
+            hashSet.add(m_random.nextInt(49) + 1);
+
+        int index = 0;
+
+        for (int val : hashSet)
+            column[index++] = val;
+
+        return column;
+    }
+
+    public int [][] getColumns(int n)
+    {
+        int[][] columns = new int[n][];
+
+        for (int i = 0; i < n; ++i)
+            columns[i] = getColumn();
+
+        return columns;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashSet sınıfı null değer de tutabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.HashSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        HashSet<String> hashSet = new HashSet<>();
+
+        hashSet.add(null);
+        hashSet.add(null);
+
+
+        System.out.println(hashSet.size());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet collection sınıfı elemanları sıralı bir biçimde tutar. Sıralama doğal sıralamadır (natural sort order)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Integer> treeSet = new TreeSet<>();
+
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i) {
+            int val = r.nextInt(100);
+
+            System.out.printf("%d ", val);
+
+            treeSet.add(val);
+        }
+
+        System.out.println();
+        System.out.println(treeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet collection sınıfı elemanları sıralamak için aşağıdaki örnektaki gibi yaratılırsa açılıma ilişkin
+    türün Comparable arayüzünü desteklemesi gerekir. Aksi durumda exception oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Rational;
+
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Rational> rationalTreeSet = new TreeSet<>();
+
+        rationalTreeSet.add(new Rational(-2, 3));
+        rationalTreeSet.add(new Rational(23, 13));
+        rationalTreeSet.add(new Rational(7, -23));
+        rationalTreeSet.add(new Rational(7, -23));
+
+        System.out.println(rationalTreeSet);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Rational sınıfı ile büyükten küçüğe sıralama
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.math.Rational;
+
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Rational> rationalTreeSet = new TreeSet<>((r1, r2) -> r2.compareTo(r1));
+
+        rationalTreeSet.add(new Rational(-2, 3));
+        rationalTreeSet.add(new Rational(23, 13));
+        rationalTreeSet.add(new Rational(7, -23));
+        rationalTreeSet.add(new Rational(7, -23));
+
+        System.out.println(rationalTreeSet);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator arayüzünün reverseOrder metodu ile büyükten küçüğe sıralama
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.math.Rational;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Rational> rationalTreeSet = new TreeSet<>(Comparator.reverseOrder());
+
+        rationalTreeSet.add(new Rational(-2, 3));
+        rationalTreeSet.add(new Rational(23, 13));
+        rationalTreeSet.add(new Rational(7, -23));
+        rationalTreeSet.add(new Rational(7, -23));
+
+        System.out.println(rationalTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet kullanılarak sıralı bir biçimde kupon üreten Lottary sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Lottary;
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        int n = Console.readInt("Kaç kupon oynamak istersiniz?");
+
+        Lottary lot = new Lottary();
+
+        ArrayUtil.display(lot.getColumns(n), 2);
+    }
+}
+
+package org.csystem.samples;
+
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class Lottary {
+    private Random m_random;
+
+    public Lottary()
+    {
+        m_random = new Random();
+    }
+
+    public int [] getColumn()
+    {
+        int [] column = new int[6];
+
+        Set<Integer> set = new TreeSet<>();
+
+        while (set.size() != 6)
+            set.add(m_random.nextInt(49) + 1);
+
+        int index = 0;
+
+        for (int val : set)
+            column[index++] = val;
+
+        return column;
+    }
+
+    public int [][] getColumns(int n)
+    {
+        int[][] columns = new int[n][];
+
+        for (int i = 0; i < n; ++i)
+            columns[i] = getColumn();
+
+        return columns;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet collection sınıfının Comparator arayüz parametreli ctor'u ile karşılaştırmanın nasıl yapılacağı
+    belilenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Integer> treeSet = new TreeSet<>((i1, i2) -> i2 - i1);
+
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i) {
+            int val = r.nextInt(100);
+
+            System.out.printf("%d ", val);
+
+            treeSet.add(val);
+        }
+
+        System.out.println();
+        System.out.println(treeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<String> treeSet = new TreeSet<>();
+
+        treeSet.add("bolu");
+        treeSet.add("ankara");
+        treeSet.add("istanbul");
+        treeSet.add("izmir");
+
+        for (String s : treeSet)
+            System.out.println(s);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<String> treeSet = new TreeSet<>((s1, s2) -> s2.compareTo(s1));
+
+        treeSet.add("bolu");
+        treeSet.add("ankara");
+        treeSet.add("istanbul");
+        treeSet.add("izmir");
+
+        for (String s : treeSet)
+            System.out.println(s);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet sınıfı ile karşılaştırma işlemi Comparable olmayan sınıflar için de yapılabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator = (z1, z2) -> Double.valueOf(z2.getNorm()).compareTo(Double.valueOf(z1.getNorm()));
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator);
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator sınıfının reversed isimli metodu ile elde bulunan bir comparator arayüzüne ilişkin
+    sıralamanın tersi de kolaylıkla belirlenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator = (z1, z2) -> Double.valueOf(z1.getNorm()).compareTo(Double.valueOf(z2.getNorm()));
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator.reversed());
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator sınıfının comparing metodu ile sıralama kriteri fonksiyonel olarak belirlenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator =  Comparator.comparing(Complex::getNorm); //(z1, z2) -> Double.valueOf(z1.getNorm()).compareTo(Double.valueOf(z2.getNorm()));
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator.reversed());
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator sınıfının comparingDouble metodu ile sıralama kriteri fonksiyonel olarak belirlenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator = Comparator.comparingDouble(z -> z.getNorm());
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator.reversed());
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Parametresi ile aldığı bir yazının tüm karakterlerinin farklı olup olmadığın test eden
+    areCharactersDistinct isimli metodu yazınız ve test ediniz
+    Örnek: xyzt  -> true
+           xxyzt -> false
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+import org.csystem.util.StringUtil;
+
+class App {
+    public static void main(String [] args)
+    {
+        String str = Console.readLine("Bir yazı giriniz");
+
+        if (StringUtil.areCharactersDistinct(str))
+            Console.writeLine("%s içerisindeki tüm karakterler farklı%n", str);
+        else
+            Console.writeLine("%s içerisinde tekrarlayan karakterler var%n", str);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    var değişkenler (local variable syntax)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        var a = 10;
+        var b = "ankara";
+
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    var değişkenler türlerini atanan  değere göre alırlar. var değişkenler Java 10 ile eklenmiştir. Yalnızca yerel
+    değişkenler ve Java 11 ile birlikte lambda parametre değişkenleri olarak bildirilebilir. var değişken dinamik
+    bir tür belirtmez. Değişken türünü derleme zamanında alır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class App {
+    public static void main(String [] args)
+    {
+        var a = 10;
+        var b = "ankara";
+        boolean c = true;
+        var d = c;
+
+
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashMap sınıfının put metodu ile bir anahtara karşılık değer eklenebilir. put metodu
+	anahtar daha önce eklenmişse eskisini ezer yani yeni değeri ekler. Bu durumda eski değeri de
+	geri döner. Eğer anahtar eklenmemişse null değeri döner. Bu collection sınıflar null değeri de
+	tutabildiklerinden var olup olmamasına ilişkin strateji izlemek için containsKey metodu kullanılmalıdır.
+	get metodu anahtara karşılık tutulan değeri bize verir. Eğer bu değer yoksa null değeri verir.
+	Ancak null değeri de tutuluyorsa geri dönüş değerinden var olup olmadığı anlaşılamaz. Bu durumda
+	containsKey ile test yapılarak veri alınabilir. Anahtarın tekilliği (unique) hashCode ve
+	equals metotları ile test edilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.Console;
+
+import java.util.HashMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var cityMap = new HashMap<Integer, String>();
+
+        cityMap.put(34, "istanbul");
+        cityMap.put(67, "zonguldak");
+        cityMap.put(6, "ankara");
+
+        int plate = Console.readInt("Plakayı giriniz");
+
+        if (cityMap.containsKey(plate))
+            System.out.println(cityMap.get(plate));
+        else
+            System.out.println("Aranan plakaya ilişkin il bulunamadı");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashMap sınıfının keySet metodu tüm anahtarlara ilişkin Set referansını döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var countyMap = new HashMap<Integer, ArrayList<String>>();
+
+        countyMap.put(34, new ArrayList<>());
+        countyMap.get(34).add("şişli");
+        countyMap.get(34).add("fatih");
+        countyMap.get(34).add("silivri");
+
+        countyMap.put(6, new ArrayList<>());
+        countyMap.get(6).add("çankaya");
+        countyMap.get(6).add("kazan");
+
+        for (var key : countyMap.keySet()) {
+            System.out.printf("%d->", key);
+            for (var county : countyMap.get(key))
+                System.out.printf("%s ", county);
+
+            System.out.println();
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashMap sınıfının values metodu ile tüm değerler elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var countyMap = new HashMap<Integer, ArrayList<String>>();
+
+        countyMap.put(34, new ArrayList<>());
+        countyMap.get(34).add("şişli");
+        countyMap.get(34).add("fatih");
+        countyMap.get(34).add("silivri");
+
+        countyMap.put(6, new ArrayList<>());
+        countyMap.get(6).add("çankaya");
+        countyMap.get(6).add("kazan");
+
+        for (var list : countyMap.values()) {
+            for (var county : list)
+                System.out.printf("%s ", county);
+            System.out.println();
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeMap sınıfı anahtar değerlerini sıralı olarak tutar. keySet metodu da değerleri sıralı bir set olarak
+    verir. TreeMap için verilen anahtar değeri eğer Comparator arayüzü referansı verilmeyecekse
+    Compareable arayüzünü desteklemelidir.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Integer> comparator = (p1, p2) -> p1.compareTo(p2);
+        var countyMap = new TreeMap<Integer, ArrayList<String>>(comparator.reversed());
+
+        countyMap.put(34, new ArrayList<>());
+        countyMap.get(34).add("şişli");
+        countyMap.get(34).add("fatih");
+        countyMap.get(34).add("silivri");
+
+        countyMap.put(6, new ArrayList<>());
+        countyMap.get(6).add("çankaya");
+        countyMap.get(6).add("kazan");
+
+        countyMap.put(67, new ArrayList<>());
+        countyMap.get(67).add("Kdz. Ereğli");
+        countyMap.get(67).add("Devrek");
+        countyMap.get(67).add("Çaycuma");
+
+
+        for (var key : countyMap.keySet()) {
+            System.out.printf("%d -> ", key);
+            for (var county : countyMap.get(key))
+                System.out.printf("%s ", county);
+
+            System.out.println();
+        }
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeMap ile Comparator kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.IntNumber;
+
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var countyMap = new TreeMap<IntNumber, ArrayList<String>>((i1, i2) -> i1.getVal() - i2.getVal());
+
+        countyMap.put(IntNumber.valueOf(34), new ArrayList<>());
+        countyMap.get(IntNumber.valueOf(34)).add("şişli");
+        countyMap.get(IntNumber.valueOf(34)).add("fatih");
+        countyMap.get(IntNumber.valueOf(34)).add("silivri");
+
+        countyMap.put(IntNumber.valueOf(1000), new ArrayList<>());
+        countyMap.get(IntNumber.valueOf(1000)).add("çankaya");
+        countyMap.get(IntNumber.valueOf(1000)).add("kazan");
+
+        countyMap.put(IntNumber.valueOf(67), new ArrayList<>());
+        countyMap.get(IntNumber.valueOf(67)).add("Kdz. Ereğli");
+        countyMap.get(IntNumber.valueOf(67)).add("Devrek");
+        countyMap.get(IntNumber.valueOf(67)).add("Çaycuma");
+
+
+        for (var key : countyMap.keySet()) {
+            System.out.printf("%s -> ", key);
+            for (var county : countyMap.get(key))
+                System.out.printf("%s ", county);
+
+            System.out.println();
+        }
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir program içerisinde aynı yazıların hashCode bilgileri eşittir. hashCode metodunun String sınıfı
+    için nasıl override edildiğine ilişkin kesinlik yoktur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        var s = Console.read("Bir yazı giriniz:");
+        var str = "ankara";
+
+        Console.writeLine("HashCode of s:%d%n", s.hashCode());
+        Console.writeLine("HashCode of str:%d%n", str.hashCode());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemHead(i * 10);
+
+        for (var val : list)
+            System.out.printf("%d ", val);
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+import java.util.Iterator;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemHead(i * 10);
+
+        Iterator<Integer> iter = list.reverseIterator();
+
+        while (iter.hasNext())
+            System.out.printf("%d ", iter.next());
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        int index = list.indexOf(5);
+
+        System.out.printf("index=%d%n", index);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walkReverse(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walk(System.out::println);
+    }
+}
+
+package org.csystem.collection;
+
+import java.util.Iterator;
+import java.util.function.Consumer;
+
+public class CSDDoublyLinkedList<T> implements Iterable<T> {
+	private int m_size;
+	private Node m_head, m_tail;
+
+	private class Node{
+		T Item;
+		Node Next, Prev;
+
+		public Node(T item)
+		{
+			Item = item;
+		}
+	}
+
+	private class ListIterator implements Iterator<T> {
+		private Node m_curNode;
+
+		public boolean hasNext()
+		{
+			m_curNode = m_curNode == null ? m_head : m_curNode.Next;
+
+			return m_curNode != null;
+		}
+		public T next()
+		{
+			return m_curNode.Item;
+		}
+	}
+
+	private class ListReverseIterator implements Iterator<T> {
+		private Node m_curNode;
+
+		public boolean hasNext()
+		{
+			m_curNode = m_curNode == null ? m_tail : m_curNode.Prev;
+
+			return m_curNode != null;
+		}
+
+		public T next()
+		{
+			return m_curNode.Item;
+		}
+	}
+
+	public void addItemHead(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head != null) {
+			m_head.Prev = node;
+			node.Next = m_head;
+			m_head = node;
+		}
+		else
+			m_head = m_tail = node;
+
+		++m_size;
+	}
+
+	public void addItemTail(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head != null) {
+			m_tail.Next = node;
+			node.Prev = m_tail;
+			m_tail = node;
+		}
+		else
+			m_head = m_tail = node;
+
+		++m_size;
+	}
+
+	public void clear()
+	{
+		if (m_head == null)
+			return;
+
+		for (var node = m_head.Next; node != null; node = node.Next)
+			node.Prev = null;
+
+		m_head = m_tail = null;
+
+		m_size = 0;
+	}
+
+	public void deleteItem(int pos)
+	{
+		if (pos >= m_size || pos < 0 || m_head == null)
+			return;
+
+		if (pos == 0)
+			deleteItemHead();
+		else if(pos == m_size - 1)
+			deleteItemTail();
+		else {
+			Node curNode = m_head;
+
+			for(int i = 0; i < pos; i++, curNode = curNode.Next)
+				;
+
+			curNode.Prev.Next = curNode.Next;
+			curNode.Next.Prev = curNode.Prev;
+
+			--m_size;
+		}
+	}
+
+	public void deleteItemHead()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_head == m_tail) // size==1
+			m_head = m_tail = null;
+		else {
+			m_head = m_head.Next;
+			m_head.Prev = null;
+		}
+
+		m_size--;
+	}
+
+	public void deleteItemTail()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_head == m_tail) // size==1
+			m_head = m_tail = null;
+		else {
+			m_tail = m_tail.Prev;
+			m_tail.Next = null;
+		}
+		m_size--;
+	}
+
+	public boolean empty() {return m_head == null;}
+
+	public T get(int pos)
+	{
+		if (m_head == null || pos < 0 || pos >= m_size)
+			throw new IndexOutOfBoundsException("invalid pos");
+
+		Node curNode = m_head;
+
+		for(int i = 1; i <= pos; i++, curNode = curNode.Next)
+			;
+
+		return curNode.Item;
+	}
+
+	public T getItemHead()
+	{
+		if (empty())
+			return null;
+
+		return m_head.Item;
+	}
+
+	public T getItemTail()
+	{
+		if (empty())
+			return null;
+
+		return m_tail.Item;
+	}
+
+	public int indexOf(T item)
+	{
+		if (m_head == null)
+			return -1;
+
+		Node curNode = m_head;
+
+		if (item != null) {
+			for(int i = 0; i < m_size; curNode = curNode.Next, i++)
+				if (item.equals(curNode.Item))
+					return i;
+		}
+		else
+			for(int i = 0; i < m_size; curNode = curNode.Next, i++)
+				if (curNode.Item == null)
+					return i;
+
+		return -1;
+	}
+
+	public void insertItem(int pos, T item)
+	{
+		if (pos > m_size || pos < 0)
+			throw new IndexOutOfBoundsException("Invalid position");
+
+		if (m_head != null){
+			if (pos == 0)
+				addItemHead(item);
+			else if(pos == m_size)
+				addItemTail(item);
+			else {
+				Node curNode = m_head;
+
+				for(int i = 1; i <= pos - 1; i++, curNode = curNode.Next)
+					;
+
+				var node = new Node(item);
+
+				node.Next = curNode.Next;
+				node.Prev = curNode;
+				curNode.Next = node;
+				node.Next.Prev = node;
+				m_size++;
+			}
+		}
+		else
+			addItemTail(item);
+
+	}
+
+	public Iterator<T> iterator()
+	{
+		return new ListIterator();
+	}
+
+	public Iterator<T> reverseIterator()
+	{
+		return new ListReverseIterator();
+	}
+
+	public int lastIndexOf(T item)
+	{
+		if(m_head == null)
+			return -1;
+
+		Node curNode = m_tail;
+
+		int i = m_size - 1;
+
+		for(; i >= 0; curNode = curNode.Prev, i--) {
+			if (item == null && curNode.Item == null)
+				return i;
+
+			if(curNode.Item != null && curNode.Item.equals(item))
+				return i;
+		}
+
+		return -1;
+	}
+
+	public int size() {return m_size;}
+
+	public void walkReverse(Consumer<T> con)
+	{
+		for (Node node = m_tail; node != null; node = node.Prev)
+			con.accept(node.Item);
+	}
+
+	public void walk(Consumer<T> con)
+	{
+		for (var node = m_head; node != null; node = node.Next)
+			con.accept(node.Item);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walk(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walk(val -> System.out.printf("%d ", val * val));
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        System.out.println(list.getReverse(3));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        System.out.println(list.getReverse(3));
+    }
+}
+
+package org.csystem.collection;
+
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+public class CSDSinglyLinkedList<T> implements Iterable<T> {
+	private int m_size;
+	private Node m_head, m_tail;
+
+	private class Node {
+		T Item;
+		Node Next;
+
+		public Node(T item)
+		{
+			Item = item;
+		}
+	}
+
+	private class ListIterator  implements Iterator<T> {
+		private Node m_curNode;
+
+		public boolean hasNext()
+		{
+			m_curNode = m_curNode == null ? m_head : m_curNode.Next;
+
+			return m_curNode != null;
+		}
+
+		public T next()
+		{
+			return m_curNode.Item;
+		}
+	}
+
+	public void addItemHead(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head == null) //is linked list empty?
+			m_head = m_tail = node;
+		else {
+			node.Next = m_head;
+			m_head = node;
+		}
+		++m_size;
+	}
+
+	public void addItemTail(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head == null)
+			m_head = m_tail = node;
+		else {
+			m_tail.Next = node;
+			m_tail = node;
+		}
+		++m_size;
+	}
+
+	public void clear()
+	{
+		m_head = m_tail = null;
+		m_size = 0;
+	}
+
+	public void deleteItem(int pos)
+	{
+		if (pos < 0 || pos >= m_size)
+			return;
+
+		if (m_head == null)
+			return;
+
+		if (pos == 0)
+			deleteItemHead();
+		else if (pos == m_size - 1)
+			deleteItemTail();
+		else {
+			Node node = m_head;
+
+			for (int i = 0; i < pos - 1; node = node.Next, ++i)
+				;
+
+			node.Next = node.Next.Next;
+			--m_size;
+		}
+	}
+
+	public void deleteItemHead()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_size == 1)
+			m_tail = null;
+
+		m_head = m_head.Next;
+		--m_size;
+	}
+
+	public void deleteItemTail()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_size != 1) {
+			Node node = m_head;
+
+			for (; node.Next.Next != null; node = node.Next)
+				;
+
+			node.Next = null;
+			m_tail = node;
+		}
+		else
+			m_head = m_tail = null;
+
+		--m_size;
+	}
+
+	public boolean empty() {return m_head == null;}
+
+	public boolean insertItem(int pos, T item)
+	{
+		if (pos < 0 || pos > m_size)
+			return false;
+
+		if (m_head != null) {
+			if (pos != 0) {
+				Node curNode = m_head;
+
+				for (int i = 1; i <= pos - 1; ++i) //pos dan bir önceki düğüm
+					curNode = curNode.Next;
+
+				Node node = new Node(item);
+
+				node.Next = curNode.Next;
+				curNode.Next = node;
+				++m_size;
+			}
+			else
+				addItemHead(item);
+		}
+		else
+			addItemTail(item);
+
+		return true;
+	}
+
+	public int indexOf(T item)
+	{
+		int index = 0;
+
+		if (item != null) {
+			for (var node = m_head; node != null; node = node.Next, ++index)
+				if (item.equals(node.Item))
+					return index;
+		}
+		else
+			for (Node node = m_head; node != null; node = node.Next, ++index)
+				if (node.Item == null)
+					return index;
+
+		return -1;
+	}
+
+	public Iterator<T> iterator()
+	{
+		return new ListIterator();
+	}
+
+	public int size() {return m_size;}
+
+	public Optional<T> get(int pos)
+	{
+		if (m_head == null || pos < 0 || pos >= m_size)
+			return Optional.empty();
+
+		int i = 0;
+
+		Node node = m_head;
+
+		for (; i < pos; node = node.Next, ++i)
+			;
+
+		return Optional.of(node.Item);
+	}
+
+	public T getItemHead()
+	{
+		if (empty())
+			return null;
+
+		return m_head.Item;
+	}
+	public T getItemTail()
+	{
+		if (empty())
+			return null;
+
+		return m_tail.Item;
+	}
+
+	public Optional<T> getReverse(int n) //Sondan n-inci elemanı bulacak
+	{
+		return get(m_size - n);
+
+		/*
+		//m_size tutulmamışsa (mulakat sorusu)
+		Node curNode = m_head;
+
+		for (var node = m_head; node != null; node = node.Next) {
+			n--;
+
+			if (n < 0)
+				curNode = curNode.Next;
+		}
+
+		return n >= 0 ? Optional.empty() : Optional.of(curNode.Item);
+		*/
+	}
+
+	public void walk(Consumer<T> con)
+	{
+		for (var node = m_head; node != null; node = node.Next) //Traverse
+			con.accept(node.Item);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıda bir sınıf türünden nesnelerin sayısı tutulmaktadır. Closeable arayüzü ile sayacın düşürülmesi
+    sağlanmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.io.Closeable;
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new ArrayList<Sample>();
+
+        for (int i = 0; i < 10; ++i) {
+            list.add(new Sample());
+        }
+
+        System.out.printf("Number of Sample:%d%n", Sample.getCount());
+
+        for (var sample : list) {
+            sample.close();
+            System.out.printf("Loop:Number of Sample:%d%n", Sample.getCount());
+        }
+
+        System.out.printf("Number of Sample:%d%n", Sample.getCount());
+    }
+}
+
+class Sample implements Closeable {
+    //....
+    private static int ms_count;
+
+    {
+        ++ms_count;
+    }
+
+    public Sample(/*...*/)
+    {
+        //...
+    }
+
+    public static int getCount()
+    {
+        return ms_count;
+    }
+
+    @Override
+    public void close()
+    {
+        --ms_count;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün forEach metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Integer> list = new ArrayList<>();
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(r.nextInt(100));
+
+        list.stream().forEach(val -> System.out.printf("%d ", val));
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java 8 ile birlikte Iterable arayüzüne de forEach metodu eklenmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Integer> list = new ArrayList<>();
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(r.nextInt(100));
+
+        list.forEach(val -> System.out.printf("%d ", val));
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün filter metodu ile koşula uyan değerlere ilişkin bir Stream
+    referansı elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Integer> list = new ArrayList<>();
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(r.nextInt(100));
+
+        list.forEach(val -> System.out.printf("%d ", val));
+        System.out.println("\n***************");
+        list.stream().filter(NumberUtil::isPrime).forEach(System.out::println);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün count metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.NumberUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Integer> list = new ArrayList<>();
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(r.nextInt(100));
+
+        list.forEach(val -> System.out.printf("%d ", val));
+        System.out.println("\n***************");
+        list.stream().filter(val -> NumberUtil.isPrime(val)).forEach(System.out::println);
+        var count = list.stream().filter(val -> NumberUtil.isPrime(val)).count();
+
+        System.out.printf("Count:%d%n", count);
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte stokta bulunan tüm ürünler listelenmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 1987, 123));
+        products.add(new Product(3, "Mikrofon", 0, 123));
+
+        products.stream().filter(p -> p.getStock() > 0).forEach(System.out::println);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün allMatch metodu parametresi ile aldığı koşula tüm elemanlar
+    uyuyorsa true döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 0, 123));
+        products.add(new Product(3, "Mikrofon", 10, 123));
+
+        if (products.stream().allMatch(p -> p.getStock() > 0))
+            System.out.println("Tüm ürünler stokta var");
+        else {
+            System.out.println("Stokta bulunmayan ürünler:");
+            products.stream().filter(p -> p.getStock() <= 0).forEach(System.out::println);
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün anyMatch metodu parametresi ile aldığı koşula uyan en az bir eleman
+    varsa true döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 10, 123));
+        products.add(new Product(4, "Mikrofon", 10, 123));
+
+        if (products.stream().anyMatch(p -> p.getStock() <= 0)) {
+            System.out.println("Stokta bulunmayan ürünler");
+            products.stream().filter(p -> p.getStock() <= 0).forEach(System.out::println);
+        }
+        else
+            System.out.println("Tüm ürünler stokta var");
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün noneMatch metodu parametresi ile aldığı koşula hiçbir eleman
+    uymuyor ise true döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 10, 123));
+        products.add(new Product(4, "Mikrofon", 80, 123));
+
+        if (products.stream().noneMatch(p -> p.getStock() <= 0))
+            System.out.println("Tüm ürünler stokta var");
+        else {
+            System.out.println("Stokta bulunmayan ürünler");
+            products.stream().filter(p -> p.getStock() <= 0).forEach(System.out::println);
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    IntStream sınıfı ile int türüne ilişkin bir dizi sarmalanabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        int [] a = {1, 2, 3, 4};
+
+        IntStream.of(a).forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Arrays sınıfının stream metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.Arrays;
+
+class App {
+    public static void main(String [] args)
+    {
+        int [] a = {1, 2, 3, 4};
+
+        Arrays.stream(a).forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün findFirst metodu ile ilk eleman elde edilebilir. Bu metot
+    Optional döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 10, 123));
+        products.add(new Product(3, "Mikrofon", 10, 123));
+
+        var op = products.stream().filter(p -> p.getStock() <= 0).findFirst();
+
+        if (op.isPresent()) {
+            System.out.println("Stokta bulunmayan ilk ürün");
+            System.out.println(op.get());
+        }
+        else
+            System.out.println("Tüm ürünler stokta var");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün findFirst metodu ile ilk eleman elde edilebilir. Bu metot
+    Optional döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 10, 123));
+        products.add(new Product(3, "Mikrofon", 0, 123));
+
+        var op = products.stream().filter(p -> p.getStock() <= 0).findFirst();
+
+        op.ifPresent(p -> {
+            System.out.println("Stokta bulunmayan ilk ürün");
+            System.out.println(p);
+        });
+
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün map metodu dönüştürmek amaçlı kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 10, 123));
+        products.add(new Product(3, "Mikrofon", 0, 123));
+
+        products
+                .stream()
+                .filter(p -> p.getStock() > 0)
+                .map(p -> p.getName())
+                .filter(name -> name.length() >= 6)
+                .forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün mapToInt metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+import java.util.ArrayList;
+import java.util.List;
+
+class App {
+    public static void main(String [] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 345, 5000));
+        products.add(new Product(2, "mouse", 23, 50));
+        products.add(new Product(3, "Klavye", 10, 123));
+        products.add(new Product(4, "Mikrofon", 10, 123));
+
+        products
+                .stream()
+                .filter(p -> p.getStock() > 0)
+                .mapToInt(p -> p.getStock())
+                .forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stream arayüzünün of metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+
+import java.util.stream.Stream;
+
+class App {
+    public static void main(String [] args)
+    {
+        int len = Console.readInt("Length?");
+        String [] str =  {"ankara", "istanbul", "izmir", "muş", "bolu", "zonguldak", "antalya"};
+
+        Stream.of(str).filter(city -> city.length() > len).forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   IntStream arayüzünün reduce metodu ile stream içerisindeki elemanlara ilişkin bir işlem yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        var a = ArrayUtil.getRandomArray(10, 1, 100);
+
+        IntStream.of(a).forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+
+        var op = IntStream.of(a).reduce((r, e) -> r + e);
+
+        op.ifPresent(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    reduce metodu ilk değeri verilen bir işlem için verilen metodu
+    her elemana uygular. Kümülatif bir biriktirme sağlar
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        var list = IntStream.rangeClosed(1, 10).mapToObj(val -> val).collect(Collectors.toList());
+
+        int val = list.stream().reduce(0, Operation::add);
+
+        System.out.println(val);
+    }
+}
+
+class Operation {
+    public static int add(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    reduce metodu ilk değeri verilen bir işlem için verilen metodu
+    her elemana uygular. Kümülatif bir biriktirme sağlar
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        var list = new ArrayList<Integer>();
+
+        IntStream.rangeClosed(1, 10).forEach(val -> list.add(val));
+
+        int val = list.stream().reduce(0, Operation::add);
+
+        System.out.println(val);
+    }
+}
+
+class Operation {
+    public static int add(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    reduce metodu ilk değeri verilen bir işlem için verilen metodu
+    her elemana uygular. Kümülatif bir biriktirme sağlar
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Random r = new Random();
+        var list = IntStream.generate(() -> r.nextInt(100)).limit(10).mapToObj(val -> val).collect(Collectors.toList());
+
+        list.forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+
+        int val = list.stream().reduce(0, Operation::add);
+
+        System.out.println(val);
+    }
+}
+
+class Operation {
+    public static int add(int a, int b)
+    {
+        return a + b;
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    map ve reduce metodunun bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product("LPT 1000", "Laptop1", 100, new BigDecimal(1000.45), new BigDecimal(1500)));
+        products.add(new Product("LPT 1001", "Laptop2", 300, new BigDecimal(1200.67), new BigDecimal(1700)));
+        products.add(new Product("MOU 1004", "Mouse", 3000, new BigDecimal(10.67), new BigDecimal(60)));
+
+        var result = products.stream()
+                .map(p -> p.getPrice().subtract(p.getCost()).multiply(new BigDecimal(p.getStock())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        System.out.printf("%.2f%n", result.doubleValue());
+    }
+}
+
+class Product {
+    private String m_id;
+    private String m_name;
+    private int m_stock;
+    private BigDecimal m_cost, m_price;
+
+    public Product(String id, String name, int stock, BigDecimal cost, BigDecimal price)
+    {
+        m_id = id;
+        m_name = name;
+        m_stock = stock;
+        m_cost = cost;
+        m_price = price;
+    }
+
+
+    public String getId()
+    {
+        return m_id;
+    }
+
+
+    public void setId(String id)
+    {
+        this.m_id = id;
+    }
+
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+
+    public void setName(String name)
+    {
+        this.m_name = name;
+    }
+
+
+    public int getStock()
+    {
+        return m_stock;
+    }
+
+
+    public void setStock(int stock)
+    {
+        this.m_stock = stock;
+    }
+
+
+    public BigDecimal getCost()
+    {
+        return m_cost;
+    }
+
+
+    public void setCost(BigDecimal cost)
+    {
+        this.m_cost = cost;
+    }
+
+
+    public BigDecimal getPrice()
+    {
+        return m_price;
+    }
+
+
+    public void setPrice(BigDecimal price)
+    {
+        this.m_price = price;
+    }
+
+    public String toString()
+    {
+        return m_name;
+    }
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    map ve reduce metodunun bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product("LPT 1000", "Laptop1", -100, new BigDecimal(1000.45), new BigDecimal(1500)));
+        products.add(new Product("LPT 1001", "Laptop2", 300, new BigDecimal(1200.67), new BigDecimal(1700)));
+        products.add(new Product("MOU 1004", "Mouse", 3000, new BigDecimal(10.67), new BigDecimal(60)));
+
+        BigDecimal result = products.stream()
+                .map(p-> {
+                    if (p.getStock() > 0)
+                        return p.getPrice().subtract(p.getCost()).multiply(new BigDecimal(p.getStock()));
+
+                    return BigDecimal.ZERO;
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        System.out.printf("%.2f%n", result.doubleValue());
+    }
+}
+
+class Product {
+    private String m_id;
+    private String m_name;
+    private int m_stock;
+    private BigDecimal m_cost, m_price;
+
+    public Product(String id, String name, int stock, BigDecimal cost, BigDecimal price)
+    {
+        m_id = id;
+        m_name = name;
+        m_stock = stock;
+        m_cost = cost;
+        m_price = price;
+    }
+
+
+    public String getId()
+    {
+        return m_id;
+    }
+
+
+    public void setId(String id)
+    {
+        this.m_id = id;
+    }
+
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+
+    public void setName(String name)
+    {
+        this.m_name = name;
+    }
+
+
+    public int getStock()
+    {
+        return m_stock;
+    }
+
+
+    public void setStock(int stock)
+    {
+        this.m_stock = stock;
+    }
+
+
+    public BigDecimal getCost()
+    {
+        return m_cost;
+    }
+
+
+    public void setCost(BigDecimal cost)
+    {
+        this.m_cost = cost;
+    }
+
+
+    public BigDecimal getPrice()
+    {
+        return m_price;
+    }
+
+
+    public void setPrice(BigDecimal price)
+    {
+        this.m_price = price;
+    }
+
+    public String toString()
+    {
+        return m_name;
+    }
+
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte [1, 100] aralığındaki sayıların toplamı bulunmuştur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        var op = IntStream.rangeClosed(1, 100).reduce((a, b) -> a + b);
+
+        op.ifPresent(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte [1, 100) aralığındaki sayıların toplamı bulunmuştur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        var op = IntStream.range(1, 100).reduce((a, b) -> a + b);
+
+        op.ifPresent(System.out::println);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte İngilizce alfabenin tüm karakterleri ekrana basılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        IntStream.range(0, 26).forEach(val -> System.out.printf("%c", (char)(val + 'A')));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte factorial metodu IntStream kullanılarak yapılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        for (int i = 0; i <= 10; ++i)
+            System.out.printf("%d!=%d%n", i, Util.factorial(i));
+    }
+}
+
+class Util {
+    public static int factorial(int val)
+    {
+        if (val < 0)
+            return -1;
+
+        if (val <= 1)
+            return 1;
+
+        return IntStream.rangeClosed(2, val).reduce((a, b) -> a * b).getAsInt();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte int türden dizi Integer stream yapılmıştır. Bu örnek temel türden bir diziden
+   sarmalayan sınıf türünden Stream elde etmekte kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+class App {
+    public static void main(String [] args)
+    {
+        int [] a = {1, 2, 3, 4};
+
+        Stream<Integer> stream = IntStream.range(0, a.length).mapToObj(index -> a[index]);
+
+        stream.forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Iterable arayüzünün splitIterator metodu StreamSupport isimli sınıf ile kullanılarak Iterable' dan
+   Stream elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+class App {
+    public static void main(String [] args)
+    {
+        Iterable<Integer> numbers = Sample.getNumbers(10, 20);
+        Stream<Integer> stream = StreamSupport.stream(numbers.spliterator(), false);
+
+        stream.forEach(System.out::println);
+    }
+}
+
+class Sample {
+    public static Iterable<Integer> getNumbers(int min, int max)
+    {
+        Random r = new Random();
+
+        List<Integer> list = new ArrayList<>() {};
+
+        for (int i = 0; i < 10; ++i)
+            list.add(r.nextInt(max - min) + min);
+
+        return list;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   generate metodu ile belirlenen bir duruma göre değerler elde edilebilir. Bu değerlerden
+   istenilen sayıda alınması için limit metodu çağrılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        Random r = new Random();
+
+        IntStream.generate(() -> r.nextInt(100)).limit(10).forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   generate metodu ile belirlenen bir duruma göre değerler elde edilebilir. Bu değerlerden
+   istenilen sayıda alınması için limit metodu çağrılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        Random r = new Random();
+
+        IntStream.generate(() -> r.nextInt(100)).filter(val -> val % 2 == 0).limit(10).forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıdaki örnekte int türden dizinin en büyük üç elemanı elde edilmektedir. sorted metodu dizinin sıralanmış
+   biçimini stream olarak verir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        int [] grades = ArrayUtil.getRandomArray(30, 0, 101);
+
+        System.out.println("Before:");
+
+        Arrays.stream(grades).forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+
+        IntStream.of(grades).sorted().skip(grades.length - 3).forEach(System.out::println);
+
+        System.out.println("After:");
+        Arrays.stream(grades).forEach(val -> System.out.printf("%d ", val));
+        System.out.println();
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Stream den List elde edilmesi
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.NumberUtil;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        int [] grades = ArrayUtil.getRandomArray(30, 0, 101);
+
+        Arrays.stream(grades).forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+        var list = IntStream.of(grades)
+                .filter(NumberUtil::isPrime)
+                .mapToObj(val -> val)
+                .collect(Collectors.toList());
+
+        System.out.println(list.getClass().getName());
+
+        list.forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Basit bir isPrime metodu ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        IntStream.rangeClosed(1, 100).filter(Util::isPrime).forEach(System.out::println);
+    }
+}
+
+class Util {
+    public static boolean isPrime(int val)
+    {
+        if (val <= 1)
+            return false;
+
+        return IntStream.rangeClosed(2, val / 2).noneMatch(i -> val % i == 0);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Basit bir isPrime metodu ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+
+class App {
+    public static void main(String [] args)
+    {
+        IntStream.range(1, 100).filter(Util::isPrime).forEach(System.out::println);
+    }
+}
+
+class Util {
+    public static boolean isPrime(int val)
+    {
+        if (val <= 1)
+            return false;
+
+        return IntStream.rangeClosed(2, val / 2).allMatch(i -> val % i != 0);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir stream in sıralı olarak elde etmek için sorted metotları
+    kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        var cities = new ArrayList<CityInfo>();
+
+        cities.add(new CityInfo(67, "zonguldak"));
+        cities.add(new CityInfo(34, "istanbul"));
+        cities.add(new CityInfo(35, "izmir"));
+        cities.add(new CityInfo(6, "ankara"));
+
+        cities.stream().sorted((c1, c2) -> c2.getPlate() - c1.getPlate()).forEach(System.out::println);
+    }
+}
+
+class CityInfo {
+    private int m_plate;
+    private String m_name;
+
+    public CityInfo(int plate, String name)
+    {
+        m_plate = plate;
+        m_name = name;
+    }
+
+    public int getPlate()
+    {
+        return m_plate;
+    }
+
+    public void setPlate(int m_plate)
+    {
+        this.m_plate = m_plate;
+    }
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String m_name)
+    {
+        this.m_name = m_name;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%d:%s", m_plate, m_name);
+    }
+
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    distinct metodu ile elde edilen stream içerisinde tekrarlı
+    eleman kalmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        List<Integer> list = new ArrayList<>();
+
+        list.add(10);
+        list.add(20);
+        list.add(10);
+        list.add(10);
+        list.add(20);
+        list.add(30);
+
+        list.stream().distinct().forEach(System.out::println);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    distinct metodu ile elde edilen stream içerisinde tekrarlı
+    eleman kalmaz. Dikkat: Dökümanlarda belirtilmese bile distinct metodu
+    hashCode metoduna da bakar.
+
+    distinct metodu tekrarlı elemanlar için ilk bulduğunu verir (stable)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        List<CityInfo> cities = new ArrayList<>();
+
+        cities.add(new CityInfo(67, "zonguldak"));
+        cities.add(new CityInfo(34, "istanbul"));
+        cities.add(new CityInfo(34, "istanbul"));
+        cities.add(new CityInfo(35, "izmir"));
+        cities.add(new CityInfo(6, "ankara"));
+        cities.add(new CityInfo(35, "izmir"));
+
+        cities.forEach(System.out::println);
+
+        System.out.println("***********");
+
+        cities.stream().distinct().forEach(System.out::println);
+    }
+}
+
+class CityInfo {
+    private int m_plate;
+    private String m_name;
+
+    public CityInfo(int plate, String name)
+    {
+        m_plate = plate;
+        m_name = name;
+    }
+
+
+    public int getPlate()
+    {
+        return m_plate;
+    }
+
+
+    public void setPlate(int plate)
+    {
+        m_plate = plate;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return m_plate;
+    }
+
+    public boolean equals(Object o)
+    {
+        CityInfo ci = (CityInfo)o;
+
+        return ci.m_plate == this.m_plate;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%d:%s", m_plate, m_name);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Ürünlerin satış fiyatına azalan sırada ilk iki ürün
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String[] args)
+    {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product("LPT 1000", "Laptop1", 100, new BigDecimal(1000.45), new BigDecimal(1500)));
+        products.add(new Product("LPT 1001", "Laptop2", 300, new BigDecimal(1200.67), new BigDecimal(1700)));
+        products.add(new Product("MOU 1004", "Mouse", 3000, new BigDecimal(10.67), new BigDecimal(60)));
+
+        products.stream().sorted((p1, p2)->p2.getPrice().compareTo(p1.getPrice())).limit(2).forEach(System.out::println);
+    }
+}
+
+class Product {
+    private String m_id;
+    private String m_name;
+    private int m_stock;
+    private BigDecimal m_cost, m_price;
+
+    public Product(String id, String name, int stock, BigDecimal cost, BigDecimal price)
+    {
+        m_id = id;
+        m_name = name;
+        m_stock = stock;
+        m_cost = cost;
+        m_price = price;
+    }
+
+
+    public String getId()
+    {
+        return m_id;
+    }
+
+
+    public void setId(String id)
+    {
+        this.m_id = id;
+    }
+
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+
+    public void setName(String name)
+    {
+        this.m_name = name;
+    }
+
+
+    public int getStock()
+    {
+        return m_stock;
+    }
+
+
+    public void setStock(int stock)
+    {
+        this.m_stock = stock;
+    }
+
+
+    public BigDecimal getCost()
+    {
+        return m_cost;
+    }
+
+
+    public void setCost(BigDecimal cost)
+    {
+        this.m_cost = cost;
+    }
+
+
+    public BigDecimal getPrice()
+    {
+        return m_price;
+    }
+
+
+    public void setPrice(BigDecimal price)
+    {
+        this.m_price = price;
+    }
+
+    public String toString()
+    {
+        return m_name;
+    }
+
+}
+/*----------------------------------------------------------------------------------------------------------------------
+   skip metodu ve limit metodunun kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+    public static void main(String[] args)
+    {
+        List<Integer> list = new ArrayList<>();
+
+        for (int i = 1; i <= 30; ++i)
+            list.add(i);
+
+        list.stream().limit(20).skip(11).forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+   generate metodu bir dizilim elde etmekte kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.stream.Stream;
+import static java.util.stream.Stream.generate;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] names = {"Fethi", "Naşit", "Kubilay", "Ahmet", "Arek", "Erhan", "Ozan", "Deniz", "Umut"};
+
+        Random r = new Random();
+
+        Stream.generate(() -> names[r.nextInt(names.length)]).limit(10).forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   iterate metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Stream;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Stream.iterate(10, val -> 2 * val + 1).limit(10).forEach(System.out::println);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Aşağıda basit asallık testi yapan metotlar yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+public class App {
+    public static void main(String[] args)
+    {
+        IntStream
+                .iterate(-10, val -> val + 1)
+                .limit(109)
+                .filter(Util::isPrime1).
+                forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+
+        IntStream
+                .iterate(-10, val -> val + 1)
+                .limit(109)
+                .filter(Util::isPrime2).
+                forEach(val -> System.out.printf("%d ", val));
+
+        System.out.println();
+    }
+}
+
+class Util {
+    public static boolean isPrime1(int val) //Dikkat bu şekilde yazılmamalı sadece örnek
+    {
+        return val <= 1 ? false : Stream.iterate(2, a -> a + 1).limit(val - 2).noneMatch(a -> val % a == 0);
+    }
+
+    public static boolean isPrime2(int val)
+    {
+        return val <= 1 ? false : IntStream.rangeClosed(2, val / 2).noneMatch(a -> val % a == 0);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+   Stream sınıfının concat metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] cities = {"istanbul", "ankara", "izmir"};
+        List<String> citiesList = new ArrayList<>();
+
+        citiesList.add("zonguldak");
+        citiesList.add("sinop");
+
+        Stream.concat(citiesList.stream(), Stream.of(cities)).forEach(System.out::println);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    collect metodu Collector arayüzünün 3. generic parametresindeki türden bir
+    referans döndürür. Collectors sınıfının metotlarının bir çoğu
+    Collector referansı döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] cities = {"istanbul", "ankara", "izmir"};
+
+        List<Integer> list = Stream.of(cities).map(s -> s.length()).collect(Collectors.toList());
+
+        list.forEach(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collectors sınıfının metotları import static direktifi ile
+    kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.List;
+import java.util.stream.Stream;
+import static java.util.stream.Collectors.*;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] cities = {"istanbul", "ankara", "izmir"};
+
+        List<Integer> list = Stream.of(cities).map(s -> s.length()).collect(toList());
+
+        list.forEach(System.out::println);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Collectors sınıfının counting metodu ile stream in eleman sayısı bulunabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.counting;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] cities = {"istanbul", "ankara", "izmir", "zonguldak", "bolu"};
+
+        long count = Stream.of(cities).filter(s -> s.length() > 5).collect(counting());
+
+        System.out.println(count);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Collectors sınıfının summingInt metodu ile toplam bulunabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.summingInt;
+import static java.util.stream.Collectors.toList;
+
+public class App {
+    public static void main(String[] args)
+    {
+        var list = Stream.iterate(1, val -> val + 1).limit(100).collect(toList());
+
+        int sum = list.stream().collect(summingInt(val -> val));
+
+        System.out.println(sum);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Collectors sınıfının averagingInt metodu ile ortalama bulunabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.averagingInt;
+import static java.util.stream.Collectors.toList;
+
+public class App {
+    public static void main(String[] args)
+    {
+        List<Integer> list = Stream.iterate(1, val -> val + 1).limit(100).collect(toList());
+
+        double avg = list.stream().collect(averagingInt(val -> val));
+
+        System.out.println(avg);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    partitioningBy metodu ile belirli bir koşula uyanlar ve uymayanlar
+    bir Map içerisinde toplanabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Stream;
+import static java.util.stream.Collectors.*;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Person [] people = {
+                new Person("Ali", 10, 6, 2000),
+                new Person("Veli", 11, 7, 1997),
+                new Person("Selami", 10, 6, 1978),
+                new Person("Secati", 10, 8, 2005)};
+
+        Map<Boolean, List<Person>> map = Stream.of(people).collect(partitioningBy(p -> p.getAge() >= 18));
+
+        System.out.println("Young people:");
+        List<Person> young = map.get(false);
+
+        young.forEach(System.out::println);
+
+        System.out.println("*******************");
+
+        System.out.println("Adult people:");
+        List<Person> adult = map.get(true);
+
+        adult.forEach(System.out::println);
+    }
+}
+
+class Person {
+    private String m_name;
+    private LocalDate m_birthDate;
+
+    public Person(String name, int day, int mon, int year)
+    {
+        m_name = name;
+        m_birthDate = LocalDate.of(year, mon, day);
+    }
+    //...
+
+    public double getAge()
+    {
+        return ChronoUnit.DAYS.between(m_birthDate, LocalDate.now()) / 365.;
+    }
+
+    public String toString()
+    {
+        return String.format("%s:%.02f", m_name, this.getAge());
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    groupingBy metodu belirli bir türe göre gruplamak amaçlı kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.time.LocalDate;
+
+import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Stream;
+import static java.util.stream.Collectors.*;
+
+public class App {
+    public static void main(String[] args)
+    {
+        Person [] people = {
+                new Person("Ali", 10, 6, 1978, MaritalStatus.DIVORCED),
+                new Person("Veli", 11, 7, 1997, MaritalStatus.MARRIED),
+                new Person("Selami", 10, 6, 1978, MaritalStatus.SINGLE),
+                new Person("Secati", 10, 8, 1976, MaritalStatus.DIVORCED)};
+
+        Map<MaritalStatus, List<Person>> map = Stream.of(people).collect(groupingBy(Person::getMaritalStatus));
+
+        System.out.println("Divorced people:");
+        map.get(MaritalStatus.DIVORCED).forEach(System.out::println);
+
+        System.out.println("Single people:");
+        map.get(MaritalStatus.SINGLE).forEach(System.out::println);
+
+        System.out.println("Married people:");
+        map.get(MaritalStatus.MARRIED).forEach(System.out::println);
+    }
+}
+
+enum MaritalStatus {SINGLE, MARRIED, DIVORCED};
+
+class Person {
+    private String m_name;
+    private LocalDate m_birthDate;
+    private MaritalStatus m_maritalStatus;
+
+    public Person(String name, int day, int mon, int year, MaritalStatus maritalStatus)
+    {
+        //...
+        m_name = name;
+        m_birthDate = LocalDate.of(year, mon, day);
+        m_maritalStatus = maritalStatus;
+    }
+    //...
+
+    public MaritalStatus getMaritalStatus()
+    {
+        return m_maritalStatus;
+    }
+
+    public double getAge()
+    {
+        return ChronoUnit.DAYS.between(m_birthDate, LocalDate.now()) / 365.;
+    }
+
+    public String toString()
+    {
+        return String.format("%s:%.02f:%s", m_name, this.getAge(), m_maritalStatus);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    joining metodu ile string birleştirmesi yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] names = {"Ali", "Veli", "Selami"};
+
+        String str = Stream.of(names).collect(joining());
+
+        System.out.println(str);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    joining metodu ile string birleştirmesi yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] names = {"Ali", "Veli", "Selami"};
+
+        String str = Stream.of(names).collect(joining("-"));
+
+        System.out.println(str);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    maxBy ve minBy metotları ilgili stream in verilen comparator
+    arayüzünü implemente etmiş nesneye göre en büyük ve en küçük
+    değerlerini verir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.minBy;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] names = {"Ali", "Veli", "Selami"};
+
+        Optional<String> result = Stream.of(names).collect(minBy((s1, s2) -> s1.compareTo(s2)));
+
+        if (result.isPresent()) {
+            System.out.println(result.get());
+        }
+        else
+            System.out.println("Maximum bulunamıyor");
+
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    maxBy ve minBy metotları ilgili stream in verilen comparator
+    arayüzünü implemente etmiş nesneye göre en büyük ve en küçük
+    değerlerini verir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.maxBy;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] names = {"Ali", "Veli", "Selami"};
+
+        Optional<String> result = Stream.of(names).collect(maxBy((s1, s2) -> s1.compareTo(s2)));
+
+        if (result.isPresent()) {
+            System.out.println(result.get());
+        }
+        else
+            System.out.println("Maximum bulunamıyor");
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    reducing metodu ile bir stream içerisinde bir işlem yaptırılarak
+    sonuç elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.reducing;
+
+public class App {
+    public static void main(String[] args)
+    {
+        String [] names = {"Ali", "Veli", "Selami", "Abdurrahman", "Secati", "Satılmış"};
+
+        String result = Stream.of(names).collect(reducing("", (s1, s2)-> s1 + s2));
+
+        System.out.println(result);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Properties sınıfı ve properties dosyası kullanımı:
+
+    #Connection information file
+
+    connection.hostname=jdbc:postgresql://localhost
+    connection.port=5432
+    connection.dbname=devicesdb
+    connection.username=postgres
+    connection.password=csd1993
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
+class App {
+    public static void main(String [] args)
+    {
+        try {
+            Properties properties = new Properties();
+
+            properties.load(new InputStreamReader(new FileInputStream("connection.properties")));
+
+            String hostname = properties.getProperty("connection.hostname");
+            int port = Integer.parseInt(properties.getProperty("connection.port"));
+            String dbname = properties.getProperty("connection.dbname");
+            String username = properties.getProperty("connection.username");
+            String password = properties.getProperty("connection.password");
+
+            String url = String.format("%s:%d/%s", hostname, port, dbname);
+
+            System.out.println(url);
+            System.out.println(username);
+            System.out.println(password);
+        }
+        catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+

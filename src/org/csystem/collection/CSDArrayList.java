@@ -3,30 +3,29 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 package org.csystem.collection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class CSDArrayList<T> implements Iterable<T> {
+public class CSDArrayList<T> implements Iterable<T>, Cloneable{
     private static final int DEFAULT_CAPACITY = 10;
     private T[] m_elems;
     private int m_index;
+    private static <T> void copy(T [] source, T [] dest)
+    {
 
+    }
     private static void controlForCapacity(int capacity, String msg)
     {
         if (capacity < 0)
             throw new IllegalArgumentException(msg);
     }
-
+    @SuppressWarnings("unchecked")
     private void allocateCapacity(int capacity)
     {
-        T [] temp = (T [])new Object[capacity];
-
-        for (int i = 0; i < m_index; ++i)
-            temp[i] = m_elems[i];
-
-        m_elems = temp;
+        m_elems = Arrays.copyOf(m_elems,capacity);
     }
-
 
     private void controlForIndex(int index, String msg)
     {
@@ -41,14 +40,13 @@ public class CSDArrayList<T> implements Iterable<T> {
         this(DEFAULT_CAPACITY);
     }
 
-
+    @SuppressWarnings("unchecked")
     public CSDArrayList(int initialCapacity)
     {
         controlForCapacity(initialCapacity, "illegal argument");
 
         m_elems = (T [])new Object[initialCapacity];
     }
-
     public boolean add(T elem)
     {
         if (m_index == m_elems.length)
@@ -76,7 +74,7 @@ public class CSDArrayList<T> implements Iterable<T> {
 
     public void ensureCapacity(int capacity)
     {
-        //TODO:
+
     }
 
     public T get(int index)
@@ -110,7 +108,7 @@ public class CSDArrayList<T> implements Iterable<T> {
 
             public boolean hasNext()
             {
-                return idx < size();
+                return idx < m_index;
             }
             public T next()
             {
@@ -125,5 +123,12 @@ public class CSDArrayList<T> implements Iterable<T> {
     public void trimToSize()
     {
         this.allocateCapacity(m_index);
+    }
+
+    public Object clone()
+    {
+        CSDArrayList<T> clone = new CSDArrayList<T>(m_elems.length);
+
+        return clone;
     }
 }

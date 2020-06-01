@@ -9940,7 +9940,7 @@ class App {
         try {
             Class<?> clsSample = Class.forName("org.csystem.app.Sample");
             Constructor<?> ctorDefault = clsSample.getDeclaredConstructor();
-            Constructor<?> ctorInt = clsSample.getDeclaredConstructor(int.class);getDeclaredConstructor
+            Constructor<?> ctorInt = clsSample.getDeclaredConstructor(int.class);
 
             ctorDefault.setAccessible(true);
 
@@ -10632,6 +10632,3218 @@ public class IntRange implements Iterable<Integer> {
             }
         };
     }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Doublerange sınıfı ve Iterable arayüzünün anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.DoubleRange;
+
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        var drange = new DoubleRange(1.3, 7.4, 0.1);
+
+        Util.doWork(drange, System.out::println);
+    }
+}
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Doublerange sınıfı ve Iterable arayüzünün anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.DoubleRange;
+
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        var drange = new DoubleRange(1.3, 7.4, val -> 2 * val + 0.02);
+
+        Util.doWork(drange, System.out::println);
+    }
+}
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    DoubleRange sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.DoubleUnaryOperator;
+
+public class DoubleRange implements Iterable<Double> {
+    private final double m_min, m_max;
+    private final DoubleUnaryOperator m_doubleUnaryOperator;
+
+    public DoubleRange(double min, double max, double step)
+    {
+        this(min, max, (step <= 0) ? (val -> val + 1) : (val -> val + step));
+    }
+
+    public DoubleRange(double min, double max, DoubleUnaryOperator doubleUnaryOperator)
+    {
+        if (min >= max || doubleUnaryOperator == null)
+            throw  new IllegalArgumentException("min must be less than max OR doubleUnaryOperator can not be null");
+
+        m_min = min;
+        m_max = max;
+        m_doubleUnaryOperator = doubleUnaryOperator;
+    }
+
+    public double getMin()
+    {
+        return m_min;
+    }
+
+    public double getMax()
+    {
+        return m_max;
+    }
+
+    @Override
+    public Iterator<Double> iterator()
+    {
+        return new Iterator<Double>() {
+            private double m_curElem = m_min;
+
+            @Override
+            public boolean hasNext()
+            {
+                return m_curElem <= m_max;
+            }
+
+            @Override
+            public Double next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                double val = m_curElem;
+
+                m_curElem = m_doubleUnaryOperator.applyAsDouble(m_curElem);
+
+                return val;
+            }
+        };
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+   CSDArrayList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.collection.CSDArrayList;
+
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDArrayList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        Util.doWork(list, val -> System.out.printf("%d ", val));
+        System.out.println();
+    }
+}
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDArrayList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util.collection;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class CSDArrayList<T> implements Iterable<T> {
+    private static final int DEFAULT_CAPACITY = 10;
+    private T[] m_elems;
+    private int m_index;
+
+    private static void controlForCapacity(int capacity, String msg)
+    {
+        if (capacity < 0)
+            throw new IllegalArgumentException(msg);
+    }
+
+    private void allocateCapacity(int capacity)
+    {
+        T [] temp = (T [])new Object[capacity];
+
+        for (int i = 0; i < m_index; ++i)
+            temp[i] = m_elems[i];
+
+        m_elems = temp;
+    }
+
+    private void controlForIndex(int index, String msg)
+    {
+
+        if (index < 0 || index >= m_index)
+            throw new IndexOutOfBoundsException(msg);
+    }
+
+    public CSDArrayList()
+    {
+        this(DEFAULT_CAPACITY);
+    }
+
+    @SuppressWarnings("unchecked")
+    public CSDArrayList(int initialCapacity)
+    {
+        controlForCapacity(initialCapacity, "illegal argument");
+
+        m_elems = (T [])new Object[initialCapacity];
+    }
+
+    public boolean add(T elem)
+    {
+        if (m_index == m_elems.length)
+            this.allocateCapacity(m_elems.length != 0 ? m_elems.length * 2 : 1);
+
+        m_elems[m_index++] = elem;
+
+        return true;
+    }
+
+    public void add(int index, T elem)
+    {
+        //TODO:
+    }
+
+    public int capacity() {return m_elems.length;}
+
+    public void clear()
+    {
+        for (int i = 0; i < m_index; ++i)
+            m_elems[i] = null;
+
+        m_index = 0;
+    }
+
+    public void ensureCapacity(int capacity)
+    {
+        //TODO:
+    }
+
+    public T get(int index)
+    {
+        this.controlForIndex(index, "Index out of bounds");
+
+        return m_elems[index];
+    }
+
+    public T remove(int index)
+    {
+        //TODO:
+
+        return null;
+    }
+
+    public T set(int index, T elem)
+    {
+        this.controlForIndex(index, "Index out of bounds");
+        T oldElem = m_elems[index];
+
+        m_elems[index] = elem;
+
+        return oldElem;
+    }
+
+    public int size() {return m_index;}
+
+    public void trimToSize()
+    {
+        this.allocateCapacity(m_index);
+    }
+
+    @Override
+    public Iterator<T> iterator()
+    {
+        return new Iterator<T>() {
+            private int m_curIndex;
+
+            @Override
+            public boolean hasNext()
+            {
+                return m_curIndex < m_index;
+            }
+
+            @Override
+            public T next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                return m_elems[m_curIndex++];
+            }
+        };
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   RandomIntGenerator sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.RandomIntGenerator;
+
+import java.util.function.Consumer;
+
+class App {
+    public static void main(String [] args)
+    {
+        var randomGenerator = new RandomIntGenerator(1, 100, 10);
+
+        Util.doWork(randomGenerator, val -> System.out.printf("%d ", val));
+        System.out.println();
+    }
+}
+
+class Util {
+    public static <T> void doWork(Iterable<T> iterable, Consumer<T> con)
+    {
+        for (var val : iterable)
+            con.accept(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    RandomIntGenerator sınıfı
+
+    RandomIntGenerator r = new RandomIntGenerator(1, 101, 10);
+
+    for (int val : r)
+        System.out.println(val);
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
+
+public class RandomIntGenerator implements Iterable<Integer> {
+    private final int m_min;
+    private final int m_max;
+    private final int m_count;
+    private final Random m_random;
+
+    public RandomIntGenerator(int min, int max, int count)
+    {
+        this(new Random(), min, max, count);
+    }
+
+    public RandomIntGenerator(Random r, int min, int max, int count)
+    {
+        if (min > max || count <= 0)
+            throw  new IllegalArgumentException("Invalid values");
+
+        m_random = r == null ? new Random() : r;
+        m_min = min;
+        m_max = max;
+        m_count = count;
+    }
+
+    public int getMin()
+    {
+        return m_min;
+    }
+
+    public int getMax()
+    {
+        return m_max;
+    }
+
+    public int getCount()
+    {
+        return m_count;
+    }
+
+    @Override
+    public Iterator<Integer> iterator()
+    {
+        return new Iterator<Integer>() {
+            private int m_count = 1;
+
+            @Override
+            public boolean hasNext()
+            {
+                return m_count <= RandomIntGenerator.this.m_count;
+            }
+
+            @Override
+            public Integer next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                ++m_count;
+                return m_random.nextInt(m_max - m_min) + m_min;
+            }
+        };
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün pratikteki anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>();
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+
+
+        Vector<Double> vecd = new Vector<>();
+
+        for (int i = 0; i < 10; ++i)
+            vecd.add(i * 0.4);
+
+        ArrayList<BigInteger> bigList = new ArrayList<>();
+
+        bigList.add(new BigInteger("9999999999999999999999999999999999999999999"));
+        bigList.add(new BigInteger("9999999999999999999999999999999999999999998"));
+
+
+        ArrayList<Number> list = new ArrayList<>(vec);
+
+        list.addAll(vecd);
+
+        list.addAll(bigList);
+
+        for (Number number : list)
+            System.out.println(number);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün pratikteki anlamı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        var names = new Vector<String>();
+
+        names.add("ali");
+        names.add("veli");
+        names.add("selami");
+
+        var list = new ArrayList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        ArrayList<Object> objs = new ArrayList<>(names);
+
+        objs.add(3.4);
+        objs.add(true);
+
+        objs.addAll(list);
+
+        for (var obj : objs)
+            System.out.println(obj);
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayList sınıfının indexOf metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<String> cities = new ArrayList<>();
+
+        cities.add("ankara");
+        cities.add("istanbul");
+        cities.add("izmir");
+
+        int index = cities.indexOf("ankara");
+
+        System.out.println(index);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayList sınıfının indexOf metodu null değer aranmıyorsa equals metodunu çağırır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Color> colors = new ArrayList<>();
+
+        colors.add(Color.RED);
+        colors.add(Color.BLUE);
+        colors.add(Color.GREEN);
+        colors.add(Color.GREEN);
+
+        int index = colors.indexOf(Color.BLUE);
+
+        System.out.println(index);
+    }
+}
+
+enum Color {RED, GREEN, BLUE}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    ArrayList sınıfının indexOf metodu null değer aranmıyorsa equals metodunu çağırır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        ArrayList<Product> products = new ArrayList<>();
+
+        products.add(new Product(1, "laptop", 123, 6700));
+        products.add(new Product(2, "mouse", 100, 67));
+        products.add(new Product(3, "bal", 34, 300));
+
+        int index = products.indexOf(new Product(2, "mouse"));
+
+        if (index >= 0) {
+            Product p = products.get(index);
+
+            System.out.println(p);
+        }
+        else
+            System.out.println("Aranan ürün bulunamadı");
+    }
+}
+
+
+
+package org.csystem.samples;
+
+public class Product {
+    private int m_id;
+    private String m_name;
+    private int m_stock;
+    private double m_price;
+
+    public Product()
+    {
+
+    }
+
+    public Product(int id, String name)
+    {
+        this(id, name, 0, 0);
+    }
+
+    public Product(int id, String name, int stock, double price)
+    {
+        m_id = id;
+        m_name = name;
+        m_stock = stock;
+        m_price = price;
+    }
+
+    public int getId()
+    {
+        return m_id;
+    }
+
+    public void setId(int id)
+    {
+        m_id = id;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    public int getStock()
+    {
+        return m_stock;
+    }
+
+    public void setStock(int stock)
+    {
+        m_stock = stock;
+    }
+
+    public double getPrice()
+    {
+        return m_price;
+    }
+
+    public void setPrice(double price)
+    {
+        m_price = price;
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof Product))
+            return false;
+
+        Product p = (Product)other;
+
+        return p.m_id == m_id && p.m_name == m_name;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("[%d]%s:%d * %.2f=%.2f", m_id, m_name, m_stock, m_price, m_price * m_stock);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Pair sınıfının equals metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+import org.csystem.util.Pair;
+
+import java.util.ArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var productPairs = new ArrayList<Pair<Integer, Product>>();
+
+        productPairs.add(Pair.create(1, new Product(1, "laptop", 123, 6700)));
+        productPairs.add(Pair.create(2, new Product(2, "mouse", 100, 67)));
+        productPairs.add(Pair.create(3, new Product(3, "bal", 34, 300)));
+
+        var productPair = Pair.create(3, new Product(3, "bal"));
+
+        System.out.println(productPairs.contains(productPair) ? "Ürün var" : "Ürün yok");
+    }
+}
+
+package org.csystem.util;
+
+public final class Pair<F, S> {
+    private final F m_first;
+    private final S m_second;
+
+    public static <F, S> Pair<F, S> create(F first, S second)
+    {
+        return new Pair<>(first, second);
+    }
+
+    public Pair(F first, S second)
+    {
+        m_first = first;
+        m_second = second;
+    }
+
+    public F getFirst() {return m_first;}
+    public S getSecond() {return m_second;}
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object obj)
+    {
+        var other = (Pair<F, S>)obj;
+
+        return m_first.equals(other.m_first) && m_second.equals(other.m_second);
+    }
+
+    public String toString()
+    {
+        return String.format("(%s, %s)", m_first, m_second);
+    }
+}
+
+package org.csystem.samples;
+
+public class Product {
+    private int m_id;
+    private String m_name;
+    private int m_stock;
+    private double m_price;
+
+    public Product()
+    {
+
+    }
+
+    public Product(int id, String name)
+    {
+        this(id, name, 0, 0);
+    }
+
+    public Product(int id, String name, int stock, double price)
+    {
+        m_id = id;
+        m_name = name;
+        m_stock = stock;
+        m_price = price;
+    }
+
+    public int getId()
+    {
+        return m_id;
+    }
+
+    public void setId(int id)
+    {
+        m_id = id;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+
+    public int getStock()
+    {
+        return m_stock;
+    }
+
+    public void setStock(int stock)
+    {
+        m_stock = stock;
+    }
+
+    public double getPrice()
+    {
+        return m_price;
+    }
+
+    public void setPrice(double price)
+    {
+        m_price = price;
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof Product))
+            return false;
+
+        Product p = (Product)other;
+
+        return p.m_id == m_id && p.m_name == m_name;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("[%d]%s:%d * %.2f=%.2f", m_id, m_name, m_stock, m_price, m_price * m_stock);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    IntValue sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+public final class IntValue {
+    private static final IntValue[] CACHE = new IntValue[256];
+    private final int m_val;
+
+    private IntValue(int val)
+    {
+        m_val = val;
+    }
+
+    public static final IntValue ONE = valueOf(1);
+    public static final IntValue ZERO = valueOf(0);
+
+    public static IntValue valueOf(int val)
+    {
+        if (val < -128 || val > 127)
+            return new IntValue(val);
+
+        if (CACHE[val + 128] == null)
+            CACHE[val + 128] = new IntValue(val);
+
+        return CACHE[val + 128];
+    }
+
+    public IntValue add(int val)
+    {
+        return valueOf(m_val + val);
+    }
+
+    public IntValue add(IntValue n)
+    {
+        return add(n.m_val);
+    }
+
+    public IntValue sub(int val)
+    {
+        return add(-val);
+    }
+
+    public IntValue sub(IntValue n)
+    {
+        return sub(n.m_val);
+    }
+    public int getVal() {return m_val;}
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof IntValue))
+            return false;
+
+        return ((IntValue)other).m_val == m_val;
+    }
+
+    @Override
+    public String toString()
+    {
+        return m_val + "";
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Triple sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+public class Triple<F, S, T> {
+    private F m_first;
+    private S m_second;
+    private T m_third;
+
+    public static <F, S, T> Triple<F, S, T> create(F first, S second, T third)
+    {
+        return new Triple<>(first, second, third);
+    }
+
+    public Triple(F first, S second, T third)
+    {
+        m_first = first;
+        m_second = second;
+        m_third = third;
+    }
+
+    public F getFirst()
+    {
+        return m_first;
+    }
+
+    public S getSecond()
+    {
+        return m_second;
+    }
+
+    public T getThird()
+    {
+        return m_third;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object obj)
+    {
+        var other = (Triple<F, S, T>)obj;
+
+        return m_first.equals(other.m_first) && m_second.equals(other.m_second) && m_third.equals(other.m_third);
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("(%s, %s, %s)", m_first, m_second, m_third);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Pair sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util;
+
+public final class Value<T> {
+    private final T m_data;
+
+    public static <T> Value<T> create(T data)
+    {
+        return new Value<>(data);
+    }
+
+    public Value(T data)
+    {
+        m_data = data;
+    }
+
+    public T getData() {return m_data;}
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object obj)
+    {
+        var other = (Value<T>)obj;
+
+        return m_data.equals(other.m_data);
+    }
+
+    public String toString()
+    {
+        return String.format("(%s)", m_data);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Complex sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.math;
+
+public final class Complex {
+	public double re, im;
+
+	private static Complex add(double re1, double im1, double re2, double im2)
+	{
+		return new Complex(re1 + re2, im1 + im2);
+	}
+
+	private static Complex subtract(double re1, double im1, double re2, double im2)
+	{
+		return add(re1, im1, -re2, -im2);
+	}
+
+	private static Complex multiply(double re1, double im1, double re2, double im2)
+	{
+		return new Complex(re1 * re2 - im1 * im2, re1 * im2 + im1 * re2);
+	}
+
+	private static Complex devide(double re1, double im1, double re2, double im2)
+	{
+		//TODO: Do your homework
+		return multiply(re1, im1, re2, im2);
+	}
+
+	public Complex()
+	{}
+
+	public Complex(double re)
+	{
+		this(re, 0);
+	}
+
+	public Complex(double re, double im)
+	{
+		this.re = re;
+		this.im = im;
+	}
+
+	public Complex getConjugate()
+	{
+		return new Complex(re, -im);
+	}
+
+	public double getNorm()
+	{
+		return Math.sqrt(re * re + im * im);
+	}
+
+	public void dec()
+	{
+		--re;
+	}
+
+	public void inc()
+	{
+		++re;
+	}
+
+	public Complex add(Complex z)
+	{
+		return add(re, im, z.re, z.im);
+	}
+
+	public Complex add(double a, double b)
+	{
+		return add(re, im, a, b);
+	}
+
+	public Complex add(double a)
+	{
+		return add(a, 0);
+	}
+
+	public Complex subtract(Complex z)
+	{
+		return subtract(re, im, z.re, z.im);
+	}
+
+	public Complex subtract(double a, double b)
+	{
+		return subtract(re, im, a, b);
+	}
+
+	public Complex subtract(double a)
+	{
+		return subtract(a, 0);
+	}
+
+	public Complex multiply(Complex z)
+	{
+		return multiply(re, im, z.re, z.im);
+	}
+
+	public Complex multiply(double a, double b)
+	{
+		return multiply(re, im, a, b);
+	}
+
+	public Complex multiply(double a)
+	{
+		return multiply(a, 0);
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		var other = (Complex)obj;
+
+		return Double.valueOf(re).equals(other.re) && Double.valueOf(im).equals(other.im);
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("|%.2f + %.2fi| = %f", re, im, getNorm());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	PointF sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+
+package org.csystem.math.geometry;
+
+import static java.lang.Math.*;
+
+public class PointF {
+	public float x, y;
+
+	public PointF()
+	{}
+
+	public PointF(float a)
+	{
+		this(a, 0);
+	}
+
+	public PointF(float x, float y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+
+	public PointF(double radius, double theta) //theta in degrees
+	{
+		this((float)(radius * cos(toRadians(theta))), (float)(radius * sin(toRadians(theta))));
+	}
+
+	public static double distance(float x1, float y1, float x2, float y2)
+	{
+		return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	}
+
+	public double distance(PointF p)
+	{
+		return distance(x, y, p.x, p.y);
+	}
+
+	public double distance(float a, float b)
+	{
+		return distance(x, y, a, b);
+	}
+
+	public void offset(float dxy)
+	{
+		offset(dxy, dxy); //Do not repeat yourself
+	}
+
+	public void offset(float dx, float dy)
+	{
+		x += dx;
+		y += dy;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		var other = (PointF)obj;
+
+		return Float.valueOf(x).equals(other.x) && Float.valueOf(y).equals(other.y);
+	}
+
+	public String toString()
+	{
+		return String.format("(%f, %f)", x, y);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDArrayList sınıfının equals metodunun testi
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+import org.csystem.util.Pair;
+import org.csystem.util.collection.CSDArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var productPairs = new CSDArrayList<Pair<Integer, Product>>();
+
+        productPairs.add(Pair.create(1, new Product(1, "laptop", 123, 6700)));
+        productPairs.add(Pair.create(2, new Product(2, "mouse", 100, 67)));
+        productPairs.add(Pair.create(3, new Product(3, "bal", 34, 300)));
+
+        var productPair = Pair.create(3, new Product(3, "bal"));
+
+        System.out.println(productPairs.contains(productPair) ? "Ürün var" : "Ürün yok");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDArrayList sınıfının equals metodunun testi (Metot Objects sınıfı kullanılarak yazılmıştır)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Product;
+import org.csystem.util.Pair;
+import org.csystem.util.collection.CSDArrayList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var productPairs = new CSDArrayList<Pair<Integer, Product>>();
+
+        productPairs.add(Pair.create(1, new Product(1, "laptop", 123, 6700)));
+        productPairs.add(Pair.create(2, new Product(2, "mouse", 100, 67)));
+        productPairs.add(Pair.create(3, new Product(3, "bal", 34, 300)));
+
+        var productPair = Pair.create(3, new Product(3, "bal"));
+
+        System.out.println(productPairs.contains(productPair) ? "Ürün var" : "Ürün yok");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDArrayList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.util.collection;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
+public class CSDArrayList<T> implements Iterable<T> {
+    private static final int DEFAULT_CAPACITY = 10;
+    private T[] m_elems;
+    private int m_index;
+
+    private static void controlForCapacity(int capacity, String msg)
+    {
+        if (capacity < 0)
+            throw new IllegalArgumentException(msg);
+    }
+
+    private void allocateCapacity(int capacity)
+    {
+        T [] temp = (T [])new Object[capacity];
+
+        for (int i = 0; i < m_index; ++i)
+            temp[i] = m_elems[i];
+
+        m_elems = temp;
+    }
+
+    private void controlForIndex(int index, String msg)
+    {
+
+        if (index < 0 || index >= m_index)
+            throw new IndexOutOfBoundsException(msg);
+    }
+
+    public CSDArrayList()
+    {
+        this(DEFAULT_CAPACITY);
+    }
+
+    @SuppressWarnings("unchecked")
+    public CSDArrayList(int initialCapacity)
+    {
+        controlForCapacity(initialCapacity, "illegal argument");
+
+        m_elems = (T [])new Object[initialCapacity];
+    }
+
+    public boolean add(T elem)
+    {
+        if (m_index == m_elems.length)
+            this.allocateCapacity(m_elems.length != 0 ? m_elems.length * 2 : 1);
+
+        m_elems[m_index++] = elem;
+
+        return true;
+    }
+
+    public void add(int index, T elem)
+    {
+        //TODO:
+    }
+
+    public int capacity() {return m_elems.length;}
+
+
+    public void clear()
+    {
+        for (int i = 0; i < m_index; ++i)
+            m_elems[i] = null;
+
+        m_index = 0;
+    }
+
+    public boolean contains(Object other)
+    {
+        return indexOf(other) >= 0;
+    }
+
+    public void ensureCapacity(int capacity)
+    {
+        //TODO:
+    }
+
+    public T get(int index)
+    {
+        this.controlForIndex(index, "Index out of bounds");
+
+        return m_elems[index];
+    }
+
+    public int indexOf(Object o)
+    {
+        int index = -1;
+
+        if (o != null) {
+            for (int i = 0; i < m_index; ++i)
+                if (Objects.equals(m_elems[i], o)) {
+                    index = i;
+                    break;
+                }
+        }
+        else {
+            for (int i = 0; i < m_index; ++i)
+                if (Objects.equals(m_elems[i], null)) {
+                    index = i;
+                    break;
+                }
+        }
+
+        return index;
+    }
+
+    public T remove(int index)
+    {
+        //TODO:
+
+        return null;
+    }
+
+    public T set(int index, T elem)
+    {
+        this.controlForIndex(index, "Index out of bounds");
+        T oldElem = m_elems[index];
+
+        m_elems[index] = elem;
+
+        return oldElem;
+    }
+
+    public int size() {return m_index;}
+
+    public void trimToSize()
+    {
+        this.allocateCapacity(m_index);
+    }
+
+    @Override
+    public Iterator<T> iterator()
+    {
+        return new Iterator<T>() {
+            private int m_curIndex;
+
+            @Override
+            public boolean hasNext()
+            {
+                return m_curIndex < m_index;
+            }
+
+            @Override
+            public T next()
+            {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+
+                return m_elems[m_curIndex++];
+            }
+        };
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Vector sınıfı capacity değerini herhangi bir belirtme olmazsa o anki capacity değerinin 2 katına çıkartır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>(3);
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Vector sınıfının capacityIncrement parametreli ctor'u ile capacity miktarının ne kadar artacağı belirlenebilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        Vector<Integer> vec = new Vector<>(4, 3);
+
+        for (int i = 0; i < 10; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+    }
+}
+
+XXXXXXXXXXXXXXXXXXXXXX
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte Vector sınıfının capacityIncrement miktarı ctor ile
+    alınan çarpım miktarına ayarlanmıştır. capacityIncrement veri elemanı
+    protected olarak bildirilmiştir. Sınıfın capacity artırması gereken metotları
+    override edilmeli ve capacity artımı ona göre belirlenmelidir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Vector;
+
+class App {
+    public static void main(String [] args)
+    {
+        MyVector<Integer> vec = new MyVector<>(3, 3);
+
+        for (int i = 0; i < 4; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+
+        for (int i = 0; i < 6; ++i)
+            vec.add(i * 10);
+
+        System.out.printf("Capacity:%d%n", vec.capacity());
+
+    }
+}
+
+class MyVector<T> extends Vector<T> {
+    private int m_capacityFactor;
+
+    private void calibrateCapacityInc()
+    {
+        if (capacity() == size()) {
+            int curCapacity = capacity();
+
+            capacityIncrement = curCapacity * m_capacityFactor - curCapacity;
+        }
+    }
+
+    public MyVector()
+    {
+        super();
+    }
+
+    public MyVector(int initialCapacity)
+    {
+        super(initialCapacity);
+    }
+
+    public MyVector(int initialCapacity, int capacityFactor)
+    {
+        this(initialCapacity);
+
+        m_capacityFactor = capacityFactor <= 1 ? 2 : capacityFactor;
+    }
+
+    public boolean add(T t)
+    {
+        if (t == null)
+            throw new IllegalArgumentException("Argument can not be null");
+
+        this.calibrateCapacityInc();
+
+        return super.add(t);
+    }
+
+    //...
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stack veri yapısı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Stack;
+
+class App {
+    public static void main(String [] args)
+    {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        while (!stack.empty())
+            System.out.println(stack.pop());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stack veri yapısı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.EmptyStackException;
+import java.util.Stack;
+
+class App {
+    public static void main(String [] args)
+    {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        try {
+            for(;;) {
+                System.out.println(stack.pop());
+            }
+        }
+        catch (EmptyStackException ex) {
+            System.out.println("Stack artık boş");
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stack sınıfının search metodu en üstteki elemanı 1 numaralı indekste kabul ederek
+    bulursa indeks numarasını döndürür. Bulamazsa -1 değerini döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+import java.util.Stack;
+
+class App {
+    public static void main(String [] args)
+    {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        int index = stack.search(10);
+
+        System.out.println(index);
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf çalışması: ArrayList sınıfından türetilmiş bir Stack sınıfı yazınız.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDStack;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDStack<Integer> stack = new CSDStack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        while (!stack.empty())
+            System.out.println(stack.pop());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf çalışması: ArrayList sınıfından türetilmiş bir Stack sınıfı yazınız.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDStack;
+
+import java.util.EmptyStackException;
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDStack<Integer> stack = new CSDStack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        try {
+            for (;;) {
+                System.out.println(stack.pop());
+                //...
+            }
+        }
+        catch (EmptyStackException ex) {}
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDStack sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDStack;
+
+
+class App {
+    public static void main(String [] args)
+    {
+        CSDStack<Integer> stack = new CSDStack<>();
+
+        for (int i = 0; i < 10; ++i)
+            stack.push(i + 1);
+
+        int index = stack.search(4);
+
+        System.out.println(index);
+    }
+}
+
+
+
+package org.csystem.collection;
+
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+
+public class CSDStack<T> extends ArrayList<T> {
+    public boolean empty()
+    {
+        return isEmpty();
+    }
+
+    public T push(T elem)
+    {
+        this.add(elem);
+
+        return elem;
+    }
+
+    public T pop()
+    {
+        if (empty())
+            throw new EmptyStackException();
+
+        return this.remove(this.size() - 1);
+    }
+
+    public T peek()
+    {
+        if (empty())
+            throw new EmptyStackException();
+
+        return this.get(this.size() - 1);
+    }
+
+    public int search(Object obj)
+    {
+        int index = this.indexOf(obj);
+
+        return index == -1 ? index : this.size() - index;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.add(i * 10);
+
+        System.out.println(list);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfının addFirst metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        System.out.println(list);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        System.out.println(list);
+
+        ArrayList<Integer> arrayList = new ArrayList<>(list);
+
+        System.out.println(arrayList);
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        while (!list.isEmpty())
+            System.out.println(list.poll());
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        while (!list.isEmpty())
+            System.out.println(list.pollFirst());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    LinkedList sınıfının poll ve pollFirst metotları eleman kalmadığında null değeri döndürür. Ancak LinkedList sınıfı
+    null değer tutabildiğinden bu şekilde bir kontrol her zaman anlamlı olmayabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(i * 10);
+
+        list.add(null);
+
+        list.add(67);
+
+        Integer val;
+
+        while ((val = list.poll()) != null)
+            System.out.println(val);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki problem null değerle tutmak yerine Optional sınıfı kullanılarak da yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        list.add(Optional.empty());
+
+        list.add(Optional.of(67));
+
+        while (!list.isEmpty()) {
+            list.poll().ifPresent(val -> System.out.println(val * val));
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün toArray metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        Optional<Integer> [] numbers = new Optional[list.size()];
+
+        list.toArray(numbers);
+
+        for (Optional<Integer> val : numbers)
+            System.out.println(val.get());
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün toArray metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        Optional<Integer> [] numbers = new Optional[list.size()];
+
+        for (Optional<Integer> val : list.toArray(numbers))
+            System.out.println(val.get());
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Collection arayüzünün toArray metodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.LinkedList;
+import java.util.Optional;
+
+class App {
+    public static void main(String [] args)
+    {
+        LinkedList<Optional<Integer>> list = new LinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addFirst(Optional.of(i * 10));
+
+        for (Optional<Integer> val : list.toArray(new Optional[list.size()]))
+            System.out.println(val.get());
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashSet sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.HashSet;
+import java.util.Random;
+
+class App {
+    public static void main(String [] args)
+    {
+        Random r = new Random();
+        HashSet<Integer> hashSet = new HashSet<>();
+
+        for (int i = 0; i < 20; ++i) {
+            int val = r.nextInt(100);
+
+            System.out.printf("%d:%b ", val, hashSet.add(val));
+        }
+
+        System.out.println();
+
+        System.out.println(hashSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashSet kullanılarak sırasız bir biçimde kupon üreten Lottary sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Lottary;
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        int n = Console.readInt("Kaç kupon oynamak istersiniz?");
+
+        Lottary lot = new Lottary();
+
+        ArrayUtil.display(lot.getColumns(n), 2);
+    }
+}
+
+
+package org.csystem.samples;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
+
+public class Lottary {
+    private Random m_random;
+
+    public Lottary()
+    {
+        m_random = new Random();
+    }
+
+    public int [] getColumn()
+    {
+        int [] column = new int[6];
+
+        HashSet<Integer> hashSet = new HashSet<>();
+
+        while (hashSet.size() != 6)
+            hashSet.add(m_random.nextInt(49) + 1);
+
+        int index = 0;
+
+        for (int val : hashSet)
+            column[index++] = val;
+
+        return column;
+    }
+
+    public int [][] getColumns(int n)
+    {
+        int[][] columns = new int[n][];
+
+        for (int i = 0; i < n; ++i)
+            columns[i] = getColumn();
+
+        return columns;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashSet sınıfı null değer de tutabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.HashSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        HashSet<String> hashSet = new HashSet<>();
+
+        hashSet.add(null);
+        hashSet.add(null);
+
+
+        System.out.println(hashSet.size());
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet collection sınıfı elemanları sıralı bir biçimde tutar. Sıralama doğal sıralamadır (natural sort order)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Integer> treeSet = new TreeSet<>();
+
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i) {
+            int val = r.nextInt(100);
+
+            System.out.printf("%d ", val);
+
+            treeSet.add(val);
+        }
+
+        System.out.println();
+        System.out.println(treeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet collection sınıfı elemanları sıralamak için aşağıdaki örnektaki gibi yaratılırsa açılıma ilişkin
+    türün Comparable arayüzünü desteklemesi gerekir. Aksi durumda exception oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Rational;
+
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Rational> rationalTreeSet = new TreeSet<>();
+
+        rationalTreeSet.add(new Rational(-2, 3));
+        rationalTreeSet.add(new Rational(23, 13));
+        rationalTreeSet.add(new Rational(7, -23));
+        rationalTreeSet.add(new Rational(7, -23));
+
+        System.out.println(rationalTreeSet);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Rational sınıfı ile büyükten küçüğe sıralama
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.math.Rational;
+
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Rational> rationalTreeSet = new TreeSet<>((r1, r2) -> r2.compareTo(r1));
+
+        rationalTreeSet.add(new Rational(-2, 3));
+        rationalTreeSet.add(new Rational(23, 13));
+        rationalTreeSet.add(new Rational(7, -23));
+        rationalTreeSet.add(new Rational(7, -23));
+
+        System.out.println(rationalTreeSet);
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator arayüzünün reverseOrder metodu ile büyükten küçüğe sıralama
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.math.Rational;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Rational> rationalTreeSet = new TreeSet<>(Comparator.reverseOrder());
+
+        rationalTreeSet.add(new Rational(-2, 3));
+        rationalTreeSet.add(new Rational(23, 13));
+        rationalTreeSet.add(new Rational(7, -23));
+        rationalTreeSet.add(new Rational(7, -23));
+
+        System.out.println(rationalTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet kullanılarak sıralı bir biçimde kupon üreten Lottary sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.samples.Lottary;
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        int n = Console.readInt("Kaç kupon oynamak istersiniz?");
+
+        Lottary lot = new Lottary();
+
+        ArrayUtil.display(lot.getColumns(n), 2);
+    }
+}
+
+package org.csystem.samples;
+
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class Lottary {
+    private Random m_random;
+
+    public Lottary()
+    {
+        m_random = new Random();
+    }
+
+    public int [] getColumn()
+    {
+        int [] column = new int[6];
+
+        Set<Integer> set = new TreeSet<>();
+
+        while (set.size() != 6)
+            set.add(m_random.nextInt(49) + 1);
+
+        int index = 0;
+
+        for (int val : set)
+            column[index++] = val;
+
+        return column;
+    }
+
+    public int [][] getColumns(int n)
+    {
+        int[][] columns = new int[n][];
+
+        for (int i = 0; i < n; ++i)
+            columns[i] = getColumn();
+
+        return columns;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet collection sınıfının Comparator arayüz parametreli ctor'u ile karşılaştırmanın nasıl yapılacağı
+    belilenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<Integer> treeSet = new TreeSet<>((i1, i2) -> i2 - i1);
+
+        Random r = new Random();
+
+        for (int i = 0; i < 10; ++i) {
+            int val = r.nextInt(100);
+
+            System.out.printf("%d ", val);
+
+            treeSet.add(val);
+        }
+
+        System.out.println();
+        System.out.println(treeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.Random;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<String> treeSet = new TreeSet<>();
+
+        treeSet.add("bolu");
+        treeSet.add("ankara");
+        treeSet.add("istanbul");
+        treeSet.add("izmir");
+
+        for (String s : treeSet)
+            System.out.println(s);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        TreeSet<String> treeSet = new TreeSet<>((s1, s2) -> s2.compareTo(s1));
+
+        treeSet.add("bolu");
+        treeSet.add("ankara");
+        treeSet.add("istanbul");
+        treeSet.add("izmir");
+
+        for (String s : treeSet)
+            System.out.println(s);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeSet sınıfı ile karşılaştırma işlemi Comparable olmayan sınıflar için de yapılabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator = (z1, z2) -> Double.valueOf(z2.getNorm()).compareTo(Double.valueOf(z1.getNorm()));
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator);
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator sınıfının reversed isimli metodu ile elde bulunan bir comparator arayüzüne ilişkin
+    sıralamanın tersi de kolaylıkla belirlenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator = (z1, z2) -> Double.valueOf(z1.getNorm()).compareTo(Double.valueOf(z2.getNorm()));
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator.reversed());
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator sınıfının comparing metodu ile sıralama kriteri fonksiyonel olarak belirlenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator =  Comparator.comparing(Complex::getNorm); //(z1, z2) -> Double.valueOf(z1.getNorm()).compareTo(Double.valueOf(z2.getNorm()));
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator.reversed());
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Comparator sınıfının comparingDouble metodu ile sıralama kriteri fonksiyonel olarak belirlenebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.math.Complex;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Complex> comparator = Comparator.comparingDouble(z -> z.getNorm());
+        TreeSet<Complex> complexTreeSet = new TreeSet<>(comparator.reversed());
+
+        complexTreeSet.add(new Complex(3, 4));
+        complexTreeSet.add(new Complex(-5, 9));
+        complexTreeSet.add(new Complex(-3, 49));
+
+        System.out.println(complexTreeSet);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Parametresi ile aldığı bir yazının tüm karakterlerinin farklı olup olmadığın test eden
+    areCharactersDistinct isimli metodu yazınız ve test ediniz
+    Örnek: xyzt  -> true
+           xxyzt -> false
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.util.Console;
+import org.csystem.util.StringUtil;
+
+class App {
+    public static void main(String [] args)
+    {
+        String str = Console.readLine("Bir yazı giriniz");
+
+        if (StringUtil.areCharactersDistinct(str))
+            Console.writeLine("%s içerisindeki tüm karakterler farklı%n", str);
+        else
+            Console.writeLine("%s içerisinde tekrarlayan karakterler var%n", str);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashMap sınıfının put metodu ile bir anahtara karşılık değer eklenebilir. put metodu
+	anahtar daha önce eklenmişse eskisini ezer yani yeni değeri ekler. Bu durumda eski değeri de
+	geri döner. Eğer anahtar eklenmemişse null değeri döner. Bu collection sınıflar null değeri de
+	tutabildiklerinden var olup olmamasına ilişkin strateji izlemek için containsKey metodu kullanılmalıdır.
+	get metodu anahtara karşılık tutulan değeri bize verir. Eğer bu değer yoksa null değeri verir.
+	Ancak null değeri de tutuluyorsa geri dönüş değerinden var olup olmadığı anlaşılamaz. Bu durumda
+	containsKey ile test yapılarak veri alınabilir. Anahtarın tekilliği (unique) hashCode ve
+	equals metotları ile test edilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.Console;
+
+import java.util.HashMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var cityMap = new HashMap<Integer, String>();
+
+        cityMap.put(34, "istanbul");
+        cityMap.put(67, "zonguldak");
+        cityMap.put(6, "ankara");
+
+        int plate = Console.readInt("Plakayı giriniz");
+
+        if (cityMap.containsKey(plate))
+            System.out.println(cityMap.get(plate));
+        else
+            System.out.println("Aranan plakaya ilişkin il bulunamadı");
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashMap sınıfının keySet metodu tüm anahtarlara ilişkin Set referansını döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var countyMap = new HashMap<Integer, ArrayList<String>>();
+
+        countyMap.put(34, new ArrayList<>());
+        countyMap.get(34).add("şişli");
+        countyMap.get(34).add("fatih");
+        countyMap.get(34).add("silivri");
+
+        countyMap.put(6, new ArrayList<>());
+        countyMap.get(6).add("çankaya");
+        countyMap.get(6).add("kazan");
+
+        for (var key : countyMap.keySet()) {
+            System.out.printf("%d->", key);
+            for (var county : countyMap.get(key))
+                System.out.printf("%s ", county);
+
+            System.out.println();
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    HashMap sınıfının values metodu ile tüm değerler elde edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var countyMap = new HashMap<Integer, ArrayList<String>>();
+
+        countyMap.put(34, new ArrayList<>());
+        countyMap.get(34).add("şişli");
+        countyMap.get(34).add("fatih");
+        countyMap.get(34).add("silivri");
+
+        countyMap.put(6, new ArrayList<>());
+        countyMap.get(6).add("çankaya");
+        countyMap.get(6).add("kazan");
+
+        for (var list : countyMap.values()) {
+            for (var county : list)
+                System.out.printf("%s ", county);
+            System.out.println();
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeMap sınıfı anahtar değerlerini sıralı olarak tutar. keySet metodu da değerleri sıralı bir set olarak
+    verir. TreeMap için verilen anahtar değeri eğer Comparator arayüzü referansı verilmeyecekse
+    Compareable arayüzünü desteklemelidir.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        Comparator<Integer> comparator = (p1, p2) -> p1.compareTo(p2);
+        var countyMap = new TreeMap<Integer, ArrayList<String>>(comparator.reversed());
+
+        countyMap.put(34, new ArrayList<>());
+        countyMap.get(34).add("şişli");
+        countyMap.get(34).add("fatih");
+        countyMap.get(34).add("silivri");
+
+        countyMap.put(6, new ArrayList<>());
+        countyMap.get(6).add("çankaya");
+        countyMap.get(6).add("kazan");
+
+        countyMap.put(67, new ArrayList<>());
+        countyMap.get(67).add("Kdz. Ereğli");
+        countyMap.get(67).add("Devrek");
+        countyMap.get(67).add("Çaycuma");
+
+
+        for (var key : countyMap.keySet()) {
+            System.out.printf("%d -> ", key);
+            for (var county : countyMap.get(key))
+                System.out.printf("%s ", county);
+
+            System.out.println();
+        }
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TreeMap ile Comparator kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.IntNumber;
+
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+class App {
+    public static void main(String [] args)
+    {
+        var countyMap = new TreeMap<IntNumber, ArrayList<String>>((i1, i2) -> i1.getVal() - i2.getVal());
+
+        countyMap.put(IntNumber.valueOf(34), new ArrayList<>());
+        countyMap.get(IntNumber.valueOf(34)).add("şişli");
+        countyMap.get(IntNumber.valueOf(34)).add("fatih");
+        countyMap.get(IntNumber.valueOf(34)).add("silivri");
+
+        countyMap.put(IntNumber.valueOf(1000), new ArrayList<>());
+        countyMap.get(IntNumber.valueOf(1000)).add("çankaya");
+        countyMap.get(IntNumber.valueOf(1000)).add("kazan");
+
+        countyMap.put(IntNumber.valueOf(67), new ArrayList<>());
+        countyMap.get(IntNumber.valueOf(67)).add("Kdz. Ereğli");
+        countyMap.get(IntNumber.valueOf(67)).add("Devrek");
+        countyMap.get(IntNumber.valueOf(67)).add("Çaycuma");
+
+
+        for (var key : countyMap.keySet()) {
+            System.out.printf("%s -> ", key);
+            for (var county : countyMap.get(key))
+                System.out.printf("%s ", county);
+
+            System.out.println();
+        }
+
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir program içerisinde aynı yazıların hashCode bilgileri eşittir. hashCode metodunun String sınıfı
+    için nasıl override edildiğine ilişkin kesinlik yoktur
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.test;
+
+import org.csystem.util.Console;
+
+class App {
+    public static void main(String [] args)
+    {
+        var s = Console.read("Bir yazı giriniz:");
+        var str = "ankara";
+
+        Console.writeLine("HashCode of s:%d%n", s.hashCode());
+        Console.writeLine("HashCode of str:%d%n", str.hashCode());
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemHead(i * 10);
+
+        for (var val : list)
+            System.out.printf("%d ", val);
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+import java.util.Iterator;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemHead(i * 10);
+
+        Iterator<Integer> iter = list.reverseIterator();
+
+        while (iter.hasNext())
+            System.out.printf("%d ", iter.next());
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        int index = list.indexOf(5);
+
+        System.out.printf("index=%d%n", index);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walkReverse(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDDoublyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDDoublyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDDoublyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walk(System.out::println);
+    }
+}
+
+package org.csystem.collection;
+
+import java.util.Iterator;
+import java.util.function.Consumer;
+
+public class CSDDoublyLinkedList<T> implements Iterable<T> {
+	private int m_size;
+	private Node m_head, m_tail;
+
+	private class Node{
+		T Item;
+		Node Next, Prev;
+
+		public Node(T item)
+		{
+			Item = item;
+		}
+	}
+
+	private class ListIterator implements Iterator<T> {
+		private Node m_curNode;
+
+		public boolean hasNext()
+		{
+			m_curNode = m_curNode == null ? m_head : m_curNode.Next;
+
+			return m_curNode != null;
+		}
+		public T next()
+		{
+			return m_curNode.Item;
+		}
+	}
+
+	private class ListReverseIterator implements Iterator<T> {
+		private Node m_curNode;
+
+		public boolean hasNext()
+		{
+			m_curNode = m_curNode == null ? m_tail : m_curNode.Prev;
+
+			return m_curNode != null;
+		}
+
+		public T next()
+		{
+			return m_curNode.Item;
+		}
+	}
+
+	public void addItemHead(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head != null) {
+			m_head.Prev = node;
+			node.Next = m_head;
+			m_head = node;
+		}
+		else
+			m_head = m_tail = node;
+
+		++m_size;
+	}
+
+	public void addItemTail(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head != null) {
+			m_tail.Next = node;
+			node.Prev = m_tail;
+			m_tail = node;
+		}
+		else
+			m_head = m_tail = node;
+
+		++m_size;
+	}
+
+	public void clear()
+	{
+		if (m_head == null)
+			return;
+
+		for (var node = m_head.Next; node != null; node = node.Next)
+			node.Prev = null;
+
+		m_head = m_tail = null;
+
+		m_size = 0;
+	}
+
+	public void deleteItem(int pos)
+	{
+		if (pos >= m_size || pos < 0 || m_head == null)
+			return;
+
+		if (pos == 0)
+			deleteItemHead();
+		else if(pos == m_size - 1)
+			deleteItemTail();
+		else {
+			Node curNode = m_head;
+
+			for(int i = 0; i < pos; i++, curNode = curNode.Next)
+				;
+
+			curNode.Prev.Next = curNode.Next;
+			curNode.Next.Prev = curNode.Prev;
+
+			--m_size;
+		}
+	}
+
+	public void deleteItemHead()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_head == m_tail) // size==1
+			m_head = m_tail = null;
+		else {
+			m_head = m_head.Next;
+			m_head.Prev = null;
+		}
+
+		m_size--;
+	}
+
+	public void deleteItemTail()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_head == m_tail) // size==1
+			m_head = m_tail = null;
+		else {
+			m_tail = m_tail.Prev;
+			m_tail.Next = null;
+		}
+		m_size--;
+	}
+
+	public boolean empty() {return m_head == null;}
+
+	public T get(int pos)
+	{
+		if (m_head == null || pos < 0 || pos >= m_size)
+			throw new IndexOutOfBoundsException("invalid pos");
+
+		Node curNode = m_head;
+
+		for(int i = 1; i <= pos; i++, curNode = curNode.Next)
+			;
+
+		return curNode.Item;
+	}
+
+	public T getItemHead()
+	{
+		if (empty())
+			return null;
+
+		return m_head.Item;
+	}
+
+	public T getItemTail()
+	{
+		if (empty())
+			return null;
+
+		return m_tail.Item;
+	}
+
+	public int indexOf(T item)
+	{
+		if (m_head == null)
+			return -1;
+
+		Node curNode = m_head;
+
+		if (item != null) {
+			for(int i = 0; i < m_size; curNode = curNode.Next, i++)
+				if (item.equals(curNode.Item))
+					return i;
+		}
+		else
+			for(int i = 0; i < m_size; curNode = curNode.Next, i++)
+				if (curNode.Item == null)
+					return i;
+
+		return -1;
+	}
+
+	public void insertItem(int pos, T item)
+	{
+		if (pos > m_size || pos < 0)
+			throw new IndexOutOfBoundsException("Invalid position");
+
+		if (m_head != null){
+			if (pos == 0)
+				addItemHead(item);
+			else if(pos == m_size)
+				addItemTail(item);
+			else {
+				Node curNode = m_head;
+
+				for(int i = 1; i <= pos - 1; i++, curNode = curNode.Next)
+					;
+
+				var node = new Node(item);
+
+				node.Next = curNode.Next;
+				node.Prev = curNode;
+				curNode.Next = node;
+				node.Next.Prev = node;
+				m_size++;
+			}
+		}
+		else
+			addItemTail(item);
+
+	}
+
+	public Iterator<T> iterator()
+	{
+		return new ListIterator();
+	}
+
+	public Iterator<T> reverseIterator()
+	{
+		return new ListReverseIterator();
+	}
+
+	public int lastIndexOf(T item)
+	{
+		if(m_head == null)
+			return -1;
+
+		Node curNode = m_tail;
+
+		int i = m_size - 1;
+
+		for(; i >= 0; curNode = curNode.Prev, i--) {
+			if (item == null && curNode.Item == null)
+				return i;
+
+			if(curNode.Item != null && curNode.Item.equals(item))
+				return i;
+		}
+
+		return -1;
+	}
+
+	public int size() {return m_size;}
+
+	public void walkReverse(Consumer<T> con)
+	{
+		for (Node node = m_tail; node != null; node = node.Prev)
+			con.accept(node.Item);
+	}
+
+	public void walk(Consumer<T> con)
+	{
+		for (var node = m_head; node != null; node = node.Next)
+			con.accept(node.Item);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walk(System.out::println);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        list.walk(val -> System.out.printf("%d ", val * val));
+
+        System.out.println();
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        System.out.println(list.getReverse(3));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    CSDSinglyLinkedList sınıfı ve test kodu
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import org.csystem.collection.CSDSinglyLinkedList;
+
+class App {
+    public static void main(String [] args)
+    {
+        var list = new CSDSinglyLinkedList<Integer>();
+
+        for (int i = 0; i < 10; ++i)
+            list.addItemTail(i);
+
+        System.out.println(list.getReverse(3));
+    }
+}
+
+package org.csystem.collection;
+
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+public class CSDSinglyLinkedList<T> implements Iterable<T> {
+	private int m_size;
+	private Node m_head, m_tail;
+
+	private class Node {
+		T Item;
+		Node Next;
+
+		public Node(T item)
+		{
+			Item = item;
+		}
+	}
+
+	private class ListIterator  implements Iterator<T> {
+		private Node m_curNode;
+
+		public boolean hasNext()
+		{
+			m_curNode = m_curNode == null ? m_head : m_curNode.Next;
+
+			return m_curNode != null;
+		}
+
+		public T next()
+		{
+			return m_curNode.Item;
+		}
+	}
+
+	public void addItemHead(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head == null) //is linked list empty?
+			m_head = m_tail = node;
+		else {
+			node.Next = m_head;
+			m_head = node;
+		}
+		++m_size;
+	}
+
+	public void addItemTail(T item)
+	{
+		Node node = new Node(item);
+
+		if (m_head == null)
+			m_head = m_tail = node;
+		else {
+			m_tail.Next = node;
+			m_tail = node;
+		}
+		++m_size;
+	}
+
+	public void clear()
+	{
+		m_head = m_tail = null;
+		m_size = 0;
+	}
+
+	public void deleteItem(int pos)
+	{
+		if (pos < 0 || pos >= m_size)
+			return;
+
+		if (m_head == null)
+			return;
+
+		if (pos == 0)
+			deleteItemHead();
+		else if (pos == m_size - 1)
+			deleteItemTail();
+		else {
+			Node node = m_head;
+
+			for (int i = 0; i < pos - 1; node = node.Next, ++i)
+				;
+
+			node.Next = node.Next.Next;
+			--m_size;
+		}
+	}
+
+	public void deleteItemHead()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_size == 1)
+			m_tail = null;
+
+		m_head = m_head.Next;
+		--m_size;
+	}
+
+	public void deleteItemTail()
+	{
+		if (m_head == null)
+			return;
+
+		if (m_size != 1) {
+			Node node = m_head;
+
+			for (; node.Next.Next != null; node = node.Next)
+				;
+
+			node.Next = null;
+			m_tail = node;
+		}
+		else
+			m_head = m_tail = null;
+
+		--m_size;
+	}
+
+	public boolean empty() {return m_head == null;}
+
+	public boolean insertItem(int pos, T item)
+	{
+		if (pos < 0 || pos > m_size)
+			return false;
+
+		if (m_head != null) {
+			if (pos != 0) {
+				Node curNode = m_head;
+
+				for (int i = 1; i <= pos - 1; ++i) //pos dan bir önceki düğüm
+					curNode = curNode.Next;
+
+				Node node = new Node(item);
+
+				node.Next = curNode.Next;
+				curNode.Next = node;
+				++m_size;
+			}
+			else
+				addItemHead(item);
+		}
+		else
+			addItemTail(item);
+
+		return true;
+	}
+
+	public int indexOf(T item)
+	{
+		int index = 0;
+
+		if (item != null) {
+			for (var node = m_head; node != null; node = node.Next, ++index)
+				if (item.equals(node.Item))
+					return index;
+		}
+		else
+			for (Node node = m_head; node != null; node = node.Next, ++index)
+				if (node.Item == null)
+					return index;
+
+		return -1;
+	}
+
+	public Iterator<T> iterator()
+	{
+		return new ListIterator();
+	}
+
+	public int size() {return m_size;}
+
+	public Optional<T> get(int pos)
+	{
+		if (m_head == null || pos < 0 || pos >= m_size)
+			return Optional.empty();
+
+		int i = 0;
+
+		Node node = m_head;
+
+		for (; i < pos; node = node.Next, ++i)
+			;
+
+		return Optional.of(node.Item);
+	}
+
+	public T getItemHead()
+	{
+		if (empty())
+			return null;
+
+		return m_head.Item;
+	}
+	public T getItemTail()
+	{
+		if (empty())
+			return null;
+
+		return m_tail.Item;
+	}
+
+	public Optional<T> getReverse(int n) //Sondan n-inci elemanı bulacak
+	{
+		return get(m_size - n);
+
+		/*
+		//m_size tutulmamışsa (mulakat sorusu)
+		Node curNode = m_head;
+
+		for (var node = m_head; node != null; node = node.Next) {
+			n--;
+
+			if (n < 0)
+				curNode = curNode.Next;
+		}
+
+		return n >= 0 ? Optional.empty() : Optional.of(curNode.Item);
+		*/
+	}
+
+	public void walk(Consumer<T> con)
+	{
+		for (var node = m_head; node != null; node = node.Next) //Traverse
+			con.accept(node.Item);
+	}
 }
 
 

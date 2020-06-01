@@ -476,7 +476,7 @@ class A {
         public void foo()
         {
             System.out.println("B.foo")
-            A.this.foo(); // this expression A::foo çağrılmıştır.
+            A.this.foo(); // this expression ile A sınıfının foo fonksiyonu  çağrılmıştır.
             this.m_val = 10;
             A.this.m_val = 20; //
         }
@@ -520,7 +520,8 @@ class A {
 --------------------------------------------------------------------------------------------------------------
 
 - sınıf içerisinde enum türü bildirilebilir. Doğası gereği new operatörü ile yaratılamayacağı için statik bildirilsin
-  yada bildirilmesin statik kabul edilir. Hatta statik bildirilmesine gerek yoktur.
+  yada bildirilmesin statik kabul edilir. Hatta statik bildirilirse derleyici statik yazılmasına gerek olmadığına dair
+  uyarı verir.
 
 
 - local classes(yerel sınıflar) :
@@ -608,7 +609,8 @@ class A {
     final class Sample {}
 
 - anonim sınıf yazımı aynı zamanda bir bildirimdir. Bu yüzden anonim sınıfı yazarken ilgili
-  taban sınıfın fonksiyonları anonim sınıf içerisinde override edilebilir.
+  taban sınıfın fonksiyonları anonim sınıf içerisinde override edilebilir. Eğer ilgili taban sınıfın bütün abstract
+  metodları implemente edilmelidir.
 
    Sample s = new Sample() {
                 public void foo()
@@ -638,7 +640,7 @@ class A {
   parametre değişkenlerini yakalayabilirler. Bu durumda yine final olmayan bir yerel değişken veya parametre değişkeni
   için effectively final kuralları geçerlidir.
 
-- callback : Ne yapılacağını dışarıdan alacağımız(Yani bir bakıma functor sınıflardır.) değişkenlerdir.
+- callback : Ne yapılacağını dışarıdan alan(Yani bir bakıma functor sınıflardır.) fonksiyonlardır.
 
 - callback tarzı sınıflar genel olarak belirli periodlar ile çalışan metodlara geçilen metodlardır.  Böyle metodlara
   timer metodlar denir.
@@ -675,14 +677,14 @@ class A {
 - anonoim sınıf herhangi bir  sınıftan türetiliyor ise hem yeni bir sınıf bildirimi hemde nesne yaratma işlemidir.
 - anonim interface ise bir interface bildirimi ve implementasyonudur.
 
-- teknik olarak ya bir interface'i implemente edecek yada anonim bir sınıftan türetilecektir.
-
+- Anonim sıfılar teknik olarak ya bir interface'i implemente edecek yada anonim bir sınıftan türetilecektir.
+- Anonim sınıflar final bir sınıftan türetilemez.
 - anonim bir sınıf birden fazla interface'i implemente edecek şeklinde yazılamaz.
 
 - Bir metodun başka bir çağıracağı metodu yapabilmesine high  order function denir(Ne yapacaığını dışarıdan almak).
-  Timer sınıfının schedule metodu tamamen böyledir(Ne yapacağını TimerTask interface'inden alıyoruz.).
+  Timer sınıfının schedule metodu tamamen böyledir(Ne yapacağını TimerTask interface'inin run kodunun yazılme şekline
+  bağlıdır.).
 
-- Java da doğrudan bir metod verilmesi gibi bir durum yoktur.
 
 
 
@@ -720,9 +722,11 @@ class A {
   bir referansa yada fonksiyonel olmayan arayüz referanslarına atanamaz(örneğin abstract bir sınıf referansı, yada
   fonksiyonel  olmayan bir interface referansına atanamaz.).
 
-- Lambda ifadesi ile fonksiyonel bir arayüzün o bir tane olan fonksiyonunu override etmek yerine(Burada kastedilen
-  aşağıda implemente edilmiştir.) onun yerine geçen kodu kısa bir biçimde yazmış oluruz.
+- Lambda ifadesi ile fonksiyonel bir arayüzün o bir tane olan fonksiyonun için anonim bir class yazıp fonksiyonu
+  override etmek  yerine geçen kodu kısa bir biçimde yazmış oluruz.
 
+- Lambda ifadesinde ki okun sol tarafı uygun fonksiyonel arayüzün değişken listesini temsil eder(tür yazılmak zorunda
+  zorunda değildir. Okun sağ tarafı ise hangi işin yapılacağını temsile eder.).
 --------------------------------------------------------------------------------------------------------------
                                             25.04.2020
 --------------------------------------------------------------------------------------------------------------
@@ -736,23 +740,25 @@ class A {
   bu fonksiyon türüymüş ve fonksiyonel arayüze atanan bir tür gibidir.
 
 
-- callback kavramı tam olarak bir programa ne yapacağımızı bizim vermemizdir. Diyebiliriz. Burada yazılan kütüphane bir
-  callback ister ve ona geçilen callback'i çağırır.
+- callback kavramı tam olarak bir programa ne yapacağımızı bizim vermemizdir. Diyebiliriz. Fonksiyonel arayüze göre
+  yazılan kütüphaneler callback ister ve ona geçilen callback'i çağırır.
 
-- Java da ki bu fonksiyonel arayüzler aynı bir function pointer gibi davranırlar
+- Java da ki bu fonksiyonel arayüzler bir function pointer gibi davranırlar
 - lambda ifadelerinde oktan öncesi kısım bize parametrik yapıyı gösterir.
 
-- Lambda ifadeleri için derleyici arka planda başka bir sınıf yad anonim sınıf oluşturmaz.
+- Lambda ifadeleri için derleyici arka planda başka bir sınıf yada anonim sınıf oluşturmaz.
 
 - Lambda ifadelerine ilişkin olarak, ilgili ifade bir çok kez yeniden kullanılabilir.
 
+- Lambda ifadesi atanacağı fonksiyonel arayüzün abstract fonksiyonuna uygun bir parametrik yapıda yazılmalıdır.
 - Lambda ifadeleri uygun fonksiyonel inteface'lere atanabilir. Lambda ifadeleri tür çıkarımı yapılacak ise
   tür çıkarımını kendisi yapacaktır.
 
 - Lambda ifadesinde tek bir değişken var ise tür tarafına yazılan parantezlere gerek yoktur.
   IIntUnaryOperator op = a -> a * a; // burada oktan önceki yer bir bildirim gibidir. Burada sadece a değişkeni
   bildirilmiştir.
-  IIntBinaryOperator op = (a, b) -> a + b; // burada a ve b değişkenleri bildirilmiştir.
+  IIntBinaryOperator op = (a, b) -> a + b; // burada a ve b değişkenleri bildirilmiştir. ok'un sağ tarafı
+  ise yapılacak işlemi gösterir.
 
 - Eğer birden fazla işlem yapılacak ise method gövdesi biçiminde yazılabilirler.
      IIntBinaryOperator op = (a, b) -> {
@@ -776,13 +782,13 @@ interface IBinaryOperator<T> {
 - Lambda ifadelerinde bildirilen bir yerel değişken ile aynı isimde başka bir yerel değişken o scope boyunca yeniden bildirilemez.
 
 - Lambda ifadeleri de yerel ve anonim sınıflar gibi bulunduğu kod bloğundaki bir değişkeni yakalayabilir. Burada
-  yakalanan değişken değiştirilemez.
+  yakalanan değişken değiştirilemez. Yani yakalanan değişken effectively finaldır.
 
-- Fonksiyonel arayüzler generic interface'ler ile kullanılada bilir.
+- Fonksiyonel arayüzler generic interface'ler ile kullanılabilir.
   Basit bir convert işlemi
 
   IFunction  s2l = a -> a.length();
-  s2l.apply("ankara");//6 çıkar
+  s2l.apply("ankara");//6
   interface IFunction<T, R> {
     R apply(T t);
   }
@@ -826,7 +832,7 @@ interface IBinaryOperator<T> {
     1-) static metot referansları(reference to a static metod)
     2-) Bir nesneye ilişkin non-static metotun reference(reference to an instance(non-static) method of particular object)
     3-) Bir türe ilişkin  non-static metot referansı (reference to an instance(non-static) metot of any object of particular type)
-    4-) Ctor referansı(Reference to a ctor)
+    4-) Ctor referansı(Reference to a ctor  <Sınıf ismi>::new şeklinde kullanılır. Uygun arayüze atanabilir.
 
 - Java da generic sınıfların wrapper sınıflar için kullanılabilen bütün interface'lerin ayrıca primitive türler için
   ayrıca temel türler için olan kısmı ayrıca yapılır.
@@ -835,9 +841,14 @@ interface IBinaryOperator<T> {
 
 ----- Java'nın function paketi ------
 
-- java.util paketi altındadır.
+- java.util paketi altındadır. içerisinde functional interface'ler vardır. Birçok interface generic bildirilmiştir.
+  Sadece primitive türler için olanlar generic bildirilmemiştir.Bu fonksiyonlar Int, Double, Long ekleri ile belirtilmiştir.
 
-- predicate interface'ler
+- Bütün interface'ler FunctionalInterface annotation'ına sahiptir.
+
+- Function interface'i
+    - kendisine verilen argümana göre bir sonuç üreten.
+- Predicate interface'ler
     - geri dönüş değeri boolean olan abstract fonksiyonu test ile isimlendirilmiş, veriyi alıp test eden interface'dir.
 
 - Supplier grupları
@@ -850,12 +861,7 @@ interface IBinaryOperator<T> {
 
 - function sınıfının bütün interface'lerini ezberlemek değil, kullanarak akılda kalması sağlanmalıdır.
 
------ optional sınıfı -----
 
-- Java 8 ile eklenmiştir, Generic bir sınıftır. Bu tarz türlere nullable type'lar denir.
-
-- Optional türü bir nesne var ise kullanılıp, eğer nesne yok ise  herhangi bir şey yapmayacaktır. Optinal sınıfı ortada
-  bir işi exception olmadan halletmenin yöntemidir.
 
 ------------------------------------------------------------------------------------------------------------------------
                                             02.05.2020
@@ -870,6 +876,11 @@ interface IBinaryOperator<T> {
 ------------------------------------------------------------------------------------------------------------------------
                                             Optional sınıfı
 ------------------------------------------------------------------------------------------------------------------------
+
+- Java 8 ile eklenmiştir, Generic bir sınıftır. Bu tarz türlere nullable type'lar denir.
+
+- Optional türü bir nesne var ise kullanılıp, eğer nesne yok ise  herhangi bir şey yapmayacaktır. Optinal sınıfı ortada
+  bir işi exception olmadan halletmenin yöntemidir.
 
 - Sınıfın static empty metodu ile boş bir optional nesnesi elde edilir.
 
@@ -893,19 +904,21 @@ interface IBinaryOperator<T> {
 - bunu of metodu ile yapamayız, of metoduna null geçmek NullPointerException fırlatılmasına sebep olur.
 
 - orElse metodu eğer kullanılan referans boş ise geçilen default değeri, dolu ise içerisindekini verecektir.
-  orElse metodunun karşılığı aşağıdaki gibidir
+  orElse metodunun karşılığı aşağıdaki gibidir. Hangi türe
   Optional<String> r  = Optional.of("ankara");
     String s = r.isPresent() ? r.get() : "ankara";
 
+- orElseGet metodu parametre olarak supplier'ın covariant açılımını alır. Yani oraya vereceğimiz lambda ifadesinin
+  geri dönüş değeri ya açıldığı türden olmalı ya da o türden türemiş bir tür olmalı
 - orElseThrow metodu eğer verilen referans boş ise bir NoSuchElementException throw edilecektir.
   bir tane overload'ı vardır.
 
-- ifPresent'in Consumer<? super T> action parametreli metodu eğer verilen optional referansı dolu ise yapılacka işi gösterir.
+- ifPresent'in Consumer<? super T> action parametreli metodu eğer verilen optional referansı dolu ise yapılacak işi gösterir.
 
-- Consumer interface'i kendisine gönderilen parametre ile bir iş yapıp void değeri döndürür.
+- Consumer interface'i kendisine gönderilen parametre ile bir iş yapıp değer döndürmez.
 
-- filter fonksiyonu argüman olarak geçilen predicate sağlanıyor ise, bu predicate' sağlayanlar için
-  ilgili referansı, sağlanmıyor ise empty Optipnal döner.
+- filter fonksiyonuna argüman olarak geçilen predicate sağlanıyor ise, ilgili optional referansını,
+   sağlanmıyor ise empty Optional referansı döner.
 
 - map fonksiyonu : parametresi Function interface'i türündendir. Bir optional sınıfından başka bir optional elde etmemizi
   sağlar. map empty bir optional referansı ile çağırılırsa empty Optional türüne döner.
@@ -959,8 +972,6 @@ interface IBinaryOperator<T> {
 
 - assert expression'ının kullanımı
     assert [boolean ifade]  [: void olmayan ifade]
-    assert true; // bu kod doğrudur, eğer bir belirli bir sonuç basılmak istenirse aşağıdaki gibi yapılmalıdır
-    assert true : "Assert edildi";
 
 - eğer ki assert deyimine ilişkin ifade true ise akış assertten devam eder false ise AssertionError nesnesi fırlatılır.
   void olmayan ifade de burada exception'a ilişkin mesajı temsil eder.
@@ -1266,7 +1277,7 @@ interface IBinaryOperator<T> {
 
 - iterable sınıfının yalnızca bir adet abstract  metodu vardır. Metodun ismi iterator'dur. parametrik yapısı aşağıdaki
   gibidir.
-    Iterable<T> iterator();
+    Iterator<T> iterator();
 
 - Iterator interface'i(Java 1.2) Iterable interface'inden  daha önce implemente edilmiş generic  bir interface'dir.
 
@@ -1310,21 +1321,148 @@ interface IBinaryOperator<T> {
   fırlatılır.). next fonksiyonu aynı zamanda iterator'de ilerlemeyi sağlayan fonksiyondur.Nasıl yapıldığı o kodu
   implemente eden kod belirler(Örneğin yazılan IntRange'de belirtilmiştir).
 
-- Java'da Iterable'dan sonra Iterable'dan türetilmiş generic Collectin arayüzü vardır. Collection'ının da bir iterator
-  metodu vardır. Collection'ın iterator dışında bir çok abstract metodu vardır.
-
 - NOT : java'da iterable olabilmek için sınıfın iterable interface'ini implemente etmek yada iterable türetilmiş bir
   interface'i implemente etmek zorunludur.
-- Collection'dan türetilmiş
-    List interface'ini implemente eden Collection sınıflar (ArrayList, Vector, LinkedList(bağlı liste))
-        Bu collection'ların aralarında öncelik sonralık ilişkisi vardır.
 
-    Set interface'ini implemente eden Collection sınıflar (Küme Collection'larıdır.)
-        1- Bu collection'lar içinde sıranın önemi yoktur(İçerisinde sıranın önemi olanlar vardır.).
-        2- Kümenin elemanlarının her biri bir tanedir.
+------------------------------------------------------------------------------------------------------------------------
+                                            30.05.2020
+------------------------------------------------------------------------------------------------------------------------
 
-    Queue interface'ini implemente eden Collection sınıflar
+- Java'da Iterable'dan sonra Iterable'dan türetilmiş generic Collectin arayüzü vardır. Collection'ının da iterator
+  metodu dışında bir çok abstract metodu vardır. Dikkat
 
-- Collection'dan türetilmemiş Map interface'i vardır.
-    - Map'i destekleyen sınıflara sözlük tarzı collection'lar denir.
-    - Map'ten türetilmiş sınıflar iterable DEĞİLDİR(Çünkü collection'dan yada iterable'dan türetilmemiştir).
+- Java'da her veri yapısı collection değildir(Map interface'ini impelemente sınıflar).
+- Collection interface'inden türemiş bazı ana interface'ler vardır. Bunlar
+    1 - List (ArrayList, Vector) //aralarında öncelik sonralık ilişkisi vardır.
+    2- Set
+    3- Queue
+
+
+
+
+- Collection sınıfının önemli metodları
+    - add(E e)
+    - addAll(Collection<? extends E> c); // bir Collection'dan başka bir collection'a aktarım yapmamızı sağlar.
+    - void clear();
+    - boolean contains(Object o)
+    - isEmpty()
+    - iterator()
+    - remove()
+    - removeAll(Collection<?> c)
+    - size()
+
+- Collection arayüzleri birbirlerine veri aktarma işlemi yapmak için kullanılır.
+- ArrayList'in Collection sınıfını alan bir ctor'u da vardır.
+- Data sınıfları için genel olarak equals metodu yazılmalıdır. Bir sınıfın yazı karşılığı varsa böyle sınıflara
+  data sınıfları denir.
+
+- Collection interface'inden türetilmiş list interface'inin öncelik sonralık ilişkisinden dolayı index kavramı vardır.
+  Bu interface'i implemente eden sınıflar da index ile veri yapısındaki i. indexteki elemana erişmek mümkündür.
+
+- Bunlara yapan iki tane metod vardır.
+    1- get(int index);//get metodu Collection'a ait değil List interface'ine ait bir metottur.
+    2- indexOf(Object o); // indexOf metodu'da List interface'ine ait bir metoddur.
+
+- indexOf metoduna geçilen parametre null değil ise list'in elemanları için karşılaştırmayı veri yapısını dolaşarak
+  equals metodunu çağırarak yapar.
+
+- List interface'i indexOf metodu için özellikle Objects(Dikkat Objects sınıfı değil) sınıfının equals metoduna ilgili
+  parametrelerin geçilerek overrride edilmesini önerir.
+
+- Objects sınıfının equals metodu eğer ilgili referanslardan ikisi de null ise true, sadece biri null ise false, aksi
+  taktirde birinci parametreye gelen sınıfın equals metoduna ikinci parametreyi geçer(equals metodunun override edilmesi).
+  bu yüzden önemlidir.
+
+- Arama yapan collection sınıfları mutlaka ve mutlaka equals metoduna bakarlar.
+
+- Donald Knuth birden fazla return deyimi içeren fonksiyonların içinde tek bir değişken tutulup fonksiyon bloğunun sonunda
+  dönüş yapılmasının ara kod için daha iyi bir çözüm olacağıdır.
+
+- contains metodu'da indexOf'a bağlu olarak true yada false döner. Eğer değer >= 0' sa true aksi değerde false döner.
+
+- Collection sınıfların hepsi equals metoduna bakarlar.
+- Object sınıfı java'nın util paketi içerisindedir.
+
+- Data sınıflarına yazılması gereken metodlar.
+    1-toString
+    2- equals
+    3- compareTo(Comparable<T> interface'inden türetilmiş olması lazım)
+
+- Kısaca List sınıfını implemente edenler indexOf metoduna sahiptirler.
+
+- Vector sınıfı
+    - capacity değeri default olarak iki katına çıkacak şekilde tasarlanmıştır. Nedeni ise O log2^n'e yakınsanmak içindir.
+    - burada bu artım miktarını değiştirmek mümkündür. Ancak bu durumda bir artırma işlemi söz konusudur çarpım söz
+      konusu değildir(ArrayList'in artırma işlemi kesin belli değildir ancak 1,5 katı gibi düşünülebilir.).
+
+- capacity'nin arttırma miktarına bir argüman geçilirse o miktar ile toplama yapılarak artırılır.
+- vector hemen hemen ArrayList gibidir. Thread Safe için bir kötü yanı vardır.
+- ArrayList ve Vector her kalınırsa her zaman ArrayList seçilmelidir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            31.05.2020
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+                                            List interface'ini implemente eden Collection sınıflar
+------------------------------------------------------------------------------------------------------------------------
+
+- adapter sınıf : bir sınıftan türetilmiş ve sınıfın başka bir işlem için kullanılmasını sağlayan sınıflardır. O sınıf
+  ile istenilen işlem yapılmazken sınıfa yapılan eklemeler ile istenilen işlemin yapılması sağlanır. Stack sınıfı bu anlamda vector'den türetilmiştir.
+
+- stack veri yapısının en tipik örneği editörlerin undo sistemidir. Silme yaptıkça bunları ilgili veri tabanına ekler.
+  Ctrl + z ile bu veri tabanından çıkarma yapar.
+
+- Stack sınıfıın metodları
+    - eleman ekleme kalıbı : push
+    - eleman alma kalıbı : pop // son elamanı alır, ve alınan elemanı siler.
+    - peek metodu();// // son elemanı alır. silme işlemi yapmaz.
+    - search(); // yukarıdan aşağıya doğru stack'i arar. en son eklenen elemanın indexi 1. indekstir. Aslında
+      search ile bulunan indeksteki elemanı elde etmek için stack.get(stack.length() - index); şeklinde yapılmalıdır.
+      Dikkat bu işlem implemente edilmek istenirse indexOf'a göre değil lastIndexOf'a göre yapılır.
+
+- stack sınıfının isEmpty metodunun yanı sıra empty metodu da vardır.
+- stack sınıfının pop metodu eğer eleman yok ise EmptyStackException hatası fırlatır.
+- Arada ki bir indekse sık sık eklemenin yapıldığı algoritmalar da list yada stack gibi bir veri yapısının kullanılması
+  çok yanlış bir tercihtir. Algoritmanın seçimi özellikle önemlidir.
+
+
+- LinkedList(Bağlı Liste)//Doubly linked listtir.
+    - Singly linked list Java da implemente edilmemiştir.
+    - doubly linked list implemente edilmiştir.
+
+- İçerisinde
+    Node referansı vardır.
+-DoublyLinkedList hem List'i hemde Deque interface'ini implemente etmiştir(Deque interface'i ile başına ve sonuna eleman
+ eklenebilen elemanlardır. ArrayList Deque değildir çünkü başa eklenme yapılamaz.).
+
+- Araya ekleme yapmak çok hızlıdır.(ArrayList gibi sınıflar da araya ekleme yapmak için kaydırma yapılır.)
+- Diziden daha fazla yer kablar. Çünkü içerisinde üç adet referans tutulur.
+- Okuma yapmak ise O(n)'dir(ArrayList'te ise araya erişim O(1)'dir.).
+- capacity değeri yoktur.
+
+- sınıfın poll ve pollFirst metodu baştan eleman çekilmesini sağlar ve çekilen elemanı siler.
+
+- eğer dönecek bir eleman yok ise null değeri döner. Veri yapısına null eklenmesi durumuna dikkat edilmelidir.
+  null eklenmesini gerektirecek sınıflar da sınınıfın T açlımı değil Optional<T> açılımı kullanılabilir. Gereken
+  yerde de null eklemek yerine empty bir Optinal eklenebilir.
+
+- Collection sınıfının toArray metodu
+    1- Object [] toArray(); // ilgili sınıfın
+    2- <T> T [] toArray(T [] array);  // verilen T türünden diziyi collection'ın elemanları ile doldurur.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Set interface'ini implemente eden Collection sınıflar
+------------------------------------------------------------------------------------------------------------------------
+
+- Eleman tekrarına izin yoktur.Kesin kuraldır.(kontrol için equals metoduna bakar)
+- bazılarında elemanlar sıralı(yani sort edilmiş şekilde) eklenir bazılarında sranın önemi yoktur.
+
+- başında hash ismi geçen bir collection hashcode ile çalışır. Başında hash olan bir collection eşitlik kavramına
+  iki şekilde bakar.
+    1- equals
+    2- hashCdoe'a bakılacak.//hashCode int türden bir değer. Object'in üçüncü önemli metotudur.
+
+- hash tarzı collection'lar için kullanacak sınıflar da hashCode'lar
+
+- TreeSet sınıfı sıralama yaparken içinde kullanılacak sınıfın compareTo metodunu çağırarak yapar.
+- bir tür sıralanacak ise Comparable yapılmalıdır(Genelde küçükten büyüğe sıralanır.).

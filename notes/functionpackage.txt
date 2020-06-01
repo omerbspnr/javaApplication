@@ -1,12 +1,14 @@
 önemli interface'ler
+- Aşağıdaki interface'ler java.util.function paketi altındadır.
+- Aşağıdaki interface'lerin primitive türler için olanıda vardır.
 
-- UnaryFunction<T>
+- UnaryOperator<T>
     - açılan türe dönen tek bir parametre alan fonksiyon
 
-- BinaryFucntion<T>
-    - açıldığı türe dönen, iki parametre alan fonksiyon
+- BinaryOperator<T>
+    - açıldığı türe geri dönen, iki parametre alan fonksiyon
 
-- Function<T,R>, BiFunction<T,U,R> interface'leri(String::length)
+- Function<T,R> BiFunction<T,U,R> interface'leri(String::length)
     - verilen parametreye bağlı olarakbir çıktı üretirler(String::length, bir örnektir).
     - fonksiyonu apply'dır
 

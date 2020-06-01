@@ -4,49 +4,49 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.IntUnaryOperator;
 
-public class DownToRange implements Iterable<Integer> {
-    private final int m_max, m_min;
-    private final IntUnaryOperator m_stepFunc;
+public final class DownToRange implements Iterable<Integer> {
 
+    private final int m_max, m_min;
+    private final IntUnaryOperator m_intUnaryOperator;
     public DownToRange(int max, int min)
     {
         this(max, min, 1);
     }
     public DownToRange(int max, int min, int step)
     {
-        this(max,min,val -> val - (step <= 0 ? 1 : step));
+        this(max, min, val -> val - step);
     }
     public DownToRange(int max, int min, IntUnaryOperator intUnaryOperator)
     {
         if (max < min || intUnaryOperator == null)
-            throw new IllegalArgumentException("max must be greater than min");
+            throw new IllegalArgumentException();
+
         m_max = max;
         m_min = min;
-        m_stepFunc = intUnaryOperator;
+        m_intUnaryOperator = intUnaryOperator;
     }
-    @Override
+
     public Iterator<Integer> iterator()
     {
-        return new Iterator<>()
-        {
-            private int m_curElem = m_max;
-            @Override
+        return new Iterator<Integer>() {
+            private int m_curr = m_max;
             public boolean hasNext()
             {
-                return m_curElem >= m_min;
+                return m_curr >= m_min;
             }
+
+            @Override
             public Integer next()
             {
-                if(!hasNext())
+                if (!hasNext())
                     throw new NoSuchElementException();
 
-                int val = m_curElem;
+                int val = m_curr;
 
-                m_curElem = m_stepFunc.applyAsInt(m_curElem);
-
+                m_curr = m_intUnaryOperator.applyAsInt(m_curr);
                 return val;
             }
         };
     }
-}
 
+}
