@@ -1,41 +1,34 @@
 package org.csystem.samples.lottaryapp;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.TreeSet;
 
 public class Lottary {
     private Random m_rand;
 
-    private boolean [] getStatus()
-    {
-        boolean [] status = new boolean[50];
-        int val;
-
-        for (int i = 0; i < 6; ++i) {
-            for (;;) {
-                val = m_rand.nextInt(49) + 1;
-                if (!status[val])
-                    break;
-            }
-            status[val] = true;
-        }
-
-        return status;
-    }
 
     private int[] getNumbers()
     {
-        int [] numbers = new int[6];
-        boolean [] status;
+        int i = 0;
+        int [] res = new int [6];
 
-        status = getStatus();
+        TreeSet<Integer> numbers = new TreeSet<>();
 
-        int index = 0;
+        while (numbers.size() != res.length)
+            numbers.add(m_rand.nextInt(49) + 1);
 
-        for (int i = 1; i < 50; ++i)
-            if (status[i])
-                numbers[index++] = i;
 
-        return numbers;
+        while(!numbers.isEmpty()) {
+            res[i++] = numbers.pollFirst();
+        }
+
+
+        return res;
+
+
+
     }
 
     public Lottary()

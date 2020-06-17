@@ -1,47 +1,35 @@
 package org.csystem.app;
 
+import org.csystem.util.ArrayUtil;
+import org.csystem.util.Console;
+import org.csystem.util.NumberUtil;
+import org.csystem.util.StringUtil;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class App {
-    public static void main(String [] args)
+    public static void main(String[] args)
     {
-        Stack<Integer> integers = new Stack<>();
+        Random r = new Random();
+        int [] a = IntStream
+                .generate(() -> r.nextInt(1000))
+                .limit(5).toArray();
 
-        for (int i= 0; i < 10; ++i)
-            integers.push(i);
-        for (int i= 0; i < 10; ++i)
-            integers.push(i);
+        System.out.println(Arrays.toString(a));
+        System.out.println(IntStream.of(a).noneMatch(NumberUtil::isPrime));
+        IntStream.of(a).filter(NumberUtil::isPrime).forEach(System.out::println);
 
-        System.out.println(integers.search(8));
-        System.out.println(integers.indexOf(8));
     }
-
 }
-class ListStack<T> extends ArrayList<T> {
 
-
-    public boolean push(T t)
-    {
-        super.add(t);
-        return true;
+class Util {
+    public static boolean isPangram(String str, String alphabet) {
+        return str.toLowerCase().chars().distinct().count() == alphabet.toLowerCase().length();
     }
-    public T pop()
-    {
-        if(empty())
-            throw new EmptyStackException();
-
-        return super.remove(size() -1);
-    }
-    public boolean empty()
-    {
-        return isEmpty();
-    }
-    public int search(Object obj)
-    {
-        int index = this.lastIndexOf(obj);
-        System.out.println(this.size());
-        return index == -1 ? index : this.size() - index;
-    }
-
 }

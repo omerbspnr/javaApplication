@@ -100,6 +100,31 @@ public class CSDArrayList<T> implements Iterable<T>, Cloneable{
 
         return oldElem;
     }
+    public boolean contains(Object o)
+    {
+        return this.indexOf(o) >= 0;
+    }
+    public int indexOf(Object elem)
+    {
+        int index = -1;
+        if (elem == null)
+        {
+            for (int i = 0; i < m_index;++i)
+                if (m_elems[i] == null) {
+
+                    index = i;
+                    break;
+                }
+        } else {
+            for (int i = 0; i < m_index; ++i) {
+                if(elem.equals(m_elems[i])) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        return index;
+    }
     @Override
     public Iterator<T> iterator ()
     {
@@ -128,7 +153,8 @@ public class CSDArrayList<T> implements Iterable<T>, Cloneable{
     public Object clone()
     {
         CSDArrayList<T> clone = new CSDArrayList<T>(m_elems.length);
-
+        clone.m_elems = Arrays.copyOf(m_elems,m_index);
+        clone.m_index = m_index;
         return clone;
     }
 }

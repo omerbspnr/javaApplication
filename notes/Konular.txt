@@ -1328,13 +1328,13 @@ interface IBinaryOperator<T> {
                                             30.05.2020
 ------------------------------------------------------------------------------------------------------------------------
 
-- Java'da Iterable'dan sonra Iterable'dan türetilmiş generic Collectin arayüzü vardır. Collection'ının da iterator
-  metodu dışında bir çok abstract metodu vardır. Dikkat
+- Java'da Iterable'dan sonra Iterable'dan türetilmiş generic Collectin arayüzü vardır. Collection'ının da
+  iterable'dan gelen iterator metodu dışında bir çok abstract metodu vardır.
 
 - Java'da her veri yapısı collection değildir(Map interface'ini impelemente sınıflar).
 - Collection interface'inden türemiş bazı ana interface'ler vardır. Bunlar
     1 - List (ArrayList, Vector) //aralarında öncelik sonralık ilişkisi vardır.
-    2- Set
+    2- Set // Bir küme ilişkisi vardır.
     3- Queue
 
 
@@ -1351,23 +1351,34 @@ interface IBinaryOperator<T> {
     - removeAll(Collection<?> c)
     - size()
 
-- Collection arayüzleri birbirlerine veri aktarma işlemi yapmak için kullanılır.
+- Collection arayüzlerinin birbirlerine veri aktarma işlemi yapmak için çok rahat kullanılabilir(addAll ve constructor
+  içerisinde).
 - ArrayList'in Collection sınıfını alan bir ctor'u da vardır.
 - Data sınıfları için genel olarak equals metodu yazılmalıdır. Bir sınıfın yazı karşılığı varsa böyle sınıflara
   data sınıfları denir.
 
+- Data sınıflarının Object'ten alınan ve genellikle override edilmesi gereken üç önemli fonksiyonu vardır.
+    - public toString()
+    - boolean equals(Object o)
+    - int hashCode(); // hashCode metodu özellikle Hash sınıfları kullanılmasıı gerektiğinde implemente edilmelidir.
+
 - Collection interface'inden türetilmiş list interface'inin öncelik sonralık ilişkisinden dolayı index kavramı vardır.
   Bu interface'i implemente eden sınıflar da index ile veri yapısındaki i. indexteki elemana erişmek mümkündür.
 
-- Bunlara yapan iki tane metod vardır.
-    1- get(int index);//get metodu Collection'a ait değil List interface'ine ait bir metottur.
-    2- indexOf(Object o); // indexOf metodu'da List interface'ine ait bir metoddur.
+- Collection'lar içerisinde index parametresi dönen yada index parametresi ile çalışan metodlar List interface'ine
+  aittir(Bu sınıflar, ArrayList, Vector, Stack).
+    1- get(int index);
+    2- indexOf(Object o);
+    3- add(int index, T elem);
 
-- indexOf metoduna geçilen parametre null değil ise list'in elemanları için karşılaştırmayı veri yapısını dolaşarak
-  equals metodunu çağırarak yapar.
+
+- indexOf metoduna geçilen parametre null değil ise list'in elemanları için karşılaştırmayı veri yapısındaki sınıfa
+  ait equals metodu ile yapar. eğer equals metodu override edilmemiş ise taban sınıflara bakar bulunamazsa en son
+  Object sınıfının equals metodunu çağırır.
 
 - List interface'i indexOf metodu için özellikle Objects(Dikkat Objects sınıfı değil) sınıfının equals metoduna ilgili
-  parametrelerin geçilerek overrride edilmesini önerir.
+  parametrelerin geçilerek overrride edilmesini önerir. indexOf metodunun parametresi Object türündendir.
+  T türünden değildir.
 
 - Objects sınıfının equals metodu eğer ilgili referanslardan ikisi de null ise true, sadece biri null ise false, aksi
   taktirde birinci parametreye gelen sınıfın equals metoduna ikinci parametreyi geçer(equals metodunun override edilmesi).
@@ -1380,15 +1391,16 @@ interface IBinaryOperator<T> {
 
 - contains metodu'da indexOf'a bağlu olarak true yada false döner. Eğer değer >= 0' sa true aksi değerde false döner.
 
-- Collection sınıfların hepsi equals metoduna bakarlar.
-- Object sınıfı java'nın util paketi içerisindedir.
+- Collection sınıfların hepsi sınıfta bir değer aranacağı zaman bunu tuttukları değerin equals  metoduna bakarak
+   yaparlar. Burada sadece Hash ile başlayan sınıflar, ayrıca hashCode metoduna bakarlar.
+- Objects sınıfı java'nın util paketi içerisindedir.
 
 - Data sınıflarına yazılması gereken metodlar.
     1-toString
     2- equals
     3- compareTo(Comparable<T> interface'inden türetilmiş olması lazım)
+    4- hashCode -> hash sınıfları için yapılması gerekir.
 
-- Kısaca List sınıfını implemente edenler indexOf metoduna sahiptirler.
 
 - Vector sınıfı
     - capacity değeri default olarak iki katına çıkacak şekilde tasarlanmıştır. Nedeni ise O log2^n'e yakınsanmak içindir.
@@ -1397,7 +1409,8 @@ interface IBinaryOperator<T> {
 
 - capacity'nin arttırma miktarına bir argüman geçilirse o miktar ile toplama yapılarak artırılır.
 - vector hemen hemen ArrayList gibidir. Thread Safe için bir kötü yanı vardır.
-- ArrayList ve Vector her kalınırsa her zaman ArrayList seçilmelidir.
+- Ancak vector çok fazla özelliğe sahip bir sınıftır(Solid'in Single responsibility'sini deler.).
+- veri yapısı olarak ArrayList veya vector arasında kalınır ise ArrayList seçilmelidir.
 
 ------------------------------------------------------------------------------------------------------------------------
                                             31.05.2020
@@ -1406,8 +1419,9 @@ interface IBinaryOperator<T> {
                                             List interface'ini implemente eden Collection sınıflar
 ------------------------------------------------------------------------------------------------------------------------
 
-- adapter sınıf : bir sınıftan türetilmiş ve sınıfın başka bir işlem için kullanılmasını sağlayan sınıflardır. O sınıf
-  ile istenilen işlem yapılmazken sınıfa yapılan eklemeler ile istenilen işlemin yapılması sağlanır. Stack sınıfı bu anlamda vector'den türetilmiştir.
+- adapter sınıf : bir sınıftan türetilmiş ve sınıfın başka bir işlem içinde kullanılmasını sağlayan sınıflardır. O sınıf
+  ile istenilen işlem yapılmazken sınıfa yapılan eklemeler ile istenilen işlemin yapılması sağlanır.
+   Stack sınıfı bu anlamda Vector'den türetilmiştir.
 
 - stack veri yapısının en tipik örneği editörlerin undo sistemidir. Silme yaptıkça bunları ilgili veri tabanına ekler.
   Ctrl + z ile bu veri tabanından çıkarma yapar.
@@ -1440,29 +1454,420 @@ interface IBinaryOperator<T> {
 - Okuma yapmak ise O(n)'dir(ArrayList'te ise araya erişim O(1)'dir.).
 - capacity değeri yoktur.
 
-- sınıfın poll ve pollFirst metodu baştan eleman çekilmesini sağlar ve çekilen elemanı siler.
+- sınıfın poll ve pollFirst metodu baştan eleman çekilmesini sağlar ve çekilen elemanı siler. poll ve pollFirst
+  metodu eleman kalmadığında null değeri döner. Veri yapısı null'da tutabilir. Bu durumda geri dönüş değerinin
+  null olup olmamasının durumuna göre bir kontrol yapılması yanlış bir durumdur.
+
+- Yukarıdaki bahsedilen sorunun çözüm yöntemi null tutulmanın da gerekli olduğu bir LinkedList sınıfında Sınıfın
+  T açılımı değil Optional T(LinkedList<Optional<T>>  instead of LinkedList<T> ) açılımının kullanılmasıdır.
 
 - eğer dönecek bir eleman yok ise null değeri döner. Veri yapısına null eklenmesi durumuna dikkat edilmelidir.
   null eklenmesini gerektirecek sınıflar da sınınıfın T açlımı değil Optional<T> açılımı kullanılabilir. Gereken
   yerde de null eklemek yerine empty bir Optinal eklenebilir.
 
 - Collection sınıfının toArray metodu
-    1- Object [] toArray(); // ilgili sınıfın
+    1- Object [] toArray(); // ilgili Collection sınıfının elemanlarını geçilen diziye aktarır. dizinin uzunluğu o
+       an ki collection'ın içinde tutulan elemanlar kadar olmalıdır.
     2- <T> T [] toArray(T [] array);  // verilen T türünden diziyi collection'ın elemanları ile doldurur.
 
+    ikisinin arasındaki fark 2.si için tür güvenliği söz konusudur. ilki için cast işlemi yapılmalıdır.Compile time için
+    tür güvenliği söz konusu değildir.
+
+ - Öncelik sonralık ilişkisi olan collection sınıfı list interface'ini implemente ederler.
 ------------------------------------------------------------------------------------------------------------------------
-                                            Set interface'ini implemente eden Collection sınıflar
+                            Set interface'ini implemente eden Collection sınıflar(Küme tarzı collection'lar)
 ------------------------------------------------------------------------------------------------------------------------
 
-- Eleman tekrarına izin yoktur.Kesin kuraldır.(kontrol için equals metoduna bakar)
+- Bu tür collection'lar için elam tekrarına izin yoktur.Kesin kuraldır.
+- elemanların collection içinde olup olmadığının kontrolü equals metodu ile yapılacaktır.
 - bazılarında elemanlar sıralı(yani sort edilmiş şekilde) eklenir bazılarında sranın önemi yoktur.
 
 - başında hash ismi geçen bir collection hashcode ile çalışır. Başında hash olan bir collection eşitlik kavramına
-  iki şekilde bakar.
+  iki şekilde bakar. Hızlı olması için kullanılır. Arama ve Ekleme de çok hızlı çalışır
     1- equals
-    2- hashCdoe'a bakılacak.//hashCode int türden bir değer. Object'in üçüncü önemli metotudur.
+    2- hashCode'ları da aynı olmalıdır.//hashCode int türden bir değer. Object'in üçüncü önemli metotudur.
+  yukarıdaki eşitliklerin ikisinin de sağlanması durumunda HashSet sınıfında bir elemandan bir tane olabilir.
 
-- hash tarzı collection'lar için kullanacak sınıflar da hashCode'lar
+- hash tarzı collection'lar için kullanacak sınıflar da hashCode metodu override edilmelidir.
+- hashCode sınıfında bir objeden bir tane olabilmesi için, hem hashCode hemde equals metodunun override edilmesi gerekir.
 
-- TreeSet sınıfı sıralama yaparken içinde kullanılacak sınıfın compareTo metodunu çağırarak yapar.
-- bir tür sıralanacak ise Comparable yapılmalıdır(Genelde küçükten büyüğe sıralanır.).
+- HashSet sınıfı null tutabilen bir sınıftır.
+- Sıranın önemsiz olduğu bir durum söz konusu olduğunda her zaman hashSet sınıfı treeSet sınıfı yerine tercih edilmeli
+  dir.
+
+- TreeSet sınıfı sıralamayı açılımda kullanılan sınıfın compareTo metodunu çağırarak yapar.Eğer açılımda kullanılan
+  sınıf comparable'ı implemente etmemiş ise ve default ctor ile nesne yaratılır ise exception throw edilir.
+
+- Bir tür sıralanacak ise yani iki farklı objesinin arasında büyüklük küçüklük ilişkisi var ise Comparable interface'ini
+  implemente etmelidir. Bu sıralama default olarak küçükten büyüğe olacak şekilde yapılır. Küçükten büyüğe sıralamaya
+  natural sort order denir. Arrays sort, TreeSet'in sort'unda default kullanılan işlem natural sort order'dır.
+
+- TreeSet sınıfı ctor'da herhangi bir koşul verilmez ise sıralamayı küçükten büyüğe doğru sıralar.
+
+- TreeSet sınıfında da bir elemandan sadece bir tane bulunabilir(TreeSet sınıfı hashCode metoduna bakmaz).
+
+- Comparable interface'i curiously recurring template pattern (CRTP)'e göre implemente edilmiş bir interface'dir.
+  Hangi sınıf'tan açılır ise compareTo metodunu ona göre implemente edilmesi gerekir.
+
+- compareTo metoduna göre yapılan bir sıralama da çağıran çağrılandan küçük ise negatif döner.Eğer doğal sıralama
+  yapılıyorsa ilgili elemanı sola atar.
+
+- TreeSet sınıfının bir tane daha constructor'ı vardır. Bu constructor sayesinde sıralamayı büyükten küçüğe yada
+  Comparable sınıfını implemente etmemiş bir sınıfı dahi TreeSet içerisinde kullanabiliriz.
+
+- Bu ctor Comparator(Sıralayıcı) interface'ini ister. Doğası functional'dır. Gerçekte iki tane abstrac method'u olmasına
+  rağmen(biri compare, diğeri equals) methodlardan biri olan equals object'ten geldiği için bu method abstract method
+  sayısına eklenmez.
+
+- Comparator interface'ine geçilen lambda ifadesinin parametrik yapısındaki sıralama önemlidir. Parametrik yapıdaki
+  sıraya göre büyüklük ve küçüklük ilişkisi belirlenir. eğer metodun geri dönüş değeri negatif ise parametrik yapıdaki
+  sıraya göre sol taraftaki değer daha küçük, pozitif ise sol taraftaki değer daha büyük, 0 ise iki değer birbirine
+  eşittir.
+
+- burada örneğin comparable olan Rational sınıfı için
+    TreeSet<Rational> rationalTreeSet = new TreeSet<>((r1,r2) -> r2.compareTo(r1));
+     compareTo methodunda fonksiyonun sol parametresine gelen değişken sağına gelen değişkenden küçük ise negatif döner.
+     Yukarıda ise fonksiyonu parametrik yapısı aynıdır. Ancak fonksiyonun çağırma sırası değiştiği için sanki küçük
+     olan nesneyi büyükmüş gibi büyük olan nesneyi de küçükmüş gibi göstermemizi sağlar.
+
+- Yukarıda açıklanan örneği Comparator interface'inin reverseOrder methodu ile de yapılabilir. Bu methodu geri dönüş
+  değeri Comparator interface'ini implemente eden bir sınıf'dır. Bu fonksiyonun çağrılması için bizim verdiğimiz türün
+  Comparable olması zorundadır.
+    TreeSet<Rational> rationalTreeSet = new TreeSet<>(Comparator.reverseOrder());
+
+- Comparator sınıfı sayesinde ayrıca Comparable olmayan nesneleri de TreeSet'te tutmamızı sağlayabiliriz.
+  Bunun için'de lambda ifadeleri kullanılabilir.
+  TreeSet<Complex> complexes = new TreeSet<>((z1, z2) -> Double.valueOf(z1).compareTo(z2));
+  // Burada  Comparator interface'i lambda ifadesi ile implemente edilmiştir.
+
+- Comparable olmayan bir nesne'yi de Comparatar interface'ine vererek compare işlemi yapılabilir.
+------------------------------------------------------------------------------------------------------------------------
+                                            06.06.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Set collection'ları daha çok bir eleman var mı yok mu bu duruma bakan collection'lardır.
+- HashSet sıralama önemsizdir(hashCode ve equals metoduna bakar).
+- TreeSet sıralama önemlidir(Sadece equals metoduna bakar. Açılıma verilen sınıf ya
+  Comparable olmalı, comparable değil ise construnctor'da Comparator interface'ine lambda geçilmelidir.).
+
+-Comparator reverseOrder(static) methodu
+    - Comparable olan bir nesneyi büyükten küçüğe sıralamak için kullanılırç
+
+- Comparator arayüzü ile karşılaştırmanın nasıl yapılabileceğibelirtilir.
+    TreeSet<Integer> treeSet = new TreeSet<>((i1, i2) -> i1.compareTo(i2)); // büyükten küçüğe
+    TreeSet<Integer> treeSet = new TreeSet<>((i1, i2) -> i2.compareTo(i1)); // küçükten büyüğe
+
+- aşağıdaki static fonksiyonlar genel olarak comparable olmayan nesneler için kullanılır.
+
+
+- Comparator sınıfının default reversed metodu.
+    - Comparator interface'ine verilen lambda ifadesine göre değil onun tersine göre sıralama yapmayı sağlar.
+      Comparator<Complex> comparator = (c1,c2) -> Double.valueOf(c1.getNorm()).compareTo(c2.getNorm());
+      TreeSet<Complex> treeSet = new TreeSet<>(comparator.reversed());//Norm'a göre küçükten büyüğe doğru yapar.
+
+- Comparator sınıfının static comparing ve comparingXXX metodları(Geri dönüş değerleri comparator'tür.)
+    comparingXXX(comparingDouble, comparingInt, ComparingLong);
+        - Temel türlere ilişkin işlemleri yapmak için kullanılır.
+
+
+    comparing(Function<? extends T, ? extends U> keyExractor);// geçilen lambda ifadesine göre bir değer üretir.
+
+- Comparator<Complex> comparator = (c1,c2) -> Double.valueOf(c1.getNorm()).compareTo(c2.getNorm());
+                                    //Comparator.compareDouble(z -> z.getNorm());
+                                    //Comparator.compareDouble(Complex::getNorm);//tam anlamıyla functional programming
+  TreeSet<Complex> treeSet = new TreeSet<>(comparator.reversed());//Norm'a göre küçükten büyüğe doğru yapar.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Map collection'ları
+------------------------------------------------------------------------------------------------------------------------
+
+- Javada Map<K,V> isimli arayüzünü destekleyen collection sınıfları vardır. Dikkat Map bize göre bir collection'dır.
+  Collection'dan yada herhangi bir arayüzden türetilmemiştir. Map interfaceini destekleyen sınıflara sözlük tarzı
+  collection sınıflar denir. Key Value prensibi vardır.
+
+- Bir anahtara karşılık Bir değer tutulur(Buradaki değer eğer bir ArrayList ise bitden çok değer tutulabilir).
+- bir anahtara yeni bir değer verilirse eski değer silinir. bu işlem put metodu ile yapılır. Put metodu silinen değeri
+  geri döndürür(Eğer ki ekleme yapılmadan önce ilgili anahtar boş ise null döner.).
+
+- Hash sınıfları null değeri de tutabilir. Bir keyin var olup olmaması constainsKey metodu ile yapılır.
+- Burada anahtarlar Set sınıfları ile tutulur. Eğer sınıf HashMap ise anahtar HashSet ile, eğer sınıf TreeMap,
+  ise TreeSet anahtar'lar treeSet ile tutulur.
+
+- HashMap sınıfları için karşılaştırma olarak(hashCode ve equals metoduna bakılır.)
+- TreeMap sınıfları için anahtar karşılaştırması(Açıldığı sınıfın equals'ı ile yapılır.
+  ile tutulur.
+  class HashMap<K,V> {
+   Pair<HasMap<K>, V> keyVals;
+
+  }
+
+- Map intterface'inin keySet metodu bütün kullanılan anahtar değerlerini geri döndürür.
+
+- get(Object o) metodu da sınıfın ilgili key'ine karşılık gelen bir value var ise onu döndürür.
+
+- HashMap bir key için bir value tutar. Ancak açılımnda HashMap<K,V> yerine HashMap<K,ArrayList<V>> kullanılır ise
+  bir key için birden çok değer tutulmaını sağlar.
+
+- TreeMap sınıfı ile HashMap arasındaki fark TreeMap sınıfı anahtarları sıralı tutar. Açıldığı türün yalnız equals metoduna
+  bakar
+
+- Map sınıfının values metodları key'lere karşılık tutulan bütün değerleri döndürür..
+
+- Java'da bir program içinde aynı yazıların hashCode bilgileri eşittir(Farklı derleyiciler de farklı değerler olabilir).
+  Ancak bu durum derleyiciden derleyici değişebilir. Bu yüzden farklı derleyicilerde o derleyeicide üretilen hashCode'un
+  aynısı üretilmeyebilir. Ancak  aynı string nesnesi için gene o derleyici içinde aynı hashcode üretilir(X derleyicisinde
+  üretilen hashCode ile Y derleyicisindeki farklı olabilir. Ancak X derleyicisinde aynı string nesnesi için aynı hashCode
+  değeri üretilir.). C#'da aynı derleyici de program her çalıştığında farklı sonuçlar verir. Java'da aynı derleyici de
+  aynı sonucu verir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            13.06.2020
+------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Stream Api
+------------------------------------------------------------------------------------------------------------------------
+
+- Java da ki fonksiyonel programlamaya yönelik library'lerdir.(Aslında bunlara yeni nesil iterator'ler de denilebilir.)
+
+- Java 8 ile birlikte eklenen fonksiyonel programlamayı destekleyen ve fluent kalıbı ile çalışan stream api'ler eklendi.
+
+- Stream bir generic interface'dir(açılımı T'dir.).
+
+- Çok kullanıldıkları için temel türler için kullanılan IntStream, LongStream,DoubleStream interface'leri vardır.
+
+
+- Stream interface'inin bir çok abstract metodu vardır. Stream interface'inin implementasyonunu biz yapmayız.
+  Collection interface'inin default stream methodu bir Collection sınıfından bize stream interface'ini implemente etmiş
+  bir Stream referansı döndürür.
+
+- Stream interface'ini biz genel olarak implemente etmeyiz. Biz stream'i implemente etmiş sınıfları kullanılırız.
+- Stream'i implemente etniş bir sınıf
+
+- Stream'in bir çok yararlı callback alan metodu vardır. Bu metodlar lambdalarla çalışabilecek şekilde implemente edilmiştir.
+
+- Stream'lar elimizde dizi veya collection var ise çok daha anlamlı şekilde çalışır.
+
+- Stream api'ler  fluent kalıbına dayandığından kaynaklı bir çok fonksiyonunun geri dönüş değeri Stream<T>'dır.'
+
+
+- IntStream'in static range ve rangeClosed metodu
+    - range metodu(begin,end) [begin,end);//aralığındaki sayılardan oluşan bir stream döndürür.
+    - rangeClosed metod(begin,end) [begin,end] aralığındaki sayılardan oluşan bir stream döndürür.
+
+
+- IntStream'in static generate metodu
+    - bir supplier(Yani parametresiz int değer döndüren bir lambda ister.). Eğer ki IntRange'den sonra limit fonksiyonu
+      çağrılmaz ise generate promgram patlayana kadar değer üretir.
+
+    - generate methodunun görevi supplier'dan aldığını sürekli olarak generate eder. Limit koyarak n tane rastgele
+      üretilmiş sayı elde edilir.
+
+
+
+- Stream'lerde son fluent kalıbının son çağrılan metodu çalıştığında arka plandaki döngü oluşur. Örnek olarak
+
+    list.stream().filter(s -> s.length > 5 ).forEach(System.out::println);
+    // burada filter için ayrı forEach için ayrı bir döngü yapılmaz. En son kod forEach olduğu için forEach
+       çalıştığı zaman arka plandaki döngü yaratılır. Kodunun arka planda aşağıdaki şekilde yazıldığını düşünebiliriz.
+       for (String s : list)
+       {
+            if (s.length > 5)
+                System.out.prinltn(s);// kod bundan çok daha efektif yazılmış bir kod olabilir.
+       }
+
+
+
+-- Aşağıdaki metodlar bütün stream arayüzleri için geçerlidir.
+
+- forEach metodu
+    - Consumer interface'i ister.
+    - forEach metodu çok kullanıldığı için Iterable interface'ine de eklenmiştir.(default bir metoddur.)
+
+- filter
+    - içine bir predicate alır. stream arayüzünün tuttuğu verilerden koşula uyanları döner.
+
+- count metodu
+    - bir Stream arayüzünde tutulan veri sayısını döndürür. geri dönüş değeri long'dur.
+
+- allMatch metodu
+    - aldığı predicate'e Stream'de tutulan bütün verilen uyuyor ise true döner.
+
+    if (products.stream().allMatc(s -> s.getStock() > 0))
+        sout("bütün ürünler stokta vardır.")
+     else
+        products.stream().filter(s -> s <= 0).forEach(System.out::println)// stokta olmayan ürünleri yazdırır.
+
+- anyMatch metodu
+    - aldığı predicate'e Stream'de verilerden bir tane bile uyan varsa true döner.
+    if(products.stream().anyMatch(s -> s.getStock() <= 0)) // stokta ürün yoktur.
+        products.stream().filter(s -> s <= 0).forEach(System.out::println)//stokta olmayan ürünleri yazdırır.
+
+- noneMatch metodu
+    - aldığı predicate'a Stream'deki verilerden hiç biri uymuyorsa true döner.
+            if(products.stream().anyMatch(s -> s.getStock() <= 0)) // true ise bütün ürünler stokta vardır..
+                products.forEach(System.out::println); // bütün ürünleri yazdırır.
+
+- allMatch ve noneMatch'e atanacak lambda ifadesi birbirinin tam zıttı olursa aynı sonucu verirler.
+    products.stream().allMatch(p -> p.getStock > 0);//Ürünlerin hepsi stokta var ise(verdiğimiz predicate ile eşleşme vardır.)
+    products.stream().noneMatch(p -> p.getStock <= 0);// Ürünlerinin hepsi stokta var ise.
+    (Verdiğimiz predicate ile eşleşmeme durumu)
+
+
+- stream sadece bir grup veriyi temsil eder.
+
+- IntStream'in of methodu
+    - Parametresi int ... val türündendir.
+    - Bu parametreye bir dizi yada birden çok int değer geçilebilir.
+
+- Java 8'den itibaren factory metodlar valueOf ile değil of ile isimlendirilmiştir.
+
+- of metodları elimizde bulunan bir diziyi sarmalayıp stream elde etmemizi sağlar.
+
+- temel türden(int, long, double) dizilerden ilgili XxxStream interface'lerinin of metodu ile sarmalanabilirler.
+
+- Arrays'in stream metodu da kendisine verilen T türünden diziler için Stream<T> açılımını primitive türler için
+  ilgili IntStream, LongStream, DoubleStream'den hangisi uygunsa ona döner.
+
+
+- stream bir dizi yada öncelik sonralık ilişkisi olan bir collection olmak zorunda değildir. Stream'in sadece
+  bir grup veriyi temsil ettiği belirtebiliriz.
+
+- findFirst metodu özellikle web servislerinde çok kullanılır.
+    - stream'da tutulan ilk veriyi döner. Geri dönüş değeri optional'dır.
+    - Optional olmasının nedeni stream'in boş olması yada findFirst'ten önce bir filter metodu yapılmış ve
+      bunun sonucunda stream'in boş olmasıdır.
+
+
+---- stream api'lerde dönüşüm(Bir stream'den başka bir stream elde etme ---
+- dönüştürme işlemleri map metodları ile yapılır
+
+- map metodları -> dönüştürme işlemi için kullanılır. Bir stream'dan başka bir stream nesnesi elde edilmesini sağlar.
+
+
+
+- Stream'in map metodu generic bir stream elde edilir. map metodundan bir IntSream elde edilemez. Ancak ve ancak
+  Stream<Integer> açılımı elde edilebilir
+
+- Generic bir Stream'den  IntStream DoubleStream, LongStream elde etmek için mapToInt, mapToDouble, mapToLong metodları
+  kullanılır.
+
+- kısace map metodları aldığı T türünden bir Stream'i Stream'in R  açılımını geri döndürür.
+
+- map metodunun parametresi de Function olduğu için(Function<T,R> ) Stream'in<R> türünü döndürür.
+
+- filter yada forEach metodlarında yeni bir stream türünü geri döndürmez.
+    products.stream().filter(p -> p.getStock() > 0).forEach(System.out::println);//burada her method sonunda yeni
+    bir stream nesnesi üretilmez.
+
+- Ancak map metodu yeni bir stream döndürür. Aşağıdaki map metodu yeni bir stream referansı döndürür.
+    products.stream().filter(p->p.getStock() > 0).map(Product::getName).forEach(System.out::println)
+
+- Kısaca map metodları(Bir çok programlama dilinde map ve reduce bu şekilde isimlendirilmiştir.) a türünden b türüne
+  dönüşüm yapılmasını sağlar. A türünün B türüne dönüşmesini sağlayan bir metodu veya boxing, unboxing mekanizması
+  olmalıdır. Ayrıca aldığı A türü üzerinde bir işlem yapıp yeniden A türüne de dönebilirler.
+
+
+
+- Stream'in of metodu
+    - IntStream'in of metodu int [] a bir diziyi sarmalamak için kullanılır.
+    - Stream'in of metodu ise T türünden bir diziyi sarmalamak için kullaınırız
+
+- Bir Stream üzerinde belirli bir işlem yapan api'lerde vardır. reduce metodu bu api'lerden bir metodudur.
+
+- reduce metodu(Hem Stream için, hemde XxxStream için geçerlidir.)
+    - Bir Stream üzerinde belirli bir işlem yapıp bir sonuç üretir.
+    - reduce metodlarının parametresi BinaryOperator'dır(IntStream için IntBinaryOperator).
+    - BinaryOperator interface'i T türünden iki tane referans alıp bu referanslar'ın sonucunu üretir.
+      Örneğin
+
+    - reduce metodu iki farklı şekilde yazılır(2 farklı overload'ı vardır.).
+        1- Optional<T> reduce(BinaryOperator<T> operation); // boş bir Stream ile kullanılabileceğinden Optional döner
+        2- T reduce(T identity,  BinaryOperator<T> operation); // boş bir Stream ile kullanılması sonucu identity'yi
+           geri döner.
+
+        - reduce'ın yukaridaki metodları XxxStream interface'leri için uygun şekilde yazılmıştır.
+            1-OptionalInt reduce(IntBinaryOperator operation)
+            2-int reduce(int, identityIntBinaryOperator operation)
+
+    -  reduce(aşağıdaki örneğe göre anlatılacaktır) metodunun birinci versiyonunda Stream'in birinci elemanını alıp r
+       parametresine atama yapılır. Her bir adımda sonuç e'ye sıradaki eleman atanır. yapılan işlem sonucu r'ye atanarak
+       devam eder. Stream boş olabileceğinden kaynaklı geri dönüş değeri Optional'dır.
+        Stream.of(cities).reduce((r,e)-> r + e)
+
+     - ikinci versiyonunda ise bir ilk değer verme söz konusudur. Ve boş bir stream gelirse verilen ilk değer neyse onu
+       döner.
+        Stram.of(cities).reduce("",(r,e) -> r + e + '-')
+
+- reduce metodu hangi stream için kullanılıyorsa geri dönüş türü  eğer reduce metodunun
+    - 1. overload'ı kullanılıyor ise Optional<T>
+    - 2. overload'ı kullanılıyor ise T'ye geri döner.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            14.06.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Temel türden(int,double yada long) bir diziden  Stream<T(Integer,Double,Long)> açılımının elde edilmesi
+    1- int [] a = {1,2,3,4,5};
+       Stream<Integer> stream = Stream.of(a).mapToObj(i -> i);
+       Stream<Integer> stream = Stream.of(a).boxed();
+       Stream<Integer> stream = IntStream.range(0,a.length).mapToObj(i -> a[i]);
+       Stream<Integer> stream = Arrays.stream(a).mapToObj(i -> a[i]);
+       Stream<String> stream = Arrays.stream(a).mapToObj(i -> a[i] + "");
+
+- Bir stream arayüzüne ilişkin türler kullanıldıktan sonra kapatılır.
+
+- map fonksiyonları a-> b yada a türünü alıp bir işlem yapıp yeniden a türüne dönüştürür.
+- mapToObj IntStream,LongStream,DoubleStream'den ->Stream<B>
+- mapToInt, mapToLong, mapToDouble ->  A  türünden -> XxxStream'e geri döner.
+- Iterable arayüzünden spliterator metodu ile bir Iterable referansından Stream referansı elde edilebilir.
+
+-Temel Stream'lerin(IntStream, DoubleStream, LongStream) sadece map metodu hangi türden Stream için kullanılırsa
+ o stream'i geri döndürür.(IntStream->IntStream'e, DoubleStream->DoubleStream'e,LongStream->LongStream)
+
+- Iterable interface'inin default forEach metodu vardır. Ancak Iterable interface'inin stream metodu yoktur.
+
+- Iterable'dan Stream elde etmek için spliterator metodu ve StreamSupport sınıfının static stream metodu kullanılır.
+
+      Iterable<Integer> numbers = Sample.getNumber(10,20); // Iterable'i implemente etmiş bir nesne döner.
+      Stream<Integer> stream  = StreamSupport.stream(numbers.spliterator(),false);//false'un sebebi paralelStream
+      oluşmasını engeller.
+
+- StreamSupport.stream metodunun(static) ilk parametresi Spliterator interface'i, ikinci parametresi ise stream'in parallel bir stream
+  olup olmadığı ile alakalı olarak
+
+- Iterable'ın spliterator bu Spliterator interface'ini implemente etmiş bir sınıf döndürür.
+- ikinci parametreye false geçilirse normal stream true geçilirse parallelstream verir(parallel stream birden çok thread
+  ile çalışır.).
+
+- StreamSupport çok ihtiyaç duyduğumuz bir yapıdır.
+
+- Paralel programlama(Paralel computing)
+    - Aynı bilgisayar üzerinde, farklı çekirdeklere işleri bölmek.(burada işi parçalarlar.)
+    - Yada aynı bilgisayar üzerinde bir işi çekirdek sayısı kadar yapmak(işleri aynı anda yaparlar).(burada işi katlama
+      vardır.)
+
+- parallelstream kullanılırken dikkat edilmesi gereken bir mekanizmadır(Attığınız taş ürküttüğünüz kuşa değecek).
+
+
+- Stream'lerin limit metodu(içte yapılacak döngüyü on kez çalıştırır.)
+    - IntStream.generate(() -> r.nextInt(100)).limit(10).forEach(System.out::println); // on kez 0 ile 100 arasında sayı
+      üretir.
+    - IntStream.generate(()->r.nextInt(100)).filter(val -> val % 2 == 0).limit(10).forEach(System.out::println); //
+       0 ile 100 arasında 10 tane çift sayı üretir.
+- Not : eğer bir generate metodu var ise takip eden mutlaka bir limit metodu olmalıdır.
+- Stream'in skip metodu
+    - aldığı parametre kadar elemanı atlar.
+        IntStream.of(grades).sorted().skip(grades.length - 3).forEach(System.out::println);
+        Yukarıdaki kodda grades.length - 3 sorted edilmiş stream'in son 3 elemanını verir.
+
+- collect metodu
+    - bir stream'den bir Collection elde etmemizi saplar.
+    - parametresi için Collectors.toList();//genellikle ArrayList, Collectors.toSet();//genellikle HashSet döner
+
+- IntStream, DoubleStream ve LongStream'i özgü boxed metodu sırasıyla Stream<Integer>,Stream<Double>,Stream<Long>'a
+  dönüştürür(mapToObj yerine daha kısa bir kullanımdır.).
+  IntStream.range(0,100).filter(NumberUtil::isPrime).boxed
+
+- Not : sorted metodu default olarak Comparable olan bir nesne ister.
+

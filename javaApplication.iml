@@ -7,8 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org-csystem-mathlib" level="project" />
     <orderEntry type="library" name="org-csystem-util-datetimelib" level="project" />
     <orderEntry type="library" name="org-csystem-utillib" level="project" />
+    <orderEntry type="library" name="org-csystem-mathlib" level="project" />
   </component>
 </module>
