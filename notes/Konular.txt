@@ -1822,8 +1822,9 @@ interface IBinaryOperator<T> {
 - mapToInt, mapToLong, mapToDouble ->  A  türünden -> XxxStream'e geri döner.
 - Iterable arayüzünden spliterator metodu ile bir Iterable referansından Stream referansı elde edilebilir.
 
--Temel Stream'lerin(IntStream, DoubleStream, LongStream) sadece map metodu hangi türden Stream için kullanılırsa
+-Temel Stream'lerin(IntStream, DoubleStream, LongStream) sadece map(mapToObj metodu değil.) metodu hangi türden Stream için kullanılırsa
  o stream'i geri döndürür.(IntStream->IntStream'e, DoubleStream->DoubleStream'e,LongStream->LongStream)
+
 
 - Iterable interface'inin default forEach metodu vardır. Ancak Iterable interface'inin stream metodu yoktur.
 
@@ -1834,7 +1835,7 @@ interface IBinaryOperator<T> {
       oluşmasını engeller.
 
 - StreamSupport.stream metodunun(static) ilk parametresi Spliterator interface'i, ikinci parametresi ise stream'in parallel bir stream
-  olup olmadığı ile alakalı olarak
+  olup olmadığı ile alakalı olarak boolean bir değer alır. true ise parallelstream döner.
 
 - Iterable'ın spliterator bu Spliterator interface'ini implemente etmiş bir sınıf döndürür.
 - ikinci parametreye false geçilirse normal stream true geçilirse parallelstream verir(parallel stream birden çok thread
@@ -1856,18 +1857,585 @@ interface IBinaryOperator<T> {
     - IntStream.generate(()->r.nextInt(100)).filter(val -> val % 2 == 0).limit(10).forEach(System.out::println); //
        0 ile 100 arasında 10 tane çift sayı üretir.
 - Not : eğer bir generate metodu var ise takip eden mutlaka bir limit metodu olmalıdır.
+
 - Stream'in skip metodu
     - aldığı parametre kadar elemanı atlar.
         IntStream.of(grades).sorted().skip(grades.length - 3).forEach(System.out::println);
         Yukarıdaki kodda grades.length - 3 sorted edilmiş stream'in son 3 elemanını verir.
 
+- sorted metodu aldığı Stream nesnesini sıralar. Generic stream'lar için büyükten küçüğe sıralama mevcuttur. Ancak
+  primitive stream türleri için bu durum geçerli değildir.
+
+- Not : Generic Stream'in sorted metodu default olarak Comparable olan bir nesne ister.
+
 - collect metodu
-    - bir stream'den bir Collection elde etmemizi saplar.
-    - parametresi için Collectors.toList();//genellikle ArrayList, Collectors.toSet();//genellikle HashSet döner
+    - parametre olarak Collectors interface'i türünden bir nesne ister.
+    - collect metoduna Collectors.toList() metodunun geri dönüş değeri geçilirse Stream<T>'i bir List<T>'ye dönüştürür.
 
 - IntStream, DoubleStream ve LongStream'i özgü boxed metodu sırasıyla Stream<Integer>,Stream<Double>,Stream<Long>'a
-  dönüştürür(mapToObj yerine daha kısa bir kullanımdır.).
-  IntStream.range(0,100).filter(NumberUtil::isPrime).boxed
+  dönüştürür(mapToObj yerine daha kısa bir kullanım sağlar.).
+   var List<Integer> = IntStream
+                          .range(0,100)
+                          .filter(NumberUtil::isPrime)
+                          .boxed() // mapToObj(val -> val)
+                          .collect(Collectors.toList());
 
-- Not : sorted metodu default olarak Comparable olan bir nesne ister.
+- collect metodu
+    - <R,A> R collect(Collector<? super T, A, R> collector);
+    - T girişin türü(Stream ne ile açılıyorsa o tür), A tamamen içsel implementasyon alakalı(genel olarak ? karakter olur)
+      , R geri dönüş değeri
+    - Collectors.toList'in geri dönüş değeri Collector<T,?,List<T>>'dir. Genelde ArrayList döner(Standart değildir.).
+    - bundan kaynakları olarak collect metoduna Collectors.toList()  metodunu parametre olarak geçersek bize List<T>'ye
+      geri döner.
 
+    - Collectors.toSet() generic bir Stream'den bir Set<T>  elde etmemizi sağlar. Genelde HashSet döner(Standart
+      değildir.).
+
+
+- allMatch, noneMatch, anyMatch arasındaki ilişki.
+    public static boolean isPrime(int val) {
+        if (val <= 1)
+            return false;
+
+          return IntStream.rangeClosed(2, val / 2).allMatch(i -> val % i != 0);
+        //return IntStream.rangeClosed(2, val / 2).noneMatch(i -> val % i == 0);
+        //return !IntStream.rangeClosed(2, val / 2).anyMatch(i -> val % i == 0);
+    }
+
+    - allMatch predicate'ına geçilen ifadenin tam tersi noneMatch ile kullanılırsa aynı sonucu verir.
+
+- distinct metodu tekrarlı eleman kalmasını engeller.
+    - distinct metodu hem hashCode'a hem de equals'a bakar.
+    - distinct metodunda ilk önce hangi veri elde edilirse o veri saklanır. Sonradan gelen aynı veri geçilmez.
+
+- skip ve limit'in beraber kullanımı.
+    - skip ve limit metodlarını beraber kullanarak bir stream'daki aradaki ürünleri alabiliriz.
+
+- aralık veren bir metod olmadığı için önce limit sonra skip metodu kullanılarak bir aralık elde edilir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            20.06.2020
+------------------------------------------------------------------------------------------------------------------------
+
+
+- iterate metodu hem generic stream'ler için hemde primitive stream'lar için kullanılabilir.
+- iterate metodu : T türünden bir(XXXStream'ler için bu tür ilgili primitive türdür.) tohum değeri alır. Bu tohum
+   değerinden başlayaarak verilen UnaryOperator ile bir değer üretir.
+
+- iterate metodu ile bir döngü oluşturulabilir. Döngü değişkenini şeklinde de kullanılabilir(Yani step miktarı verilir).
+- iterate'in teker teker artırılan versiyonunun IntStream'in range'i  ile hiç bir farkı yoktur.
+
+- iterate metodunun iki parametrelisini bir limit takip etmez ise sonsuza kadar sürer.
+
+- concat metodu : birbirinden bağımsız iki adet veri yapısını aynı türden stream ile birliştirmemizi sağlar.
+  concat metodunun  iki parametresi vardır. paramatreleri Stream<? extends T> a , Stream<? extends T> b
+  concat metoduna geçilen parametreler birbirinden türetilmiş ise de kullanılabilir. Örneğin Concat metoduna geçilen
+  veri yapısının birisi Number türünden bir stream diğeri de Integer türünden bir stream olabilir. Bu durumda açılım
+  Number türünden kabul edilir.
+
+- collect metodunun parametresi olan Collector interface'i ve Collectors sınıfı
+    - Collectors sınıfı bir çok yararlı static metoda sahip geri dönüş değer Collector referansı olan bir sınıftır.
+    - Collectors metodunun en çok karşımıza çıkacağı yer collect metoduna parametre geçerken'dir.
+
+-----Collectors'in static yararlı metodları ----
+- collect metodu ve Collectors sınıfı ancak ve ancak generic Stream'ler ile kullanılabilir. XXXStream ile kullanılamaz.
+
+- toList metodu ilgili Stream'in T açılımında bir List<T> açılımını elde etmemizi sağlar.
+
+- counting metodu ilgili Stream içerisinde kaç adet eleman olduğunu döndürür. Stream'in count'i ile aynı işlemi yapar.
+
+- summingXXX metodu :  Geri dönüş değeri Collectors<T,?,R>'dır. summingInt metodu parametre olaral toXXXFunction
+  alır. Bu metod'da kendisine gelen T parametresine göre bir int,double veya long değer ütretir.
+
+- summingXXX metodu mapToXXX ve sum metodunun yaptığı iş kutulanırsa ikiside aynı işi yapar.
+    Stream.of(cities).collect(summingInt(String::length)); //Integer üretir.
+    Strema.of(cities).mapToInt(String::length).sum(); // int üretir.
+
+- averagingXXX metodu : geri dönüş değeri olarak her zaman Collector<T,?,Double> üretir. metod hangi primitive türe
+  göre kullanılırsa(averagingDouble,averagingInt,averagingLong) -> metodun parametresi o türden bir toXXXFunction lambda
+  sı ister.
+
+- partitioningBy metodu generic Stream'ler için geçerlidir. Partition anlam olarak iki grup demektir. Bir Predicate alır.
+- Aldığı predicate'a uyanları map'in true key'ine karşılık gelir. uymayanlar map'in false kısmına gelir. Eğer herhangi
+  bir key'de hiç değer olmasa bile ilgili key value çifti boş şekilde oluşturulur. Yani null döndürmez.
+- Geri dönüş değeri Collector<T,?, Map<Boolean,List<T>>> açılımını geri döner. yani collect'e  parametre olarak
+   partitioningBy metodunun geri dönüş değerini verirsek collect bize Map<Boolean,List<T>> açılımını döndüdür.
+
+- Not : Para ile çalışmıyorsak %90 BigDecimal sınıflarının bizim için kullanımının bir önemi olmayacaktır. BigDecimal
+  yerine double kullanılabilir.
+
+- groupingBy metodu : gruplama ile partition'ın farkı gruplamada grup sayısı belirsizdir. Geri dönüş değeri Map'tir.
+  Ancak gruplama parametresini Integer olarak kullanırsak 4 milyar tane grup olacaktır. Gruplamanın gerektiği bir çok
+  durum için enum türleri kullanılır. partitioningBy'ın groupingBy'dan farkı partition verilen predicate'a göre Stream'i
+  true ve false olacak şekilde sadece iki parçaya böler. Gruplama da ise bu sayının kaç olacağının bir önemi yoktur.
+
+- groupingBy parametreye olarak gruplamayı neye göre geçeceğimiz belirtilir. Bu parametreye geçilen tür ne ise Map'in
+  ilk parametresi de o olur. Bu parametreye sınıfı ilgilendiren bir parametre geçilmesi genel olarak önerilir. Ayrıca
+  gruplama için genel olarak enum'lar kullanılır. Çünkü enum'lar için grup sayısı ve kontrol etme yapısı daha kolaydır.
+- groupingBy ile elde edilen bir map'te mutlaka anahtar değerler var mı yokmu control edilmelidir. Aksi Taktirde kontrol
+  edilmeden kullanılması RunTimeException oluşturur.
+  Örneğin
+    main()
+    {
+        Map<MaritalStatus, List<Person>> map = people.stream().collect(Collectors.groupingBy(Person::getMaritalStatus));
+    }
+
+    enum MaritalStatus {
+        SINGLE, MARRIED, DIVORCED, UNDEFINED;
+    }
+
+  Map<G,List<T>> map = Stream.of(T).collect(Collectors.groupingBy(G))
+
+- Not : groupingBy metodu gruplamayaı equals ve hashCode'a göre yapar. enum'ların hashCode'ları ordinal'leridir.
+
+- groupingBy ile partitioningBy'in farkları
+    - partitioningBy verilen predicate'a göre bir stream'i iki anahtarlı bir Map<Boolean,List<T>> açılımını döndürür.
+    - partitioningBy geri dönüş değerinde anahtarlar'dan biri boş olursa boş bir map nesnesi yaratır.
+    - groupingBy verilen Function'a göre bir stream'i Map<G,List<T>> açılımını döndürür.
+    - partitioningBy geri dönüş değerinde anahtarlar'dan biri boş olursa ilgili anahtar için bir nesne yaratmaz.
+
+- joining metodları :
+    - String Stream'leri delimeter ile yada delimetersiz birleştirmeyi sağlar. Delimeter'a CharSequence implemente eden
+      herhangi bir sınıf geçilebilir(StringBuilder).Geri dönüş değeri String'dir. Java 8 ile  beraber String sınıfına
+      da static bir join metodu eklenmiştir. İki parametrelidir. 1. parametresi delimeter ister. İkinci parametresi ise
+      CharSequnce ...  veya Iterable<? extends CharSequance> 'dır..
+    - Stream.of(names).collect(Collectors.joining()); // names Stream'indeki String'leri doğrudan birleştirir.
+    - Stream.of(names).collect(Collectors.joining(CharSequence delimeter)); //delimeter ile birleştirir.
+    - String.join(CharSequence delimeter, CharSequence ... elements); // bir dizi alır.
+    - String.join(CharSequence delimeter, Iterable<? extends CharSequence> elements) // bir Collection alır.
+
+- joining metodununun özellikle ihtiyacı olduğumuz kısım elimizdeki Stream<String>'i herhangi bir şekilde bir List'e
+  veya String []'a dönüştürmeden doğrudan Stream'e ait collect metodu ile kullanmamızı sağlar.
+
+- maxBy ve minBy metodları
+    - aldıkları comparator'e açıldığı T türünün min veya max elemanını döndüdür. Boş bir Stream olabileceğinden Optional
+      döndürür.
+    - minBy ve maxBy metodu Stream'in kendi min ve max metodları ile yaptığı işin aynısını yapar.
+    - minBy ve maxBy metodu veya Stream'in kendi min ve max metodu olsun mutlaka bir Comparator ister. parametresiz
+      overload'ları implemente edilmemiştir.
+
+- Not : max ve min metodları XXXStream'ler için Comparator'süz çalışır.
+
+- reducing metodu(Collectors'a ait)
+    -  reduce ile aynı işlemi yapar. tamamen parametrik yapısı da ve geri dönüş değerleride aynıdır.
+
+- Yukarıdaki collect'e parametre olarak geçilen metodların hepsi Generic Stream ile kullanılabilecek metodlardır.
+  Temel Stream ile collect'in Collector parametreleri kullanılamayacağı için yukarıdaki fonksiyonlar kullanılamaz.
+
+
+- Stream'lerin toArray metodu 2 adet overload'ı vardır.
+    -  Object [] dönen dikkat bu fonksiyon Object [] türden bir nesne döner. Bu referansın dinamik türü de Object []'dir.
+       cast işlemleri haksız dönüşüm sağlar.
+    -  ikincisi T []'a dönen, kendisine verilen IntFunction(bir int değer alıp T döner) lambdasına göre int değer alıp T
+       türünden dizi üretir. methoda lambda ifadesine yerine T[]::new method reference'ı geçilebilir.
+------------------------------------------------------------------------------------------------------------------------
+                                            21.06.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- partitionAlgoritması çözüldü.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            SPRING BOOT
+------------------------------------------------------------------------------------------------------------------------
+
+- Bundan önce yapılan her şey bir oracle ürünüydü(Java SE idi).
+- Spring Java'ya ait değildir. Java alt yapısını kullanılır.
+
+- Spring çok genel bir framework'tur. WEb için Spring MVC(Spring web), Spring data database için, Spring core hemen
+  hemen her uygulamanın yapılabildiği bölümdür.
+
+- Spring java groovy ve kotlin ile kullanılabilen bir framework'tur.
+
+- Java'nın web servlet denilen bir yapıda kullanılır.
+
+- Spring çıktıktan sonra muadili olan(JSF,JSP) her şeyin yerine kullanılmaya başladı.
+
+- Spring ilk çıktığı zamanlar(Classic Spring denirdi.) iyiydi ancak konfigürasyonu zordu. Sonrasında Oliver ve arkadaşları
+  Spring Boot'u çıkardılar.
+
+- Spring boot spring içerisinde ayrı bir teknolojidir. Spring içerisinde ayrı bir teknolojidir.
+
+- Spring boot'un en önemli artısı auto-configuration'dır(Sadece annotation ile yapılır).
+- Framework'lerin asıl amacı hammaliye işlerini elimizden alır.
+
+- Spring boot'un en büyük  artılarından biri olan ide olsun yada olmasın Spring initializr ile bir spring projesi
+  oluşuturabiliriz.
+- Bir basit Spring boot projesi direk spring initializr sitesinden indirilir.
+
+- Spring ile kullanmayı öğreneceğimiz ayrıca bambaşka bir teknoloji daha olacak.
+
+- Built araçları nelerdir ve javada ki built araçları
+    - Tüm projeye ilişkin detayların(kullanılan library'ler, version numarıları, artifact'ler) hepsini belli komutlar
+      yazarak bir arada yapabilmemizi sağlayan teknolojilere built araçları denir.
+
+    - Java için şu anlık iki adet araç vardır. Bunlar Maven ve Gradle ile yapılır. İkisinin de temel hedefi aynıdır.
+       Bunların temel script'leri vardır.
+        Maven -> Genel de java uygulamaları için kullanılır. XML formatını kullanır
+        Gradle -> Genelde android uygulamaları için kullanılır. JSon formatını kullanılır.
+
+
+- Spring initializer'da ki field'lar anında değişebilirler
+    - group_name -> projenin paket adı gibidir. jar'ların çıktısının başına koyulur.
+    - artifact -> artiface ve name aynı olabilirler
+    - name -> artiface ve name aynı olabilirler. Projenin genel ismi verilebilir.
+    - description
+    - package name -> org.csystem...
+
+------------------------------------------------------------------------------------------------------------------------
+                                            27.06.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Spring teknolojisi web uygulamalarında da kullanılan bir teknolojidir.
+- Spring boot teknolojisi Spring framework'unu kolaylaştırmak için tasarlanan Spring içerisinde kullanılan bir teknolojidir.
+- Spring boot ile klasik Spring ile yapılan bütün işlemler yapılabilir.
+
+- Builder araçlarına örnek olarak maven ve gradle verilebilir. Bunlar birbiri yerlerine kullanılabilen araçlardır.
+    - maven
+    - gradle
+
+- Bu araçların hedefleri aynı sadece kullanım şekilleri farklıdır. maven xml, gradle json formatını kullanılır.
+
+- XML(Extensible markup language) nedir ?
+- Bir bilgisayar dilidir. programlama diili değildir. Akış içermiyordur.
+
+- Markup dilleri isimlerini element denilen yapılardan meydana gelir.
+<tag> -> açılış tagı.
+- xml'in kendine ait bir tag mekanizması yoktur.
+
+- xml de hedef herkesin kendi tag mekanizmasını kullanmasıdır.
+
+<devices> -> açılış tagı
+
+</devices> -> kapanış tagı
+açılış ve kapanış tagının bütününe element denir.
+
+- bir xml tagı içerisinde yazı="deger" çiftine attribute denir.
+<devices id="1" name="test" > devices'in id attribute'i, bazen sadece attribute'in var olduğunu belirtmek için
+ değer yazılmadan da kullanılabilir.
+
+ <devices id="1" name="test" active>
+ </devices>
+
+- bir projenin içerisinde pom.xml dosyası bir maven dosyasıdır(gradle dosyaları .gradle uzantılıdır.).
+
+- Spring boot java 8'den önce kullanılan bir teknoloji değildir.
+
+- Spring boot projesinde pom.xml dosyasında parent elementinin içindeki bilgiler değiştirilmez.
+- Burada değiştirebilecek tek şey spring boot'un yeni versiyonu çıktığında ilgili version numarası değiştirilebilir.
+
+- groupid kısmı altında kalan 4-5 satırlık kısım proje ile ilgili metadata'ların bilgilerini içirir.
+
+- Spring Boot
+
+- Spring boot'un annotation'ları
+    - SpringBootApplication (Aşağıdaki üç annotation bu annotation yazarken belirtilmiş. .class dosyasından gözükeblir. )
+        - SpringBootApplication annotation'ı ComponentScan annotation'ı ile beraber bildirilmiştir. Bu annotation
+          bildirilirken default olarak aramaların sadece ilgili paket ve sub paketletde yapılacağı şekilde bildirilmiştir.
+          Bu değiştirilebilir. Default'unda sadece o sınıfın bulunduğu paket ve o paketin alt paketlerinde aranacak
+          şekildedir.
+    - SpringBootConfiguration -> Spring frameworkun spring boot ile alakalı konfigürasyon'ların yapılabileceğini
+      uygulamada gösterir.
+
+    - EnableAutoConfiguration -> Spring boot'da kodu yazan kişinin otomatik konfigürasyonu var ise onuda kontrol et
+      anlamında kullanılır
+
+     - ComponentScan -> Proje içerisinde nerelerde arama yapılacağını belirttiğimiz yerdir.
+
+- SpringBootAnnotation'ı genellikle main'in bulunduğu sınıfa yazılır. Genel olarak bu annotation buradan silinmez.
+  Sadece yanına bazı annotation'lar eklenir.
+
+- Springboot'un reflection kısmı uygulamanın meta data bilgilerine SpringBootApplication annotation'ı ile bakar. Bu
+  annotation Spring boot'ta genellikle değiştirmeyeceğimiz ilk annotation'dır.
+
+- Spring boot projesini çalıştıran metod SpringApplication sınıfının run metodudur.
+
+- Spring boot'u Spring boot yapan deployment'ının basitleştirilmesidir.
+
+- Maven aracının package isimli switch'i yardımı ile hiç bir şey yazılmadan çalışılabilir bir jar haline getirilebilir.
+
+- Bean kavramı : Bir sınıfın çeşitli konfigürasyonlar ile(dependency injection gibi) springe uygun hale gelmesi durumunda
+  bu sınıfa SpringBean denir.
+
+- SpringBean ile SpringBoot'taki bir sınıfın Bean yapmak başka şeylerdir.
+
+- Component annotation'ı bir sınıfı SpringBean yapmamızı sağlayan annotation'dır.
+
+- Bir sınıfı Component olarak işaretlendiğinde bu sınıflar bean durumuna gelirler.
+    @Component // buradan sonra bu sınıf bean anlamına gelir. Bu tarz şeylere sterotype'da denir.
+    class Employee {
+
+    } //Eğer bu sınıf SpringBootApplication'ın bulunduğu paket içerisinde değilde başka bir pakette bulunur ise  veya
+    component işaretlenmez ise o türden bir nesne yaratılamaz.()
+
+- Sınıfın ctor'unun private olması durumunda bir çok framework erişimi engeller(Spring boot'ta çlışır.).
+
+- Bir bean'in scope denilen bir kavramı vardır. Bir bean'in default scope'u default olarak singleton'dır(O türden sadece
+  bir nesne yaratılacaktır.).Spring boot singleton bir bean için daha ayağa kalkarken ilgili nesne yaratılır.
+  Eğer bu scope kavramı prototype olarak işaretlenir ise  nesne ne zaman yaratılacak ise o zaman yaratılır.
+
+  @Component
+  @Scope("prototype") // Employee türünden bir nesne ne zaman yaratılmak istenirse o zaman yaratılır.
+  public class Employee {
+      public Employee()
+      {
+          System.out.println("Employee.employee");
+      }
+  }
+
+- Scope annotation'ın value isimli bir elemanı vardır. Bu yüzden annotation'da value="prototype" şeklinde kullanıma
+  gerek yoktur.
+
+  @Component// Device türünden nesne spring boot çalışmaya başladığı anda yaratılır. Bir Bean'in default scope'u singleton'dır.
+  public class Device {
+      public Device()
+      {
+          System.out.println("Device.Device");
+      }
+  }
+
+- Bir bean'in scope'u prototype işaretlenmez ise default scope'u singleton'dır.
+- Component işaretlenmiş bir sınıfa bean denir.
+
+- Singleton scope ile isimlendirilmiş sınıfların yaratılması paket derinlikleri ve isimlerinin sırasına göre yaratılır.
+  Örneğin daha derin pakkette olan bir sınıf  daha sonra yaratılır. Aynı paketteki farklı isme sahip iki sınıf'tan hangi
+  sınıfın ismi daha önce geliyor ise o sınıf daha önce yaratılır.
+
+- PostConstruct annotation'ı
+    - Bir sınıf nesnesi yaratıldıktan hemen sonra o sınıf nesnesine ilişkin bir metodun çağrılması istendiğinde kullanılan
+      annotation'dır. Sadece static veya non-static metodlara verilebilen bir annotation'dır.
+
+    @Component
+    public class DateDisplay {
+        public DateDisplay()
+        {
+            System.out.println("DateDisplay.DateDisplay");
+        }
+        @PostConstruct // eğer bu annotation kaldırılır ise nesne sadece yaratılır. Bu metod çağrılmaz.
+        public void displayDate()
+        {
+            LocalDate now = LocalDate.now();
+            System.out.printf("%02d/%s/%02d",now.getDayOfMonth(), now.getMonth(), now.getYear());
+        }
+    }
+
+
+--- Dependency Injection ----
+
+- SOLID prensiplerinden sonuncusudur.
+    - Dependency inversion(Yeni nesil adı Dependency Injection)
+
+- Dependency injection'da bir sınıfın nasıl yaratıldığının yada sınıfın yaratılırken ne olduğunun detaylarının
+  bizim sınıf açısından bir öneminin olmasıdır. Örneğin bir LocalDate sınıfı için LocalDate ile yapılan işlemin
+  ne olduğunun bir öneminin olması sadece biz ne tür bir LocalDate nesnesi istersek bize onu veren bir sınıfın olmasıdır.
+
+- Detayları ile bizim ilgilenmediğimiz, bizim kodumuzu detaylardan bağımsız yazdığımız durumlardır.
+  Biziö için önemli olan şey kullanılacak o sınıfın referansını tutacağımız bir değişkendir.
+
+- Dependency Injection tam olarak bir sınıfın işini yapabilmesi için bağımlı olduğu detayları sınıf içinde halletmek değil
+  dışarıdan halledilmiş bir şekilde almaktır.
+
+- Dependency Injection'ı implemente etmenin SpringBoot'ta üç yolu vardır.
+    1-) Field Injection -> FieldInjection önerilmez.
+    2-) Constructor Injection -> En çok kullanılan injection yöntemi budur. Diğer ikisi daha az kullanılacaktır.
+    3-) Setter Injection
+
+- Bir injection işlemi yapabilmek için özel bir annotation kullanılır. İsmi AutoWrited'dır.
+- auto wired anlam olarak otomatik bağlanmış şeklinde çevirilebilir.
+
+- Spring 4 ile beraber constructor injection default yapılır.,
+
+- Eğerki injection yapılacak sınıf kendi sınıfımız ise sadece bean olarak bildirmemiz yeterlidir.
+- Başka kütüphaneden alınan bir sınıf ise farklı yöntemler uygulanır.
+- injecte edilecek sınıf'ın scope'unun nesnesinin singleton mu prototype mı olacağı senaryoya bağlıdır.
+
+- ConstructorInjection için enjekte edilecek nesnenin önceden yaratılması gerekirken setter ve field injection
+  için eğer ilgili nesnenin scope'u prototype ise bu nesneler yaratıldıktan sonra enjekte edelecek nesne yaratılır.
+
+- Constructor injectionda enjekte edilecek sınıfın scope'u prototype ise bu construcor çağrılmadan ilgili sınıf nesnesi
+  yaratılır.
+
+- Diğerlerinde ctor çağrıldıktan sonra enjekte edilecek sınıf injection edilir.
+
+
+    @Component
+    @Scope("prototype")
+    public class DateTime {
+        private final LocalDate m_localDate = LocalDate.now();
+
+        public DateTime()
+        {
+            System.out.println("DateTime");
+        }
+        public int getYear()
+        {
+            return m_localDate.getYear();
+        }
+
+        public int getMonthValue()
+        {
+            return m_localDate.getMonthValue();
+        }
+
+        public int getDayOfMonth()
+        {
+            return m_localDate.getDayOfMonth();
+        }
+    }
+
+- Yukarıdaki DateTime sınıfı aşağıdaki örnekler için yazılmıştır.
+
+1-) FieldInjection
+
+    - Spring boot burada DateTimeFieldInjectionDisplay sınıfında reflection bakıp Autowired isimlendirilmiş bir elemanı
+      var ise o sınıf türünden bir component yaratılmış ise(yani DateTime'ın scope'u singleton ise) doğrudan atama yapar.
+      Eğer DateTime'ın scope'u prototype  DateTime nesnesi yaratıldıktan sonra ilgili sınıfa atanır.
+    @Component
+    public class DateTimeFieldInjectionDisplay {
+
+        @Autowired // field injection yapıldı. Field injection için spring boot'ta bir ctor yazılmaz derleyici sınıfın
+        ctor'u çağrıldıktan sonra injection işlemi yapılrı.
+        private DateTime m_localDate;
+
+        public DateTimeFieldInjectionDisplay()
+        {
+            System.out.println("DateTimeFieldInjectionDisplay");
+        }
+
+        @PostConstruct
+        public void display()
+        {
+            System.out.printf("%02d/%02d/%04d%n",m_localDate.getDayOfMonth(),m_localDate.getMonthValue(),m_localDate.getYear());
+        }
+
+    }
+2-) ConstructorInjection
+
+- Constructor injection'da aşağıdaki örnek için  DateTimeConstructorInjectionDisplay nesnesi
+  yaratılmadan önce DateTime türünden nesnenin yaratılmış olması gerekir.
+- Spring 4.3'ten ctor injection'da eğer sadece bir adet ctor var ise  Autowired annotation'ının yazılmasına gerek yoktur.
+  Ancak birden fazla var ise autowired'ın hangi ctor için uygulanılacak ise o ctor Autowired belirtilmelidir.
+    @Component
+    public class DateTimeConstructorInjectionDisplay {
+        private DateTime m_dateTime;
+
+        //@Autowired//Burada autoWired'ın bir önemi yoktur. Gizli bir autowired varmış gibi kullanılır.
+        public DateTimeConstructorInjectionDisplay(DateTime dateTime){
+            System.out.println("DateTimeConstructorInjectionDisplay");
+            m_dateTime = dateTime;
+        }
+
+        @PostConstruct
+        public void display()
+        {
+            System.out.printf("%02d/%02d/%04d%n",m_dateTime.getDayOfMonth(),m_dateTime.getMonthValue(),m_dateTime.getYear());
+        }
+
+    }
+
+
+3-) SetterInjection
+    @Component
+    public class DateTimeSetterInjectionDisplay {
+        private DateTime m_dateTime;
+        public DateTimeSetterInjectionDisplay()
+        {
+            System.out.println("DateTimeSetterInjectionDisplay");
+        }
+
+        @Autowired
+        public void setDateTime(DateTime dateTime)
+        {
+            this.m_dateTime = dateTime;
+        }
+
+        @PostConstruct
+        public void display()
+        {
+            System.out.printf("%02d/%02d/%04d%n", m_dateTime.getDayOfMonth(), m_dateTime.getMonthValue(), m_dateTime.getYear());
+        }
+
+    }
+
+- Field ve setter injection'lar da nesne referansı final bildirilemez.
+- Dependency injection aggregation gibi düşünülebilir. Ancak aggregation'ın ilerlemiş halidir.
+
+- Component ve scope annotation'ları SpringFramework'üne özgü annotationlardır.
+
+- Şu ana kadar yazdığımız bütün injection işlemleri kendi yazdığımız sınıflar üzerindendi.
+
+- Burada bizim yazmadığımız veya Spring'e ait olmayan bir sınıf kullanılırsa (örneğin standart LocalDate sınıfı) Spring
+  boot bize o  sınıf türünden bir nesnenin yaratılmasını doğrudan sağlıyamaz. LocalDate'i Component olarak bildiremeyiz.
+
+- Spring boot bu sorunun çözümü için Configuration annotation'ını yazdı. Bu annotation'ın eklendiği sınıflar hem
+  component özelliğini gösterir. Hemde kendi içerisinde çalışıyor olan bir takım metodları istenildiğinde otomatik
+  çağrılmasını sağlar.
+
+- Configuration annotation'ı ile işaretlenmiş bir sınıf içerisinde kullanılabilen sadece metodlara işaretlenibilen özel
+  bir annotation vardır. İsmi Bean'dir(Target'ı method'dur.).
+
+- Aşağıdaki yapı sayesinde standart kütüphaneye ait yada dışarıdan alınmış bir java dosyasının herhangi bir sınıfı
+  kullanılabilir. Aşağıda ki yapıda yapılan, eğer uygulamanın herhangi bir yerinde LocalDate nesnesi istenir ise bu
+  metod kullanılarak LocalDate nesnesi üretilir. Böyle işaretlenmiş metodlar geri dönüş değerlerini bean olarak vermeye
+  yarar.
+  @Configuration
+  public class DateTimeConfig {
+      @Bean
+      public LocalDate getLocalDate()
+      {
+          return LocalDate.now();
+      }
+  }
+
+- Bu metodu çağırılabilmesi içinde mutlaka bir bir yerde bir(field,setter veya ctor -> ctor için default yapılır)
+  autowired bildirilmelidir.
+
+- Bean işaretlenmiş bir metod Ya configuration ile işaretlenmiş bir sınıf içerisinde yada SpringBootApplication ile
+  işaretlenmiş bir sınıf içerisinde bulunmalıdır(SpringBootApplication ile işaretlenmiş bir sınıf içerisinde
+  işaretlenmesine çok nadir rastlanır.).
+
+- @Bean ile işaretlenmiş bir metoda'da bir scope verilebilir.
+
+
+- DependencyInjection with Configuration
+    @Configuration
+      public class DateTimeConfig {
+          @Bean
+          public LocalDate getLocalDate()
+          {
+              return LocalDate.now();
+          }
+      }
+
+
+    @Component
+    public class DateTimeDisplaySetterInjection {
+        private LocalDate m_dateTime;
+        public DateTimeDisplaySetterInjection()
+        {
+            System.out.println("DateTimeSetterInjectionDisplay");
+        }
+
+        @Autowired
+        public void setDateTime(LocalDate dateTime)
+        {
+            this.m_dateTime = dateTime;
+        }
+
+        @PostConstruct
+        public void display()
+        {
+            System.out.printf("%02d/%02d/%04d%n", m_dateTime.getDayOfMonth(), m_dateTime.getMonthValue(), m_dateTime.getYear());
+        }
+
+    }
+
+- Spring'de Bean yaratılmıi nesnelere denir.
+- NOT : Bir Bean yaratılırken herhangi bir scope verilmez ise her zaman scope'u her zaman singleton'dır. Spring'de şu
+  ana kadar gördüğümüz iki adet bean üreten annotattion,
+    1- Component
+    2- Bean annotation
+
+- Singleton kullanmanın belleksel bir durum söz konusu değil, boşu boşuna bir nesne yaratma maaliyetinin olmaması demektir.
+------------------------------------------------------------------------------------------------------------------------
+                                            28.06.2020
+------------------------------------------------------------------------------------------------------------------------
