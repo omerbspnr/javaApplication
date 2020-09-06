@@ -2085,6 +2085,9 @@ interface IBinaryOperator<T> {
                                             27.06.2020
 ------------------------------------------------------------------------------------------------------------------------
 
+- bir import direktifinde sadece springframework ismi geçiyor ise bu paket springframework'une aittir.
+- eğer bir springframework paketinin boot isminde bir alt paketi var ise bu springboot'a ait bir pakettir.
+
 - Spring teknolojisi web uygulamalarında da kullanılan bir teknolojidir.
 - Spring boot teknolojisi Spring framework'unu kolaylaştırmak için tasarlanan Spring içerisinde kullanılan bir teknolojidir.
 - Spring boot ile klasik Spring ile yapılan bütün işlemler yapılabilir.
@@ -2125,8 +2128,6 @@ açılış ve kapanış tagının bütününe element denir.
 
 - groupid kısmı altında kalan 4-5 satırlık kısım proje ile ilgili metadata'ların bilgilerini içirir.
 
-- Spring Boot
-
 - Spring boot'un annotation'ları
     - SpringBootApplication (Aşağıdaki üç annotation bu annotation yazarken belirtilmiş. .class dosyasından gözükeblir. )
         - SpringBootApplication annotation'ı ComponentScan annotation'ı ile beraber bildirilmiştir. Bu annotation
@@ -2153,12 +2154,14 @@ açılış ve kapanış tagının bütününe element denir.
 
 - Maven aracının package isimli switch'i yardımı ile hiç bir şey yazılmadan çalışılabilir bir jar haline getirilebilir.
 
-- Bean kavramı : Bir sınıfın çeşitli konfigürasyonlar ile(dependency injection gibi) springe uygun hale gelmesi durumunda
-  bu sınıfa SpringBean denir.
+- SpringBean kavramı : Bir sınıfın çeşitli konfigürasyonlar ile(dependency injection gibi) springe uygun hale gelmesi
+  durumunda bu sınıfa SpringBean denir.
 
-- SpringBean ile SpringBoot'taki bir sınıfın Bean yapmak başka şeylerdir.
+- SpringBean ile SpringBoot'taki bir sınıfı Bean yapmak başka şeylerdir.
 
-- Component annotation'ı bir sınıfı SpringBean yapmamızı sağlayan annotation'dır.
+- Component annotation'ı bir sınıfı SpringBean yapmamızı sağlayan annotation'dır. Component işaretlenmiş bir sınıf
+  eğer scope'ı singleton ise spring tarafından bir kez yaratılır. Bu durum sadece spring için geçerlidir. Java'nın
+  sentaks kuralları gereği(örneğin bu sınıftan bir sınıf türetilmiş ise) o sınıftan başka bir nesne yaratılır.
 
 - Bir sınıfı Component olarak işaretlendiğinde bu sınıflar bean durumuna gelirler.
     @Component // buradan sonra bu sınıf bean anlamına gelir. Bu tarz şeylere sterotype'da denir.
@@ -2201,8 +2204,9 @@ açılış ve kapanış tagının bütününe element denir.
   sınıfın ismi daha önce geliyor ise o sınıf daha önce yaratılır.
 
 - PostConstruct annotation'ı
-    - Bir sınıf nesnesi yaratıldıktan hemen sonra o sınıf nesnesine ilişkin bir metodun çağrılması istendiğinde kullanılan
-      annotation'dır. Sadece static veya non-static metodlara verilebilen bir annotation'dır.
+    - Bir bean yaratıldıktan hemen sonra o bean'e ilişkin bir metodun çağrılması istendiğinde kullanılan annotation'dır.
+      Eğer ki bu nesnelerin scope'u singleton ise uygulama ayağa kalkamadan ilgili metod çağrılır. Scope prototype
+      ise nesne yaratıldıktan sonra method çağrılır.
 
     @Component
     public class DateDisplay {
@@ -2225,7 +2229,7 @@ açılış ve kapanış tagının bütününe element denir.
     - Dependency inversion(Yeni nesil adı Dependency Injection)
 
 - Dependency injection'da bir sınıfın nasıl yaratıldığının yada sınıfın yaratılırken ne olduğunun detaylarının
-  bizim sınıf açısından bir öneminin olmasıdır. Örneğin bir LocalDate sınıfı için LocalDate ile yapılan işlemin
+  bizim sınıfımız açısından bir önemi yoktur . Örneğin bir LocalDate sınıfı için LocalDate ile yapılan işlemin
   ne olduğunun bir öneminin olması sadece biz ne tür bir LocalDate nesnesi istersek bize onu veren bir sınıfın olmasıdır.
 
 - Detayları ile bizim ilgilenmediğimiz, bizim kodumuzu detaylardan bağımsız yazdığımız durumlardır.
@@ -2242,9 +2246,10 @@ açılış ve kapanış tagının bütününe element denir.
 - Bir injection işlemi yapabilmek için özel bir annotation kullanılır. İsmi AutoWrited'dır.
 - auto wired anlam olarak otomatik bağlanmış şeklinde çevirilebilir.
 
-- Spring 4 ile beraber constructor injection default yapılır.,
+- Spring 4 ile beraber bir sınıfın bir adet  constructor'ı var ise autowired işaretlenmesine gerek olmadan injection
+   default yapılır.
 
-- Eğerki injection yapılacak sınıf kendi sınıfımız ise sadece bean olarak bildirmemiz yeterlidir.
+- Eğerki injection yapılacak sınıf kendi sınıfımız ise sadece @Component olarak işaretlenmesi yeterlidir.
 - Başka kütüphaneden alınan bir sınıf ise farklı yöntemler uygulanır.
 - injecte edilecek sınıf'ın scope'unun nesnesinin singleton mu prototype mı olacağı senaryoya bağlıdır.
 
@@ -2346,7 +2351,9 @@ açılış ve kapanış tagının bütününe element denir.
         public void setDateTime(DateTime dateTime)
         {
             this.m_dateTime = dateTime;
-        }
+        }Sonuçta bir inject ten
+sonra run metodunu cagırıyor
+O yüzden galıba
 
         @PostConstruct
         public void display()
@@ -2361,14 +2368,22 @@ açılış ve kapanış tagının bütününe element denir.
 
 - Component ve scope annotation'ları SpringFramework'üne özgü annotationlardır.
 
-- Şu ana kadar yazdığımız bütün injection işlemleri kendi yazdığımız sınıflar üzerindendi.
+- Şu ana kadar yazdığımız bütün injection işlemleri kendi yazdığımız sınıflar üzerinden yapabiliyorduk.
 
 - Burada bizim yazmadığımız veya Spring'e ait olmayan bir sınıf kullanılırsa (örneğin standart LocalDate sınıfı) Spring
   boot bize o  sınıf türünden bir nesnenin yaratılmasını doğrudan sağlıyamaz. LocalDate'i Component olarak bildiremeyiz.
+  Bir sınıfın kaynak kodu olmadan o sınıfı Component bildiremeyiz. Ancak o sınıfı bir Spring bean haline getirebiliriz.
 
-- Spring boot bu sorunun çözümü için Configuration annotation'ını yazdı. Bu annotation'ın eklendiği sınıflar hem
+- Yukarıdaki sorun için iki farklı çözüm vardır. Birincisi LocalDate sınıfını sarmalayan bir sınıf yazıp ilgili sınıfı
+  component bildirmek. Bu durum gene LocalDate sınıfına bir bağımlılık gerektirir.
+
+- Asıl çözüm Spring boot'un yaklaşımıdır. Configuration ve Bean annotation'ları ile çözülür.
+------------------------------------------------------------------------------------------------------------------------
+                                            @Configuration and @Bean annotation'ı
+------------------------------------------------------------------------------------------------------------------------
+- Spring ekibi yukarıdaki sorunun çözümü için Configuration annotation'ını yazdı. Bu annotation'ın eklendiği sınıflar hem
   component özelliğini gösterir. Hemde kendi içerisinde çalışıyor olan bir takım metodları istenildiğinde otomatik
-  çağrılmasını sağlar.
+  çağrılmasını sağlar. Bu metodlar sayesinde de bir Bean üretimini sağlar.
 
 - Configuration annotation'ı ile işaretlenmiş bir sınıf içerisinde kullanılabilen sadece metodlara işaretlenibilen özel
   bir annotation vardır. İsmi Bean'dir(Target'ı method'dur.).
@@ -2387,13 +2402,23 @@ açılış ve kapanış tagının bütününe element denir.
   }
 
 - Bu metodu çağırılabilmesi içinde mutlaka bir bir yerde bir(field,setter veya ctor -> ctor için default yapılır)
-  autowired bildirilmelidir.
+  autowired bildirilmelidir. Bu metodun çağrılmaması ve çağrılmayacağı durumu error değildir. Ancak yazılmasının hiç
+  bir manası yoktur.
 
 - Bean işaretlenmiş bir metod Ya configuration ile işaretlenmiş bir sınıf içerisinde yada SpringBootApplication ile
   işaretlenmiş bir sınıf içerisinde bulunmalıdır(SpringBootApplication ile işaretlenmiş bir sınıf içerisinde
   işaretlenmesine çok nadir rastlanır.).
 
-- @Bean ile işaretlenmiş bir metoda'da bir scope verilebilir.
+- Springframework bir sınıftan bir SpringBean elde etmesi için o sınıfın @Component olarak işaretlenmesi gerekir.
+- Springframework bir metoddan bir SpringBean elde etmesi için o sınıfın @Configuration ile o metodunda @Bean ile
+  bildirilmesi gerekir.
+
+- Cofiguration işaretlenmiş bir sınıfın Scope'u singleton'dır. değiştirilemez. Bu sınıfın @Bean işaretlenmiş metodu
+  bir Spring bean üretir.
+
+
+- Bean işaretlenmiş bir metoda da ayrıca bir scope verilebilir. Eğer scope verilmez ise metod bir kez çağrılır. Geri
+  dönüş değeri tutulur. Eğer prototype olur ise metod her bir injection işlemi için çağrılır.
 
 
 - DependencyInjection with Configuration
@@ -2429,13 +2454,1364 @@ açılış ve kapanış tagının bütününe element denir.
 
     }
 
-- Spring'de Bean yaratılmıi nesnelere denir.
+- SpringBean  nesne yaratılmıi nesnelere denir.
 - NOT : Bir Bean yaratılırken herhangi bir scope verilmez ise her zaman scope'u her zaman singleton'dır. Spring'de şu
   ana kadar gördüğümüz iki adet bean üreten annotattion,
     1- Component
-    2- Bean annotation
+    2- method annotated with Bean
 
-- Singleton kullanmanın belleksel bir durum söz konusu değil, boşu boşuna bir nesne yaratma maaliyetinin olmaması demektir.
+- Eğerki Autowired'a karşılık gelen bir Bean üretecek Componen işaretlenmiş  sınıf veya Bean işaretlenmiş bir metod yok
+  ise error oluşur.
+- Singleton kullanmanın belleksel bir durum söz konusu değil, boşu boşuna bir nesne yaratma maaliyetinin olmaması
+  demektir.
 ------------------------------------------------------------------------------------------------------------------------
                                             28.06.2020
 ------------------------------------------------------------------------------------------------------------------------
+
+- Component dependency injection'da kullanabileceğimmiz sınıfları temsil eder.
+- Bir sınıfı component yapmak o sınıfı bean'e çevirmektir.
+
+- Spring'de bean'lere isim verilebilir
+- Component olan bir bean'in default ismi, işaretlenen sınıfın isminin küçük harflerinden oluşan halidir.
+
+- konfigürasyon dosyasından alınan bean'lere de isim verilebilir.
+- Bean işaretlenmiş bir metodda bean ismi metodun isminin küçük harflerinden oluşan halidir. Bir beanin ismi özellikle
+  qualifier annotation'ı ile bir anlam kazanır.@
+
+- Bir configuration'dan bean elde etmek ile bir component'ten bean elde etmek arasında hiç bir fark yoktur. ikisinde de
+  bean elde edilir. Fark yalnız nesneyi initialize ederken yapılan detaylar configuration'da metod içerisinde halledilir.
+
+- Dependency inversion prensible, dependency injection ve ioc(inversion of controls) bu üç terim birbirine çok yakın
+  terimlerdir. Bunların çıkış noktası solid'in d'si olan dependency inversion'dır.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Application Runner interface'i
+------------------------------------------------------------------------------------------------------------------------
+
+
+- Component veya Configuration(Configuration annotation'ı içerisinde ki bean metodlar) türünden bean'lerin scope'ları
+  singleton ise daha spring boot ayağa kalkmadan bu nesneler hayata gelir.
+
+- Eğer bunların scope'ı prototype ise nesne zaman istenirse ozaman yaratılır.
+
+- Component ve configuration arasında ki fark
+    - Component dependency injection da kullanacağımız sınıfları temsil eder.
+    - Configuration ise bean metodlar yazmak da dahil olmak üzere bir takım konfigürasyonlara ilişkin sınıfları temsil
+      eder.
+
+    - Configuration'da ApplicationRunner'lar injection şeklinde kullanılacak bean'ler değillerdir.
+
+
+- ApplicationRunner interface'ini döndüren bir metod yazılır ve bu metod @Bean işaretlenir ise(Bir metodun @Bean
+  işaretlenebilmesi için bulunduğu sınıfın @Configuration işaretlenmesi gerekir.) buradaki metod Springboot tarafından
+  çağırılır. Bu metodun çağırımı tamamen spring boot tarafından yapılır. Herhangi bir şekilde dependency injection
+  yapılıpi post construct işlemine gerek kalmadan bu işlem gerçekleştirilir.
+
+- Burada iki önemli farklılık vardır. Application interface'ini döndüren bir method uygulama ayağa kalktıktan sonra
+  çağrılır. PostConstruct ve singleton'a sahip bir metodda durum böyle değildir.
+
+- Aynı paketteki ApplicationRunner döndüren metodlar harf sırasına göre aynı sınıf içerisindeki application runner
+  döndüren metodlar ise bildirildikleri sıraya göre hangisi önce ise o  spring boot onu çağırır. Metodlar senkron bir
+  şekilde çağırılır.
+
+- Application runner bir functional interface'dir. Bu yüzden ApplicationRunner referansına bir lambda ifadesi atanabilir.
+  ApplicationArguments türünden bir parametre ister.
+
+- Bean annotation'ı ile neden nesne yaratılır.
+    - Sınıfın kaynak kodları bizim tarafından yazılmamıştır ve component değildir.
+    - component işaretlensin yada işaretlenmesin bir sınıftan nesne elde edilmesini bir algoritmaya göre isteyebiliriz.
+
+
+- SpringBoot ApplicationRunner döndüren ve bean olarak bildirilmiş bir metod görüyor ise geri dönen referansın run
+  metdounu çalıştırır.
+
+- ApplicationRunner spring boot tarafından çalıştırıldığı için spring boot mutlaka ApplicationRunner isteyecektir.
+  Burada ApplicationRunner'ın scope'unun bir önemi yoktur. Çünkü spring boot çalıştıktan hemen sonra ApplicationRunner'
+  lar çağırılacaktır.
+
+- ApplicationRunner bean'leri hiç bir zaman programı çok meşgul edecek şekilde yapılmamalıdır.
+
+
+- Bir Bean'e isim yada value vererek  bir order  oluşturulamaz  .
+
+- Order annotation'ı aynı interface'i implemente eden  sınıflar için bir kullanılan bir annotaion'dır. Eğer nesneler her
+  seferinde farklı bir sınıf'tan türetiliyor ise  order annotation'ının bir işlevi yoktur.
+
+- Normalde bir Component'in yada Bean bir metod'dan yaratılma aynı pakette ise isim karşılaştırmasında hangisi daha önce
+  ise o daha önce yaratılır.
+  Aynı sınıfta ise hangisi daha önce bildirilmiş ise o daha önce yaratılır.
+
+- Order annotation'ı ile aynı interface'den türemiş sınıflar'da hangisinin daha önce yaratılacağına bir sıra verilebilir.
+
+- ApplicationRunner injekte edilecek bir bean türü değildir. Spring Boot tarafından çağırılır.
+
+- ApplicationRunner ile yapılacak bir işlem Component işaretlenmiş PostConstruct bir metod  ile de yapılabilir.
+  Ancak ApplicationRunner interface'i Spring boot'un inject olarak aldığı bir interface'dir.
+
+- Aynı türe dönen birden fazla  @Bean metod var ise spring hata verir.
+
+- Spring Boot'ta her şey dependency injection ile işlenir.
+
+- ApplicationRunner dönen ve Bean işaretlenmiş metodlar SpringBoot ayağa kalkarken hepsi çağrılır.
+
+- Bean metodlar üzerinden order yapılamaz.
+
+- Spring boot'ta aynı interface'ler ve taban sınıfların bean'leri arasında sıra söz konusudur. Order o taban sınıftan
+  veya interface'den türetilmiş bir sınıfa verilmelidir. Bir lambda'ya order verilemez.
+
+- field injection hemen hemen hiç tercih etmemeliyiz.
+- pratikte en çok kullanılan injection yöntemi ctor injection.
+- Bir sınıfın birden çok ctor'u var ise hangi ctor'un injection ile çalışacağına karar vermek için autowired ile
+  işaretleriz.
+
+- Bir sınıfın ancak ve ancak bir tek constructor'ı autowired işaretlenebilir.
+
+- Bir ctor'da aynı anda iki tane dependency alınabilir.
+    @Autowired
+    public DateTimeApplicationRunner(LocalDate date,LocalTime time)
+    {
+        m_date = date;
+        m_time = time;
+    }//iki adet bean ile injection yapılabilir.
+
+
+------ Collection dependency injection ------------
+- spring collection injection yapabilir.
+- spring ortak bir noktaya sahip bean'leri bir araya getirerek bir dependency injection yapılmasını sağlayabilir.
+
+- Örneğin aynı interface'i IOperation'ı implemente eden üç farklı sınıf @Component olarak işaretlenmiş olsun. Bu
+  sınıfları inject edebileceğimiz, Collection veya List interface'li bir sınıf yazılabilir(List<IOperation>). Spring
+  bizim için bu üç sınıftan component işaretlendiği için her birinden bir nesne yaratır ve bu sınıflara bir araya
+  toplayıp ilgili sınıfa enjekte eder. Eğer hiç bir nesne yaratılmaz ise springframework boş bir list'e yada collection
+  injekte eder. Bu durumda uygulama da hiç component oluşmamış ise uygulama patlamaz.
+
+- Normalde dependency injecton'da T türünden bir referans için sadece tek bir bean metod yazılabilirdi. Ancak bu durum
+  Collection<T> türüne spring tarafından yapılacak bir injection söz konusu olduğunda birden çok bean metod aynı değere
+  dönebilir.
+
+- Aşağıdaki kod normalde error oluştururdu. Ancak injection Yapılacak sınıfın referansı Collection<IOperation<Integer>>
+  olduğundan kaynaklı kod geçerlidir.
+  @Configuration
+  public class ApplicationConfig {
+      @Bean
+      public IOperation<Integer> getOperation()
+      {
+          return new IntModulusOperation();
+      }
+
+      @Bean
+      public IOperation<Integer> getOperation2()
+      {
+          return new IntAddOperation();
+      }
+
+      @Bean
+      public IOperation<Integer> getOperation3()
+      {
+          return new IntMultiplyOperation();
+      }
+  }
+------------------------------------------------------------------------------------------------------------------------
+                                            05.07.2020
+------------------------------------------------------------------------------------------------------------------------
+- Bir Spring boot uygulanamasının çalışma sırası
+    - SpringApplication.run(...); ile spring boot bir takım ilk işlemleri yapar(Bunlara spring initialization denir).
+    - Bu işlemler gerekli nesnelerin yaratılması ve configuration işlemlerinin yapılmaısıdır.
+    - Bundan sonra varsa ApplicationRunner'lar yapılır.
+    ...
+    ...
+    ...
+    ...
+
+- Bir spring boot programı içerisinde aynı isimde iki bean olamaz. Farklı paketlerde ki iki farklı configuration
+  içerisinde iki farklı bean metod aynı isimde olamaz.
+  package x;
+  @Configuration
+  class  ApplicationRunnerConfig {
+
+    @Bean
+    public ApplicationRunner runApplication()
+    {
+    }
+  }
+  package y;
+    @Configuration
+    class  ApplicationRunnerConfig {
+
+      @Bean
+      public ApplicationRunner runApplication() // error.  aynı türden referansları dönen bean'lerin ismi default olarak
+      {                                            aynı olamaz.
+      }
+    }
+
+----- Qualifier annotation'ı -----
+
+- Inject işleminde hangi bean'in kullanılacağını belirtilen annotation'dır.
+- Bir bean'in ismi default olarak yazıldığı metodun yada sınıfın ismi'dir. Örneğin
+
+- Bir bean'e isim iki şekilde verilebilir.
+
+1-) Component veya  bean annotation'ı içinde
+    @Component("intAdd")
+    class IntAddOperation implements IOperation {
+        //..
+    }
+
+    veya
+
+    @Configuration()
+    class OperationConfig implements IOperation {
+        @Bean("intMultiply")
+        public IOperation getOperation()
+        {
+            return new IntMultiplyOperation();
+        }
+    }
+
+2-)Qualifier annotation'ı ile
+    @Component
+    @Qualifier("intAdd")
+    class IntAddOperation implements IOperation {
+        //..
+    }
+
+    veya
+
+    @Configuration
+    class OperationConfig implements IOperation {
+        @Bean
+        @Qualifier("intMultiply")
+        public IOperation getOperation()
+        {
+            return new IntMultiplyOperation();
+        }
+    }
+
+- Bir bean'e herhangi bir isim verilmez ise işaretlendiği sınıfın(sınıfta isimin ilk harfi küçüktür.) veya metodunismini alır.
+   @Component // burada üretilen bean'in ismi intAddOperation'dır. Yani sınıfın ilk harfi küçüktür.
+   class IntAddOperation implements IOperation {
+       //..
+   }
+   @Configuration
+   class OperationConfig implements IOperation {
+       @Bean// bean'in ismi getOperation'dır.
+       public IOperation getOperation()
+       {
+           return new IntMultiplyOperation();
+       }
+   }
+
+
+- Aynı sınıfı implemente eden sınıflar arasındaki order ilişkisi yapılması durumu List interface'ini implemente eden
+  sınıflar için geçerlidir. Çünkü öncelik sonralık ilişkisi bu sınıflar için vardır. Collection interface'ini implemente
+  eden sınıflar için böyle bir durumun olacağı kesin olmayacağından yaratılma sırası buna göre olmaz.
+
+- Qaulifier annotation'ı
+    - bean bir sınıfa
+        @Component
+        @Qualifier("intAdd")
+        class IntAddOperation implements IOperation {
+            //..
+        }
+
+    - bean dönen bir metoda
+        @Configuration
+        class OperationConfig implements IOperation {
+            @Bean
+            @Qualifier("intMultiply")
+            public IOperation getOperation()
+            {
+                return new IntMultiplyOperation();
+            }
+        }
+    - field injection'da enjekte edilecek field elemanına
+        public class ApplicationRunnerConfig {
+            @Autowired
+            @Qualifier("getOperation")
+            private IOperation m_operation;
+            //..
+         }
+
+    - ctor injection'da enjekte edilecek method parametresine
+        public class ApplicationRunnerConfig {
+            private final IOperation m_operation;
+
+            public ApplicationRunnerConfig(@Qualifier("getOperation")IOperation operation)
+            {
+                m_operation = operation;
+            }
+
+            @Bean
+            public ApplicationRunner runApplication()
+            {
+                return args-> {
+                    System.out.println("ApplicationRunnerConfig");
+                    System.out.println(m_operation.apply(15,25));
+                };
+            }
+        }
+    - setter injection'da enjekte edilecek method parametresine
+        public class ApplicationRunnerConfig {
+            private IOperation m_operation;
+
+            @Autowired
+            public void setOperation(@Qualifier("getOperation")IOperation operation)
+            {
+                m_operation = operation;
+            }
+
+            @Bean
+            public ApplicationRunner runApplication()
+            {
+                return args-> {
+                    System.out.println("ApplicationRunnerConfig");
+                    System.out.println(m_operation.apply(15,25));
+                };
+            }
+        }
+
+
+    - setter injection'da @Autowired'ın hemen altında kullanılabilir.
+        public class ApplicationRunnerConfig {
+            private IOperation m_operation;
+
+            @Autowired
+            @Qualifier("getOperation")
+            public void setOperation(IOperation operation)
+            {
+                m_operation = operation;
+            }
+
+            @Bean
+            public ApplicationRunner runApplication()
+            {
+                return args-> {
+                    System.out.println("ApplicationRunnerConfig");
+                    System.out.println(m_operation.apply(15,25));
+                };
+            }
+        }
+
+- Constructor Qualifier olarak işaretlenemez.
+
+- Normal şartlar altında aynı türden reference döndüren bean'lerin bir program içerisinde bulunamaz. Aşağıdaki örnek
+  farklı dosyalarda yazılmıştır
+
+    @Configuration
+    public class OperationConfig2 {
+        @Bean
+        public IOperation getOperation2()
+        {
+            return new IntMultiplyOperation();
+        }
+        @Bean
+        public IOperation getOperation()
+        {
+            return new IntMultiplyOperation();
+        }
+    }
+
+    @Configuration
+    public class OperationConfig {
+        @Bean
+        public IOperation getOperation2()
+        {
+            return new IntMultiplyOperation();
+        }
+        @Bean
+        public IOperation getOperation()
+        {
+             return new IntMultiplyOperation();
+        }
+    }
+
+- Yukarıda yazılan örnek normal şartlar altında runtime'da bir exception fırlatır. Çünkü bir uygulama içinde aynı
+  referans'a dönen bean'lerin isimleri aynı olamaz. Bu durum qualifier annotation'ı ile çözülür.
+  @Configuration
+  public class OperationConfig {
+      @Bean("OperationConfig.getOperation2")
+      public IOperation getOperation2()
+      {
+          return new IntMultiplyOperation();
+      }
+      @Bean("OperationConfig.getOperation")
+      public IOperation getOperation()
+      {
+           return new IntMultiplyOperation();
+      }
+  }
+
+  @Configuration
+  public class OperationConfig2 {
+      @Bean
+      public IOperation getOperation2()
+      {
+          return new IntMultiplyOperation();
+      }
+      @Bean
+      public IOperation getOperation()
+      {
+          return new IntMultiplyOperation();
+      }
+  }
+
+- Bir program da bir bean ismi unique olmalıdır. Aynı referansa dönsün yada dönmesin aksi durumda error oluşur.
+
+- Bir program içerisinde qualifier annotation'ı ile belirtilmiş bir bean injection işleminde kullanılabilmesi için
+  injection yapılacak yerde  qualifier annotation'ı bean'in ismi  bildirilmelidir. Yanlış bir qualifier isminde error
+  oluşur. Qualifier ismi bildirilmez ise eğer tek bu injection'a atanabilecek tek bir bean var ise error
+  oluşmaz. Birden fazla bean var ise, Bu bean'lerden primary işaretlenmiş olan bir bean var ise o bean atanır.
+  Eğer herhangi bir bean yok ise runtime error oluşur.
+
+- Qualifier bildirilmiş bir bean qualifier işaretlenmemiş bir metoda atanabilir. Eğer bu parametre bu bean ismi ile
+  işaretlenir ise sadece bu bean atanabilir.
+
+--- Primary annotation ----
+
+- Bir bean primary işaretlendiği zaman herhangi bir şekilde bean ismi ile istenmez ise birden fazla bean içerisinden
+  primary işaretlenmiş olanı verir. aynı referansa geri dönen birden fazla primary işaretlenmiş bean'ler olamaz.
+
+--- Spring boot ile maven library'si oluşturmak ---
+
+- Hocanın verdiği general template lib'den oluşturulur. Elde edilen jar çalışabilen bir jar değildir.
+
+------------------------------------------------------------------------------------------------------------------------
+                        Value annotation'ı ve properties dosyası
+------------------------------------------------------------------------------------------------------------------------
+
+- Spring boot projelerinde uzantısı .properties olan bir dosya vardır. Bu dosya yeni nesil spring projelerinde kullanılan
+  bir dosyadır.
+
+- Bu dosya projenin resources bölümünde otomatik olarak gelen bir dosyadır. Bu dosya bir script dosyasıdır.
+- Bu dosyada belirtilen
+    <isim> = <değer> araçlar kullanılır. Spring boot bu dosyayı parse eder.
+- Bu isim ve değerler ilgili proje içerisinde kullanılabilir.
+- Bazı araçlar(Hibernate,JPA, Spring boot, Spring web) buradaki isimleri tanıyıp eğer dosyaya yazılır ise ona göre işlem
+  yapar.
+
+- Bu dosyada ki yorum satırları # ile başlatılır. Bu yorum satırları shell script'lerde klasik bir şekilde böyle
+  belirtilir.
+
+- Bu dosya bizim için çok önemli bir dosyadır.
+
+- Bu dosya sayesinde bir methoda injection işlemi yapılabilir.
+- @Value annotation'ına $ ve küme parantezi içerisinde bir isim verilirse(@Value("${name}")) program ilgili ismi proper
+  ties dosyasında bu isme karşılık gelen değeri argüman olarak geç demektir.
+
+@Configuration
+public class CalculatorRunnerOperation1Config {
+    private final SampleCalculator m_sampleCalculator;
+
+    public CalculatorRunnerOperation1Config(SampleCalculator calculator)
+    {
+        m_sampleCalculator = calculator;
+    }
+
+    @Bean("calculatorRunneroperation1")
+    public ApplicationRunner runCalculator(@Value("${op1.a}")int a, @Value("${op1.b}")int b,@Value("${op1.op}") char op)
+    {
+        return args -> {
+            System.out.println("CalculatorRunnerConfig.runCalculator");
+            m_sampleCalculator.calculate(a, b, op);
+        };
+    }
+}
+
+- Yukarıdaki örnekte runCalculator metodu spring boot tarafından çağırılırken, properties dosyasındaki ilgili isme sahip
+  değerleri bu fonksiyona argüman olarak geçilmesini sağlar.
+
+- Eğer properties dosyasında ilgili isim bulunamaz ise runtime da exception oluşur. Böyle durumlarda bu isim yerine
+  default olarak kullanılabilecek bir isim geçilebilir.
+
+@Configuration
+public class CalculatorRunnerOperation1Config {
+    private final SampleCalculator m_sampleCalculator;
+
+    public CalculatorRunnerOperation1Config(SampleCalculator calculator)
+    {
+        m_sampleCalculator = calculator;
+    }
+
+    @Bean("calculatorRunneroperation1")
+    public ApplicationRunner runCalculator(@Value("${op1.a:5}")int a, @Value("${op1.b}")int b,@Value("${op1.op}") char op)
+    {
+        return args -> {
+            System.out.println("CalculatorRunnerConfig.runCalculator");
+            m_sampleCalculator.calculate(a, b, op);
+        };
+    }
+}
+
+
+- @Value("${op1.a:5}")int a ile eğerki op1.a ismi properties dosyasında bulunamaz ise bunun yerine 5 değeri ile çağrıl
+  ması sağlanır. Bir default değer gibi kullanılmasını sağlar.
+
+- Properties dosyaları aynı zamanda configürasyon dosyalarıdır.
+
+- Value annotation'ı içerisinde kullanılan bu dile SpEL(Spring Expression Language) denir. Başka annotation'lar ile de
+  kullanılabilir. Özellikle Value içerisinde kullanılır.
+
+- Bu dosya ve Value annotation'ı çok önemlidirler.
+
+
+- properties dosyasında o dosya içerisinde bildirilmiş başka bir değişkene ${name} ile erişilir.
+
+- Value annotation'ı sınıfın elemanlarına, metodlara, parametrelere ve annotation'lara verilen bir annotation'dır.
+- Yani bir sınıfın veri elemanı da properties dosyasından  alınabilir.
+
+- Bir jar dosyanın içerisinde gömülü bir properties dosyası da bulunur.
+- Eğerki bu jar'ın bulunduğu klasörde bir properties dosyası var ise jar'ın içindeki properties yerine bu properties
+  kullanılır. Klasördeki properties doyası jar'ın içindekini ezer.
+
+- Yani properties dosyası gömülü bile olsa dışrıdan ayrıca bir konfigürasyon dosyası da kullanılabilir.
+
+- Properties dosyaları ile  spring boot ile gelen özelliklerdir. Bir jar'ın içerisindeki properties default
+  configürasyon dosyasıdır. Jar'ın bulunduğu klasördeki properties dosyası ise yeni konfigürasyon dosyasıdır.
+
+- Bir jar dosyası çalıştırılken properties geçilebilir.
+    - java -jar name.jar --op1.a=89
+
+- Spring boot ile (Aşağıdaki işlemler properties dosyası için yapılan işlemlerdir.)
+    - default konfigürasyon yapılabilir
+    - Konfigürasyon dışarıdan alınabilir.
+    - uygulama çalıştırılken konfigürasyonda değişiklikler yapılabilir.properties'de ilgili isim olsun yada olmasın
+      verilen isim o program çalıştığı sürece geçerlidir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            19.07.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Java'da hangi teknoloji olursa olsun(JSP, JSF) web teknolojileri üzerine kurulu her şey servlet denilen sistematik
+  üzerinde toplanır.
+
+- Servlet java'nın web üzerindeki temel taşıdır. Yani java'da web işlemlerinde en alttaki yapıda servlet yapısı vardır.
+
+- Servlet kullanılmaması durumunda socket api'ler kullanılır. Bununla birlikte servlet dışında kendimiz server işlemleri
+  ni ele alırız.
+
+- Servlet'in sorumlu olduğu bir çok şey vardır.
+    - Request'leri karşılamak
+    - Uygun bilgileri request ile alıp response'ı dönebilecek şekilde bir takım işlemleri beraberinde getirir.
+
+- Servlet java'nın uzak makineler ile haberleşmesinde özellikle web servis veya web uygulamalarının dayandığı teknolojiye
+  denir.
+
+- http'nin bazı çok önemli metodları vardır. Client bir istekte bulunduğunda özellikle get ve post metodlarını kullanır.
+  Client bir request'in nasıl yapıldığını server'a söyler(post veya get).
+    - get -> adresiyle beraber elemanların ? ile url'in yanına takılmasıdır.
+    - post -> iletilen verilerin header'lara yazılmasıdır.
+    - delete -> güvenlik gerekçesi ile pek kullanılmaz
+    - put -> güvenlik gerekçesi ile pek kullanılmaz
+
+- Bir istekte bulunulduğunda bir response döndürülür. Bu request ve response'ın nasıl yapıldığı uygulamanın temelini
+  oluşturur.
+- Eğer response bir html sayfası ise bunlara genel olarak web uygulaması denir.
+- Eğer response özel bazı formatlar da ise(json, xml) bunlara rest service denir. Bu ayrım çok önemlidir.
+
+- Eğer başka bir protokel üzerinden request ve response yapılır ise(örneğin soap) bunlara soap servisler denir. Soap
+  servisler kullanımı giderek azalmaktadır.
+
+- Ancak bunların temel amacı bir request ve response olmasu durumudur.
+
+- Şu an genel olarak restful service'ler çok daha yaygın kullanılmaktadır.
+
+- request hizmet alan veya müşteri anlamında kullanılır.
+- server hizmet veren kişidir.
+
+- Birbiriyle konuşan sistemler üzerinden konuşan uygulamarın geneline MICROSERVICE denir.
+
+
+- Aşağıdakiler eskiden yapılan bir servlet uygulamasının nasıl yapıldığına ait aşağı seviyede nasıl çalıştığına yönelik bir
+  örnektir. Spring boot bunların bir çoğunu bizim için elimine etmektedir.
+- Bir servlet uygulaması aslında HttpServlet denilen bir sınıftan türetilmiş ve aynı zamanda bir takım annotation'lar
+  ile işaretlenmiş olması gerekiyor. HttpServlet sınıfı içerisindeki bir takım metodların override edilmesi  gerekmektedir.
+- Örneğin server'a gelen bir get request'i için doGet denilen bir metod çağırılır. iki adet prametresi vardır. request
+  ve response'dır. request'in türü HttpServletRequest  bu metodun birinci parametresi(Bu sınıf gerektiği yerde kullanılır.)
+  HttpServletResponse bunun ikinci parametresidir(Bu sınıfa ihtiyacımız olmayacaktır. Spring boot bu sınıfın yapacağı
+  bütün işlemleri yapacaktır.).
+
+- Sring boot yukarıda yapılan işlemleri sarmalayarak doGet ve doPost methodunu override etmek yerine çok daha yüksek
+  seviyeli bir şekilde kodu yazmamızı sağlar.
+
+- Controller : request ve response'ları verilerle birlikte yöneten katmandır. Bu controller'ın görevi gelen isteği ilgili
+  metoda yönlendirir. Bu metodlara action metodlar denir.
+
+- Eğer controller'ın döndüğü cevap bir html sayfası ise buna web uygulaması denir. Eğer cevap json veya xml formatında
+  ise buna rest service denir.
+
+- servlet üzerinde çalışan bir uygulamayı bir web application server tarafından çalıştırılıp yönetilmesi gerekir. Bu
+  programlar:
+    - Tomcat
+    - Jboss
+    - Glansfish
+    - websphere
+
+- Client tarafından istekler yukarıda yazılan uygulamalardan herhangi birine gelir ve bu uygulamalar akışı servlet'e
+  yönlendirir.
+- Bizim web tarafını organize eden uygulumalara web application server'lardır.
+- spring boot uygulamalarında embbedded tomcat web dependency'si ile  beraber gelen bir web application server'dır.
+
+- Tcp-ip protokolünde transmission port denilen bir port vardır. Bu server ile yapılan bilgi alışverişinde bilginin başka
+  bir port üzerinden iletilmesidir.
+
+- Transmission port Server'ın ip adresindeki ilgili port'un bizim local'imizde veya server'da müsait olamama durumu
+  üzerine veri alışverişinin başka bir port üzerinden gerçekleşmesidir. Transmission port her zaman kullanılır.
+
+- Transmission port belirlenebilen bir port'tur. Ancak  belirlenmez ise işletim sistemindeki ilk müsait port kullanılır.
+
+- LocalPort  : TransmissionPort'tur.
+  RemotePort : ip'nin sonunda kullanılan port'tur.
+  LocalAddress : uygulamanın kendi ip'si
+  RemoteAddress : istemcinin ip'si
+  RemoteHost :
+
+
+- Bir request'te client program http metodu olarak belirleme yapmaz ise default metod get'tir.
+  client program post metodu için header'a post yazılması gerekir.
+
+- rest servisleri test ekmek için kullanılan bazı programlar
+    - http -> httpie programıdır.
+    - curl ->  curl ve http linux ve unix sistemler de default olarak gelir.
+    - postman
+
+- Embedded tomcat'in default port'u 8080'dir. bu port istenirse application.properties dosyasından
+  değiştirilebilir.
+  server.port=50500 -> bu satır sayesinde tomcat uygulamayı 50500'den erişir.
+- server.port uygulama'nın jar dosyası çalıştırılırken de verilebilen bir bilgidir.
+   javar -jar artifact_name.jar --server.port=50500
+
+- HttpServlet sınıfı spring tarafından bir bean olarak verilmektedir.
+- Spring de genel olarak php'deki controller yapısında olduğu gibi bir türetme kavramı söz konusu değildir.
+
+- Bir controller belirtilirken bu işlem annotation'lar(@Controller, @RestController) ile yapılır.
+- RestController annotation'ı aynı zamanda bir controller annotation'dır.
+
+
+- RequestMapping annotation'ı
+    - Bir url yönlendirilmesi için yapılan annotation'dır. RequestMapping annotation'ı sadece action metodlara değil
+      aynı zamanda controller'ın kendisine de verilebilen bir annotation'dır.
+    - Bu işlem için annotation'ın value isimli property'sine atama yapılmalıdır.
+
+    @RestController
+    @RequestMapping("/info")
+    public class ServletInformationController{
+    //.. http://ip:port/info -> url'i ile bütün sınıflar buraya erişir.
+    }
+
+- Kısaca RequestMapping annotation'ı kendisine verilen value değerine göre bir sınıfa yada bir action metoda yönlendirme
+  yapan annotation'dır.
+
+- RequestMapping annotation'ı PostMapping ve GetMapping annotation'larını kapsayan bir annotation'dır.
+
+- @PostMapping("/info") = @RequestMapping(value = "/info", method = RequestMethod.POST)
+- @GetMapping("/") = @RequestMapping(value = "/", method = RequestMethod.POST)
+
+- GetMapping ve PostMapping annotation'ları RequestMapping'i sadeleştirmek için kullanılan annotation'lardır.
+
+- Controller nesnelerinin(RestController veya Controller) bir scope bildirimi yapılmaz ise scope'u singleton'dır.
+- Bu özellik örneğin kullanıcıdan gelen isteğin zamanını almak istendiğinde önemli bir durumdur. Çünkü scope'u singleton
+  bırakır isek ilk bağlantıdan sonra bir daha Controller nesnesi yaratılmayacağı için hep aynı zaman döner.
+
+- Controller nesnesinin scope'u tamamen senaryomuza bağlı bir durumdur. Eğer ki singleton dışında bir durum gerekiyorsa
+  scope'u değiştirmelidir.
+
+- HttpServletRequest sınıfı kullanıcıdan gelen bir istekte kullanıcıya ve server'a ait bilgiler barındırmaktadır.
+  Örneğin local Address = Server'ın local adresi,
+          remote Address = client'ın adresi
+          remote host =  proxy adresidir.
+          localPort = anlaştıkları port,
+          remotePort = veri alışverişinin yapıldığı port (transmission port) yani ilk müsait port
+
+
+- client tarafından gelen her bir request için
+    - spring tarafından HtppServletRequest nesnesi yaratılır(Kesin olarak yaratılmalıdır.).
+    - İlgili Controller'a sahip action metod veya sınıfa yönlendirme yapılır.
+    - çıktı iletilir(Çıktı iletilirken spring HttpServletResponse türünden bir yapı ile sonucu iletir. Ancak bu
+      yapı alt seviyeli bir yapı olduğu için spring bizden bu hammaliyeyi alır.).
+
+- Controller ile işaretlenmiş bir sınıf rest servislerde kullanılmaz. Controller annotation'ı ile işaretlenmiş sınıflar
+  da action metodlar bir html sayfası döndürür.
+
+- RestController ise web service'i(yani rest service'i) yayınlanmak için kullanılır.
+- action metodlar için default root bulunmamaktadır. Bir action metod @GetMapping ile işaretlenmek .
+    @RestController
+    public class MyController{
+        @GetMapping("/")
+        public string foo(){return "foo"}
+        /*
+            public string foo(){return "foo"}
+            Bu iki durum aynı değildir. Bir action metod @GetMapping ile işaretlenmelidir.
+        */
+    }
+
+- Dünyada verilerin iletimini sağlayan bir takım formatlar vardır(JSON,XML). Bunlara ingilizce de data exchange format denir.
+  Bu formatlar genellikle human-readable'dır(Basit string'ler biçimindedir.).
+
+- Bir xml dosyasını parse edebilmek için bütün xml bilgisinin okunması gerekir. Mobil uygulamalar ile birlikte  XML gibi
+  formatların kullanımı işi zorlaştırdığı için JSON formatı kullanılmıştır. Json formatını parse etmek için bir dosyanın
+  tamamını kullanmak zorunda değildir.
+  json formatının kullanımı :
+    {
+        key : value
+        key2 : value2
+        //.. şeklinde devam eder
+    }
+
+- spring boot default olarak json yayınlanır. Bu tarz service'lere restful services denir.
+
+- spring boot'ta json formatı dönmenin en basit yolu ilgili türe dönüp o eğer istek get ise sınıfın getter'ları eğer
+  istek post ise sınıfın setter'ları olmalıdır.
+
+- spring boot'ta oluşturulan json formatı için key isimleri get metodlarının isimlerinin get'ten sonraki kısmın camelcase
+  olarak yazılmış halidir. value ise'de ilgili get fonksiyonunun geri dönüş değeridir.
+
+  örnek : public int getLocalPort(){
+            return m_localPort};
+        {
+           localPort : 54040
+           ..
+        }
+  şeklinde devam eder.
+
+- bu spring'den kaynaklı oluşan bir durumdur.
+
+- spring burada ilgili sınıfın sadece get metodlarında(eğer boolean ise is ile başlar.) yer alan bilgilerden bir json
+   üretir. get ile başlamayan bir metod'u json'a eklemez.
+
+- HttpServletRequest nesnesi bir request yapıldığında yaratılır ve her bir request'te ilgili request'e ait bütün
+  bilgileri tutar.
+- Spring web'de action metodlar eğer bir referans döndürüyorsa ve bu  referansın get metodları var ise bu durumda spring
+  default olarak bu action metodunun geri dönüş değeri için bir json üretir.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            25.07.2020
+------------------------------------------------------------------------------------------------------------------------
+- Katmanlı mimari verilerle işlem yapan bir uygulama da önemi daha çok ortaya çıkar.
+
+- Repository Katmanı : veriler ile işlem yapan katmandır.
+- Service katmanı : hizmet veren katman ->
+- Application katmanı : Servis'ten hizmet alan katmandır.
+
+- Katmanlı mimari her katmanı birbirinden ayırıp yapılacak işleri birbirinden bağımsız hale getirmektedir.
+
+- entity : bir grup verinin bir tanesini temsil eden türdür.
+
+- Genellikle service ve repository katmanları genelleştirilip öyle kullanılırlar. Bu durumlar da genelde interface
+  kullanılarak yapılır.
+
+- viewmodel ile dto sınıflar hemen hemen aynı işi yapan sınıflardır.
+
+- genel olarak convert işlemleri serviste yapılmalıdır.
+
+- Bir uygulama katmanından veri taşımak için dto(data transfer object) pattern'i kullanılır. Bu pattern sayesinde
+uygulama katmanında kullanılan verinin repository'de kullanılan ile herhangi bir alakası yoktur.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            26.07.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Http Get işlemleri :
+
+- Get parametreleri url'in sonuna eklenerek gönderilir.
+    http://localhost:8080/invoices/invoice?mon=1;
+
+- Http'nin get metodlarındaki parametreyi yakalamak için kullanılan annotation @RequestParam annotation'ıdır.
+
+- RequestParam annotation'ının value attribute' olmaz ise kendisine gelen request'teki isim ile aynı olmalıdır.
+    örneğin
+    @RequestParam int month
+    http://localhost:8080/invoices/invoice?mon=1 // mon=1 yukarıdaki annotation ile yakalanamaz.
+
+     @RequestParam int month
+     http://localhost:8080/invoices/invoice?month=1 //ok
+
+     veya
+
+     @RequestParam("mon") int month
+     http://localhost:8080/invoices/invoice?mon=1 //ok
+
+- Url'den gelen her istek bir string olarak gelir. Spring bizim için RequestParam ile işaretlenmiş tür ne ise o türe
+  dönüşüm yapar. Dönüşüm yapılamaz ise Exception oluşur. Exception spring tarafından  ele alınır. Kendi yazacağımız kod
+  ile de exception'ı handle edebiliriz. Bu kısım ileri de ele alınacaktır.
+
+- RequestParam annotation'ınının önemli bazı attribute'ları
+      value, name = get metodunda key, value pair'indeki key'in ismini verdiğimiz kısımdır. Hiç bir değer verilmez ise
+      parametrenin ismi ne ise o key o isim olur.
+      required = boolean -> default'u true'dır. bu parametrenin geçilip geçilmemesi gerektiğini belirler.
+      defaultValue = string -> required false geçildiği zaman bir defaultValue verilip verilmeyeceğini belirler.
+
+    @GetMapping("/invoicemonth")
+    public Iterable<InvoiceDTO> getInvoicesByMonth(@RequestParam(value = "mon", required = false, defaultValue = "0") int month)
+    {
+        if (month <= 0)
+            month = LocalDate.now().getMonthValue();
+        return m_invoiceService.findAllInvoicesByMonth(month);
+    }
+
+    - yukarıdaki action metod için bazı url ömrnekleri
+        http://localhost:8080/invoices/invoicemonth -> month değeri o an bulunan ayın değeridir.
+        http://localhost:8080/invoices/invoicemonth -> month değeri o an bulunan ayın değeridir.
+        http://localhost:8080/invoices/invoicemonth?mon=5 -> month değeri 5'dir.
+        http://localhost:8080/invoices/invoicemonth?mon=-1 -> month değeri o an bulunan ayın değeridir.
+        http://localhost:8080/invoices/invoicemonth?mon=ali -> hata oluşur. badrequest alırız.
+
+
+- Http Post işlemleri
+
+- Post işlemlerinde ilgili parametrenin yakalanması için @RequestBody annotation'ı kullanılır.
+
+- Post işlemlerinde gönderilen bilgi sınıfın set metodunun isimlerindeki bilgi şeklinde gönderilmelidir.
+
+- Katmanlı mimaride herhangi bir katmanda oluşabilecek bir hata yukarıya aynen iletilirse bu durumda katmanlı mimarinin
+  herhangi bir anlamı kalmayacaktır. Bu durumda oluşabilecek hatalar yukarıya sarmalanarak gönderilmelidir.
+
+- Repository de oluşan bir hata servis katmanına repositoryException olarak, service'te oluşabilecek bir hata'da uygulama
+  katmanına service exception olark gönderilmelidir. Repository'den servise giden hata'lar da istisna olabilir ancak
+  servisten uygulamaya gidecek hatalar mutlaka sarmalanmalıdır.
+
+- Spring bit exception oluştuğunda da bu exception'ı sarmalayarak gönderir(IllegalStateException'dır.).
+
+-------- FACADE DESIGN PATTERN -------
+
+- facade design pattern'i birden çok benzer işi yapan sınıfları tek bir sınıf altında toplamak için kullanılır. Bu işlem
+  basitleştirme amaçlı kullanılır. Birden fazla sınıfı aynı anda birleştirip aynı
+
+- Örneğin bir çok projede birden çok repository sınıfı vardır. Ve her bir repository için ayri birer sınıf bulunur. Buradaki
+  amaç bu repository referans'larını tek bir sınıfta toplayıp ilgili repository'nin methodlarını kullanır.
+
+- facade kalıbı birden çok repository olduğunda kullanılan bizim projelerimizde service'e basitleştirmek için kullanılır.
+
+- facade ayrıca bir grup bilgiyi ayrı ayrı kullanmak yerine tek bir yerden kullanılmasını sağlar.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            08.08.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- MavenLibraries'den DbUtilLib oluşturuldu.
+
+- Url'den girilen bir örneğin http://localhost/8080?mon=ali gibi bir url için Spring tarafından bir BAD_REQUEST kodu döner.
+
+- Bize Spring tarafından üretilen hata kodunu işlemeden önce işlem yapabilmemizi sağlayan bir sınıf vardır. Bu sınıfın ismi
+  ResponseEntityExceptionHandler'dır. Bu sınıftan yapılan bir türetme ile beraber kendi hata kodumuzu Json olarak dönebiliriz.
+
+- Bu sınıftan türetilecek sınıflar @ControllerAdvice annotation'ı ile işaretlenmelidir. Bu sayede Controller sınıflarına
+  bir hata durumunda programcının bu sınıfta yazmış olduğu metodlara bakacağı bildirilir.
+
+- Bu sınıfta yapılacak işlemler bir response dönmek olduğu için, bu işlemler uygulamanın application katmanında olur.
+- Bu sınıfta birden çok sebepten oluşabilecek hataları spring'den önce işlemek için kullanılan metodlar vardır.
+- Bu sınıfın override edilen metodları request'ten gelen ve bu durum sonucu oluşabilecek exception'ları yakalar.
+- handleTypeMismatch override edildiği zaman Spring içerisinde oluşabilecek tür dönüşmesinden kaynaklı herhangi bir exception
+  sonucu geri döndürelecek cevabı göndeririz.
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                            15.08.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- ResponseEntityExceptionHandler'dan türetilmiş sınıfa(ControllerAdvice ile işaretlenmiş olmalıdır.) eklenen metodlar
+  (override edilen metodlar değildir.)ile kendimizin gönderdiği exception'lar alakalı işlemler yapılabilir. Bu sayede
+  oluşabilecek bir exception try-catch içerisine alınmadan(normal bir java uygulaması exception oluşması durumunda
+  çöker.), exception durumunda yapılacak metodu belirlenir. Bu metod ExceptionHandler annotation'ı ile işaretlenmelidir.
+  ve value değeri olarakda hangi exception  ile işlem yapılacak ise o exception'ın class'ı verilmelidir.
+
+  @ExceptionHandler(ServiceException.class)
+  public ResponseEntity<Object> handleServiceException(ServiceException ex)
+  {
+    var apiError = new ApiError(/*.....*/);
+    return new ResponseEntity(apiError, apiError.getHtppStatus());
+  }
+- Yukarıdaki gibi yazılacak metodlar mutlaka ResponseEntity dönmelidir. Bu metodlar sğ
+
+
+- Response entity'siz gönderilen bir response her zaman 200 yani başarı kodu ile döner. ResponseEntity ile ilgili kodun
+  Http statü kodunu da değiştirebiliriz.
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                            Jackson api
+------------------------------------------------------------------------------------------------------------------------
+
+- Jackson api bazı json elemanlarını formatlamak için kullanılan bir yapıdır(Sadece bu amaçla kullanılmaz.).
+
+- Örneğin bir tarih formatını değiştirmek için Jackson api kullanılır.
+
+- Bu api'nin JsonFormat annotation'ı ile ilgili üye değişkeninin formatı değiştirilebilir.
+- JsonFormat annotation'ı get metodlarının başına konularak json yayınlanırken istenilen formatta json yayınlanmasını
+  sağlar.
+
+- Formatlama işlemi özellikle tarih'ler için anlamlı olmaktadır.
+
+- JsonFormat annotation'ının tarih formatlamak için kullanılan iki önemli attribute'ı vardır.
+    1-) shape -> girilecek formatın hangi biçimde(string, dizi) girileceğini gösterir. shape'in türü JsonFormat.Shape
+        enum'ı türündendir.
+        - shape = JsonFormat.Shape.STRING -> girilecek format string türündendir.
+    2-) pattern
+        - pattern = "dd-MM-yyyy"; // büyük MM olmak zorundadır. mm dakika anlamına gelir. Bu yüzden ay için büyük yazılmalıdır.
+
+------------------------------------------------------------------------------------------------------------------------
+                                            16.08.2020
+------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+                                            JDBC
+------------------------------------------------------------------------------------------------------------------------
+
+- Java'nın veri tabanı yönetim sistemine erişebilmek için en temel, bütün hepsinin kullandığı bir yapı vardır. Bu yapıya
+  JDBC(Java DataBase Connectivity) api denir. Jpa, Hibernate, Eclipselink gibi araçların hepsi alt tarafta jdbc
+  kullanmaktadır.
+
+- JDBC api standartı, veri tabanına sql cümleciklerine gönderebilmek için gereken araçları içeren sınıflar topluluğudur.
+
+- Bu standartlar birer driver ile çalışır.
+
+- Bir veri tabanı yönetim sistemine erişebilmek için o veritabanı sistemine özgü sınıfların içsel olarak
+  çalıştırılması gerekir. Bu sınıfların bir standartı olmadığından, JDBC bunlara driver'lar ile erişir ve bunların
+  temel sınıfı DriverManager sınıfıdır. Bu ürünleri(Oracle, Mysql, Postgresql) yazan firmalar bu ürünlere yönelik
+  driver'ları barındırır.
+
+- Bir veri tabanı ürünü üzerinde java ile işlem yapabilmek için ilgili veri tabanı ürününün driver'larına ihtiyaç vardır.
+
+- Biz bu driver'ların jar dosyalarını aslında sisteme dahil ederiz. Reflection yöntemi ile runtime'da bu jar dosyalarına
+  bakılarak connection işlemleri yapılır.
+
+- JDBC driver'ları için ilgili ürüne yönelik driver'ların projeye eklenmesi gerekir.
+
+- Jar'ların hepsi maven'la alındığı için sorun olmayacaktır. Ancak bu işlemin manuel yapılması durumunda ilgili jar dosyası
+  indirilip ilgili yere kurulmalıdır.
+
+- Spring boot'un doğrudan dependency injection ile jdbc elamanlarını elde edebileceğimiz bir starter'ı vardur.
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+
+- jdbc içerisindeki en temel sınıf JdbcTemplate sınıfıdır. Bu sınıf doğrudan dependency injection ile oluşturulabilir.
+
+- bu paket kurulduktan sonra doğrudan program çalıştırılmaya çalışıldığında program çöker. Bunun için
+  application.properties dosyasına bir takım bilgiler yazılmalıdır.
+
+  1-) hangi veri tabanı
+    - spring.datasource.url=jdbc:postgresql(hangi veri tabanı kullanılıyor ise o yazılmalıdır.)://localhost:5432/database_name
+  2-) veri tabanı kullanıcısı
+    - spring.datasource.username=postgres
+  3-) kullanıcı şifresi
+    - spring.datasource.password=csd1993
+
+- JdbcTemplate sınıfının bir çok metodu vardır. Bu metodların özellikle belirli elemanları vardır.
+- Örnek olarak sorgulama işlemi yapan query adlı metodu vardır. ve query metodunun RowCallbackHandler adlı bir functional
+  interface referansı ister.
+  void query(String var1, RowCallbackHandler var2);
+
+- RowCallbackHandler interface'i bizden bir ResultSet alır. RowCallBackHandler aslında bizden arka planda ne yapacağını
+  istemektedir.
+
+- ResultSet sınıfı bir query işlemi yapıldığında bize verilen bir collection'dır.
+   m_jdbcTemplate.query(m_findAll, (ResultSet rs) -> findAllHandler(rs, invoices)); // lambda parametresi için ResultSet
+   türünü koymaz isek derleyici lambda ifadesine uygun iki farklı method bulacağından error verir. Bu yüzden lambda
+   parametresinin türü belirlenmelidir..
+
+- ResutSet sınıfı aslında bir set collection'ıdır. ResultSet içerisinde hiç eleman yoksa lamba'nın atandığı functional
+  interface'in ilgili metodu hiç çağrılmamaktadır.
+- Yukarıdaki sebepten kaynaklı ResultSet dolaşılırken do-while ile dolaşılmalıdır. ResultSet collection'ı dolaşılırken
+  next metodu kullanılır. Bu metod checked bir exception olan SQLException fırlatır. Bu yüzden throws  bildirimine yazılması
+  gerekir.
+     private void findAllHandler(ResultSet resultSet, Iterable<Invoice> invoices) throws SQLException
+     {
+         do {
+
+         } while (resultSet.next());
+     }
+
+- ResultSet'in get ile başlayan metodları ile get metoduna verilecek anahtar veya index numarası ile bu numaraya karşılık
+  gelen değerler geri döndürülür.
+- Burada veritabanında tutulan alanların türlerinin bilinmesi zorunludur.
+- ResultSet'e verilecek index numarası 0'dan değil 1'den başlar. Java'da index numarasının 1'den başladığı tek yer
+  burasıdır.
+
+- Veri tabanında oluşturulan money türleri ResultSet içerisinde bigdecimal olarak alınamaz. Çünkü veritabanında
+  kaydedilirken , ile ayrılır. Bunun ayarı postgresql de yapılmalıdır.
+
+- Java'nın Jdbc api'leri java.util.Date sınıfından türetilmiş java.sql.date sınıfını kullanmaktadır. Bu sınıfın toLocalDate
+  metodu ilgili sınıfı LocalDate sınıfına çevirir.
+
+- ResultSet'in getDate fonksiyonu da java.sql.Date türünü geri döndürür. Bu türü toLocalDate metodu ile LocalDate türüne
+  çevirebiliriz.
+
+- query fonksiyonanına verilen sql cümlesinde argümanları daha sonradan geçebiliriz.
+    postgresql.invoices.findByMonth=select * from invoices where date_part(month,date) = ?
+- yukarıdaki script'e soru işareti bir değişkeni belirtmektedir.
+- bu değişkenin kullanımı query fonksiyonunda gerçekleştirir.
+    @Override
+    public Iterable<Invoice> findInvoicesByMonth(int mon)
+    {
+        var invoices = new ArrayList<Invoice>();
+
+        m_jdbcTemplate.query(m_findInvoicesByMonthSql, new Object[]{mon}, (ResultSet rs) -> fillInvoices(rs, invoices));//fillInvoices repository sınıfında private metoddur.
+
+        return invoices;
+    }
+------------------------------------------------------------------------------------------------------------------------
+                                            23.08.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- DBUtilLib checked exception'lar içinde genelleştirildi. DBUtil sınıfının Supplier  ve Runnable'ın kullandığı metodlar
+  yerine ISupplierCallback ve IActionCallback functional interface'leri eklendi.
+
+
+- ResultSetExtractor inteface'i ile bir sql sorgusu sonucu elde edilen bir data'yı bize döndürür. Bu sınıf fonksiyonel
+  bir interface'dir. ve geri dönüş değeri sınıfın T açılımıdır.
+    @Override
+    public long count()
+    {
+        return m_jdbcTemplate.query(m_invoicesCountSql, (ResultSet rs) -> rs.getInt(1));
+    }
+
+- ResultSetExtractor inteface'i, RowCallbackHandler inteface'i gibi iterator'u 1 ilerleterek
+  kodu çalıştırmaz. ResultSetExtractor sınıfını kullanırken ilgili iterator'u bir ilerletip
+  öyle ResultSet'in metodlarını çalıştırmamız gerekir.
+
+  @Override
+  public long count()
+  {
+      return m_jdbcTemplate.query(m_invoicesCountSql, (ResultSet rs) -> {rs.next(); return rs.getInt(1); });
+  }
+
+------------------------------------------------------------------------------------------------------------------------
+                                            29.08.2020
+------------------------------------------------------------------------------------------------------------------------
+
+- Bir string nasıl tekrar edilir.
+    1- java 11 ile eklenen repeat fonksiyonu String s = "a"; s.repeat(n); since java 11
+    class Util {
+        public static String repeat1(int n, String s)
+        {
+            return Stream.generate(() -> s).limit(n).collect(Collectors.joining());
+        }
+        public static String repeat2(int n, String s)
+        {
+            return IntStream.rangeClosed(1, n).mapToObj(i -> s).collect(Collectors.joining());
+        }
+        public static String repeat3(int n, String s)
+        {
+            return String.join("", Collections.nCopies(n, s));
+        }
+        public static String repeat4(int n, String s)
+        {
+            return Collections.nCopies(n, s).stream().collect(Collectors.joining());
+        }
+        public static String repeat5(int n, String s)
+        {
+            return String.format("%0" + n + "d", 0) //%04d -> "0000"
+                    .replace("0", s);
+        }
+        public static String repeat6(int n, String s)
+        {
+            return String.format("%0" + n + "c", ' ') //%04d -> "0000"
+                    .replace("0", s);
+        }
+    }
+
+- inner class'lar  kullanılırken  bellek sızıntısı oluşturan çok önemli bir kod senaryosu vardır.
+    class Sample {
+        private int m_x;
+
+        private  Mample m_mample;
+
+        private class Mample {
+            private void bar(int x)
+            {
+                m_x = x;
+            }
+        }
+
+        public Sample()
+        {
+            m_mample = new Sample();
+        }
+    }
+
+- Yukarıda yazılan kodda Mample sınıfının içerisinde  Sample sınıfının ilgili objesinin tutulduğu bir referans olduğu için
+  Sample sınıfınnın ilgili nesnesinin referans sayacı asla 0'a düşmez. Sample nesnesi ölmediği için mample nesnesinin
+  sayacıda 0'a düşmez. Böyle durumlara deadlock denir.
+
+- Bu sorunun çözüm yollarından birisi sample sınıfının Closeable interface'ini implemente edip ölmeden önce ilgili mample
+  referansını 0'a düşürüp mample'ın gördüğü Sample sınıfının ilgili referansının'da sıfıra düşmesi sağlanır.
+    class Sample implements Closeable {
+        private int m_x;
+
+        private  Mample m_mample;
+
+        private class Mample {
+            private void bar(int x)
+            {
+                m_x = x;
+            }
+        }
+
+        public Sample()
+        {
+            m_mample = new Mample();
+        }
+
+        public void close()
+        {
+            m_mample = null;
+        }
+    }
+
+- Bu sorunun başka bir çözümü ise WeakReference sınıfı ile'dir. Bu sınıf ile gösterilen bir nesneyi ilgili WeakReference
+  dışında gösteren bir referans yok ise ilgili nesne garbace collected hale döner.
+  class Sample {
+      private int m_x;
+
+      private  Mample m_mample;
+
+      private static class Mample {
+          private WeakReference<Sample> m_sampleWeakReference;
+          private Mample(Sample sample){
+              m_sampleWeakReference = new WeakReference<>(sample);
+          }
+          private void bar(int x)
+          {
+              m_sampleWeakReference.get().m_x = x;
+          }
+      }
+
+      public Sample()
+      {
+          m_mample = new Mample(this);
+      }
+
+  }
+
+- normal şartlar altında JdbcTemplate ile yapılan bir save metoduda otomatik artan id'yi almak mümkün değildir. Çünkü
+  otomatik artan id database tarafından sağlanır(Aslında bir yöntem vardır ancak her sınıf için çalışmaz.).
+- Otomatik olan bir id'yi almak için bazı yöntemler vardır. Ama bu yöntemlerden bazıları her bir DBMS için çalışmıyor.
+  Örneğin JdbcTemplate üzerinden KeyHolder ile almak postgresql için çalışmaz.
+
+- Burada her database çalışabilen bir sınıf vardır. Bu sınıf JdbcTemplate sınıfından farklı bir sınıftır.
+  Bu sınıfın adı NamedParameterJdbcTemplate'dır. JdbcTemplate ile yapılabilen her işlem bu sınıf ile yapılabilir. Bu
+  sınıfta JdbcTemplate için kullanılan sql sorguları içinde kullanılan ? yerine başka bir yapı kullanılır. JdbcTemplate
+  için ? örneği(select * from invoices where invoice_id = ?)
+
+- KeyHolder interface'i ile otomatik artan id elde edilir. Bu interface'i implemente eden GeneratedKeyHolder sınıfı
+  kullanılacaktır.
+
+- application.properties dosyasında kullandığımız sql cümlelelerinde ? yerine isimli parametreler kullanılır. Bu yapı SqlParameterSource
+  interface'ini kullanan yapılar için kullanabilir. Projemizde bu yapıyı NamedParameterJdbcTemplate' sınıfının update
+  fonksiyonunda kullanıyoruz. Bu yapıyı'da repository'de save metodunda kullandık.
+    insert into invoices (name, address, date, total) values (:name, :address, :date, :total)
+
+- Yukarıda kullanılan yapı NamedParameterJdbcTemplate kullanıldığı zaman yapılabilen bir yapıdır.
+
+- application.properties dosyasında sql cümlelerimizi tutmak pek uygun bir durum değildir. Bunlar global bir sınıfta veya
+  ilgili repository sınıfında tutulmalıdır.
+
+- JdbcTemplate ile yapılan her işlem NamedParameterJdbcTemplate ile de yapılır. Bu işlem'lerdeki farklılık aşağıdaki gibidir.
+
+  JdbcTemplate için
+  private static final String FIND_BY_DATE_SQL = select * from invoices where date = ?
+  @Override
+   public Iterable<Invoice> findInvoicesByDate(LocalDate date)
+   {
+       var invoices = new ArrayList<Invoice>();
+
+       m_jdbcTemplate.query(FIND_BY_DATE_SQL, JDBCUtil.getArguments(date), (ResultSet rs) -> fillInvoices(rs, invoices));
+
+       return invoices;
+   }
+
+  NamedParameterJdbcTemplate için
+
+  private static final String FIND_BY_DATE_SQL = select * from invoices where date = :date
+
+  public Iterable<Invoice> findInvoicesByDate(LocalDate date)
+  {
+      var invoices = new ArrayList<Invoice>();
+      var args = new HashMap<String,Object>();
+      args.put("date", date);
+      m_namedParameterJdbcTemplate.query(FIND_BY_DATE_SQL, args, (ResultSet rs) -> fillInvoices(rs, invoices));
+
+      return invoices;
+  }
+
+  - hashMap'in açılımının ikinci tür parametresinin Object olmasının nedeni genel bir kullanım içindir. put ettiğimiz ilk
+    parametre ile FIND_BY_DATE_SQL içerisinde kullanılan :'dan sonraki değerin aynı olması gerekir.
+
+- NamedParameterJdbcTemplate sınıfının update metodunun yapısı
+    1. parametre Sql cümlesi
+    2. parametre SqlParameterSource interface'i -> bu interface'i new BeanPropertySqlParameterSource sınıfı gönderilir.
+       Bu sınıf constructor'ına verilen object'in get metodlarına bakarak ilgili parametrelerin değerlerini yerleştirir.
+    3. parametre Keyholder   -> otomatik artan id'yi almak için kullanılır.
+    4. parametre String [] ->   hangi id'lerin veri tabanından alınacağını ilgilendiren örnektir. Bizim örneğimizde
+                                invoice_id'yi istediğimiz için String olarak sadece o geçilmiştir.
+
+    keyholder'ın geri dönüş değeri number türündendir. Bundan dolayı id'miz hangi türden ise o türe ilişkin metod çağrılmalıdır.
+    private static final String SAVE_SQL =  "insert into invoices (name, address, date, total) values (:name, :address, :date, :total)";
+    @Override
+    public <E extends Invoice> E save(E entity)
+    {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        m_namedParameterJdbcTemplate.update(SAVE_SQL, new BeanPropertySqlParameterSource(entity), keyHolder, new String[]{"invoice_id"});
+        entity.setId(keyHolder.getKey().intValue());
+        return entity;
+    }
+
+- DBMS'de bir kullanım şekli vardır. Bu yapıya ORM yaklaşımı denir.
+------------------------------------------------------------------------------------------------------------------------
+                                            ORM (Object Relation Model)
+------------------------------------------------------------------------------------------------------------------------
+- Object relational model yaklaşımında her bir sınıf veri tabanında bir obje'ye karşlık gelir.
+- Bu yapı otomatik olarak orm yapılarının mekanizması ile sağlanır.
+
+- Orm yapılarının en temelde java düzeyinde kullanımı için standart olarak jpa(java persistence api) kullanılır.
+
+- Jpa'in farklı implementasyonları vardır. Örneğin Eclipse-link implementasyonları bunlardan biridir.
+
+- Bu implementasyonlardan en tipik kullanımı özellikle spring 5'den sonra annotation'larını jpa'e de çok yakınlaştırdığı
+  için hibernate denilen bir yapı kullanılmaktadır.
+
+- hibernate arka planda jpa'i kullanan(jpa arka planda jdbc'yi kullanmaktadır.) bir orm yaklaşımı kullanımıdır.
+
+- spring framework'unde (boot) jpa ile hibernate birlikte çalışmaktadır.
+- Bu yapıların kendilerine özgü bir dili vardır. Bu dile jql(jpql'de olabilir) denir.
+- Biz sorgularmızı yazarken hibernate query language veya jpql(jpa query language) yapısı kullanıyoruz.
+
+- bunların sql'den farklı olarak kendi sorgulama sentaksları vardır.
+
+- bu yapılar bazı şeyleri kolaylaştırmak için kullanılır. Bu yüzden de library gereksinimleri vardır.
+
+- jpa dependency eklendiği zaman, arka tarafta hibernate dependency'si de eklenir. bu duruma out of box denir.
+
+- jpa eklendikten sonra application.properties dosyasında değişiklik yapılması gerekmektedir.
+
+- spring.jpa.hibernate.ddl-auto= -> buna atanabilecek değerler aşağıdakilerdir.
+    create -> uygulama her ayağa kalktığında eski tablolar uçup yenisi getirilir.
+    create-drop -> uygulama ayağa kalktığında tablolar yaratılır. uygulama kapatıldığında tablolar silinir.
+    none -> veri tabanında her şeyin hazır olduğunu ve programın veri tabanına bakmasına gerek yok anlamına gelir.
+    update -> programcı tarafından verilen şema ile veri tabanı üzerindekileri update eder. Programcı tarafından belirlenen
+              sınıflar ile tablolar yaratılır. Tablolar var ise herhangi bir silinme olmaz.
+    validate -> daha sonra gelecektir.
+
+- ddl-auto'ya atanan değer update ise bu yaklaşıma code_first yaklaşımı sınır. kod sınıflar ve entity'ler yazılır.
+  entity'lerden tablolar oluşur.
+
+- 100'lerce tablonun olduğu bir uygulamada code_first_from_database adlı bir teknik kullanılır. database'den kodları
+  generate edilerek yapılır.
+
+- javax.persistence(javax'a java exclusive paketi denir.). Javax paketinin altındaki persistence'ı jpa'in implemente edildiği bir yapıdır.
+
+- javax.persistence paketinin @Entity isimli annotation'ı işaretlenmiş bir sınıf database de bir tabloya karşılık gelir.
+
+- Entity ile işaretlenmiş sınıflarda yerel değişkenler'i bildirirken m_ kullanılmamalıdır.
+
+- @Entity ile işaretlenmiş bir sınıfın bir primary key'i olmalıdır. primary key elemanı @Id annotation'ı ile belirtilir.
+
+- tablolarda otomatik artan id'ler @GeneratedValue denilen bir annotation ile işaretlenmelidir.
+  Bunun strategy değerine GenerationType.IDENTITY değeri ile işaretlenmelidir. Bu yapı ile dmbs'da bu elemanın
+  otomatik artan id olduğu ismi verilir.
+
+- Eğer bu veri elemanına herhangi bir column bilgisi verilmez ise bu elemanın veri tabanındaki ismi buradaki veri elemanı
+  ile aynıdır.
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "invoice_id")
+  //@Column(name = "id") // böyle yazmaya gerek yoktur. zaten bu isim direk olarak geçecektir.
+  private int id;
+
+- tablo ismi'de sınıf isminin default olarak küçük harfli olan halidir.
+- tabloya isim vermek için @Table annotation'ının name elemanı kullanılır.
+
+@Entity
+@Table(name = "invoices")
+public class Invoice {
+    //..
+}
+
+- @Column annotation'ının birden fazla elmeanı vardır.
+  Örneğin unique, nullable gibi ikisi de boolean değer alır.
+    unique-> default false'dır.
+    nullable-> default true'dır.
+
+- Entity ile işaretlenmiş bir sınıfın default constructor'ı olmak zorundadır. private olabilir farketmez. Nedeni jpa
+  ilgili entity'yi içi boş bir şekilde yaratır. Daha sonrasında içini doldurur.
+
+- Spring boot ekibi CrudRepository<T, ID> denilen bir interface yazmışlardır. Yazdığımız ICrudRepository'deki metodların
+  aynısı bu interface'de de vardır. Bu interface aslında bir patterndir.
+
+- CrudRepository interface'i repository interface'inden türetilmiştir.
+
+- JpaRepository denilen bir interface'de vardır. Buda CrudRepopository'den ve aynı zamanda PagingAndSortingRepository'i
+  interface'inden türetilmiştir.
+
+- CrudRepository'iden türetilmiş bir interface'imiz var ise veya CrudRepository türünden bir interface referansımız
+  dependency injection ile istenir ise, CrudRepository'ye ait bütün metodlar otomatik yazılır.
+
+- CrudRepository'den türetilmiş bir interface dependency injection ile istenir ise ilgili inteface'i implemente eden bir
+  sınıf otomatik olarak spring tarafından yazılacaktır.
+
+- CrudRepository'nin ilk parametresi bir tablonun karşılık geldiği entity olması gerekir.
+
+- CrudRepository'nin metodları spring tarafından otomatik olarak yazılır. ancak o inteface'den türetilmiş interface'e ait
+  metodların bazıları spring tarafından yazılmaz.
+
+- interface IInvoiceRepository extends CrudRepository<Invoice, Integer> {
+        Iterable<Invoice> findInvoicesByMonth(int month); // bu ve aşağıdaki iki metod spring tarafından yazılamaz.
+        Iterable<Invoice> findInvoicesByDate(LocalDate date);
+  }
+
+- yukarıdaki metodların yazılması için hibernate query language veya jpql dediğimiz özel bir sentaks kullanımı gerekmektedir.
+
+- Query annotation'ın value isimli elemanı ile hibernate query lanugage veya jpql yazmamız sağlanır.
+
+- hibernate query language sql cümlelerine çok benzeyen taşınabilir olsun diye kendine özel bir sentaksa sahiptir.
+
+- hibernate ql veya jpql iki türlü kullanılabilir.
+    1- from ile başlayan yapıdır.
+        @Query("from Invoice i where  i.date = :date") // Tabloya karşılık gelen entity isminin kullanımı zorunludur.
+        Iterable<Invoice> findInvoicesByDate(LocalDate date);
+    2- select ile başlar.
+        @Query("select i from Invoice  i where i.date = :date")
+        Iterable<Invoice> findInvoicesByDate(LocalDate date);
+
+
+- @Query annotation'ı ile beraber native query'lerde yazılabilir. Ancak native query yazılacağı zaman hql veya jpql
+  sentaksı değil hangi dbms üzerinde yazıyor isek ilgili database dilinde yazılması gerekir.
+
+- Bunun için @Query'nin nativeQuery elemanının true geçilmesi gerekir.
+    @Query(value = "select * from invoices where date_part('month',date) = :month", nativeQuery = true)
+    Iterable<Invoice> findInvoicesByMonth(int month);
+- veya :month yerine ? de kullanılabilir.
+    @Query(value = "select * from invoices where date_part('month',date) = ?", nativeQuery = true)
+    Iterable<Invoice> findInvoicesByMonth(int month);
+
+- burada kullanılan database hangisi ise o database'a ait dil ile yazılması gerekir. Örneğin posrgresql için plpgsql
+  sql server için t-sql olmak zorundadır.
+
+- hql kullanırken hql @Entity annotation'ları ile işaretlenmiş annotation'ları kullanır.
+
+- Şu ana kadar yazılan CrudRepository kodlarında tablo mutlaka bir sınıf ile eşleşmelidir. Büyük projelerdeki veri
+  tabanlarında bize tablolara erişim hakkı verilmemektedir. Çoğunlukla bu tablolara erişmek için fonksiyonlar kullanılır.
+
+- Yukarıdaki gibi bir durumda bizim veri tabanına erişimimiz hibernate ile sağlamamız gerekmektedir.
+
+- CrudRepository'yi kullandığımız yerlerde bazı metodlar otomatik yazılabilir. Entity sınıfının herhangi bir veri elemanı
+  eşleşecek metodlar findBy ile yazılabilir. veri elemanının DBMS'da ki unique olup olmamasına  göre geri dönüş değeri
+  Optional<T> veya Iterable<T> belirtilmelidir. Optinal unique olan bir eleman için Iterable unique olmayan bir eleman için
+  kullanılır.
+
+-  IInvoiceRepository'de kullanılan findInvoicesByDate metodu jpa tarafından findByDate ile ismi ile otomatik olarak
+   yazılabilir.
+     @Query("select i from Invoice  i where i.date = :date")
+     Iterable<Invoice> findInvoicesByDate(LocalDate date);
+     yerine
+     Iterable<Invoice> findBydate(Localdate date); //Jpa otomatik kodunu yazacaktır. findBy'dan sonraki kısım ile veri
+     ilgili entity'deki isim aynı olmalıdır.
+
+- Veri tabanında bir tabloya karşılık gelen(yani @Entity ile işaretlenmiş sınıflara) POJO(Plain Old Java Object) denir.
+
+- Pojo genel olarak repository'de olur. Servis'e kadar çıkar. Servis'ten sonra uygulama katmanına değişmiş olarak gelebilirler.
+- Bu değişim zorunlu değildir. Küçük uygulamalarda değişime gerek olmadan da bu işlem yapılabilir.Yani DTO sınıfları
+  olmadan işlem yapılabilir.
+ 
